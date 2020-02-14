@@ -44,7 +44,7 @@ module "my_codepipeline" {
 
   //Source
   source_github_repo   = "hello-world-api"
-  source_github_branch = "prd"
+  source_github_branch = "master"
   source_github_token  = module.acs.github_token
 
   //Build
