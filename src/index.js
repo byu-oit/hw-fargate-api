@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
   var params = {
     TableName: process.env.DYNAMO_TABLE_NAME
   };
-  dynamodb.describeTable(params, function(err, data) {
+  dynamodb.scan(params, function(err, data) {
     if (err) {
       console.log(err, err.stack);
       res.status(500)
@@ -27,7 +27,7 @@ app.get('/', (req, res) => {
       res.send(JSON.stringify({
         secret: process.env.SOME_SECRET,
         table: process.env.DYNAMO_TABLE_NAME,
-        numItems: data.Table.ItemCount
+        numItems: data.Count
       }))
     }
   });
