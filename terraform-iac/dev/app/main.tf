@@ -93,6 +93,7 @@ output "url" {
   value = module.my_fargate_api.dns_record
 }
 
+// This is necessary for the pipeline to do a CodeDeploy deployment
 output "appspec" {
   value = module.my_fargate_api.codedeploy_appspec_json
 }
