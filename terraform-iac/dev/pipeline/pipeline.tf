@@ -26,6 +26,8 @@ provider "github" {
 module "buildspec" {
   source        = "github.com/byu-oit/terraform-aws-basic-codebuild-helper?ref=v0.0.2"
   ecr_repo_name = "hello-world-docker-api-dev"
+  artifacts     = ["./terraform-iac/dev/app/*"]
+  pre_script    = ["pushd src", "npm install", "popd"]
 }
 
 module "my_codepipeline" {
@@ -43,6 +45,7 @@ module "my_codepipeline" {
   //Source
   source_github_repo   = "hello-world-docker-api"
   source_github_branch = "dev"
+  source_github_token  = module.acs.github_token
 
   //Build
   build_buildspec = module.buildspec.script
