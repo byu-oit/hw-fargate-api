@@ -45,7 +45,8 @@ module "my_codepipeline" {
   //Source
   source_github_repo   = "hello-world-docker-api"
   source_github_branch = "dev"
-  source_github_token  = module.acs.github_token
+  source_github_token  = "asdf"
+  #source_github_token  = module.acs.github_token
 
   //Build
   build_buildspec = module.buildspec.script
@@ -53,7 +54,7 @@ module "my_codepipeline" {
   //Deploy
   deploy_terraform_application_path = "./terraform-iac/dev/app/"
   deploy_code_deploy_config = {
-    ApplicationName     = "hello-world-docker-api-codedeploy"
-    DeploymentGroupName = "hello-world-docker-api-deployment-group"
+    ApplicationName     = "hello-world-api-dev-codedeploy"
+    DeploymentGroupName = "hello-world-api-dev-deployment-group"
   }
 }
