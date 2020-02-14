@@ -45,8 +45,7 @@ module "my_codepipeline" {
   //Source
   source_github_repo   = "hello-world-docker-api"
   source_github_branch = "dev"
-  source_github_token  = "asdf"
-  #source_github_token  = module.acs.github_token
+  source_github_token  = module.acs.github_token
 
   //Build
   build_buildspec = module.buildspec.script
