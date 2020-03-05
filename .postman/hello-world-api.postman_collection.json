@@ -1,0 +1,44 @@
+{
+	"info": {
+		"_postman_id": "c6a42bda-49fd-4dc8-a83f-7a023441c7be",
+		"name": "hello-world-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Healthcheck",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8d424273-7cac-44a1-9d4e-bcb6622ad121",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{context}}/health",
+					"host": [
+						"{{context}}"
+					],
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
