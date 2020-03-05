@@ -17,7 +17,7 @@ git clone https://github.com/byu-oit/my-new-repo
 * Checkout the dev branch
 ```
 cd my-new-repo
-git checkout dev
+git checkout -b dev
 ```
 * Find all of the `.tf` files under `terraform-iac/dev/` and:
   * replace `<account_number>` with your account number.
