@@ -19,8 +19,8 @@
 							"pm.test(\"Body is correct\", function () {",
 							"    pm.response.to.have.body(\"healthy\");",
 							"});",
-							"pm.test(\"Response time is less than 200ms\", function () {",
-							"    pm.expect(pm.response.responseTime).to.be.below(200);",
+							"pm.test(\"Response time is less than 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
 							"});"
 						],
 						"type": "text/javascript"
@@ -61,8 +61,8 @@
 							"    var jsonData = pm.response.json();",
 							"    pm.expect(jsonData.table).to.eql(\"hello-world-api-dev\");",
 							"});",
-							"pm.test(\"Response time is less than 200ms\", function () {",
-							"    pm.expect(pm.response.responseTime).to.be.below(200);",
+							"pm.test(\"Response time is less than 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
 							"});"
 						],
 						"type": "text/javascript"
