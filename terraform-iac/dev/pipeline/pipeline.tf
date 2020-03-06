@@ -28,7 +28,7 @@ module "buildspec" {
   ecr_repo_name = "hello-world-api-dev"
   artifacts     = ["./terraform-iac/dev/app/*"]
   pre_script    = ["cd src"]
-  post_script   = ["cd .."]
+  post_script   = ["cd ..", "mv src/*.tfvars ."]
 }
 
 module "my_codepipeline" {
