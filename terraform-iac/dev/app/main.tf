@@ -95,8 +95,8 @@ data "aws_ssm_parameter" "permissions_boundary" {
 
 
 resource "aws_iam_role" "iam_for_lambda" {
-  name = "iam_for_lambda"
-  permissions_boundary = aws_ssm_parameter.permissions_boundary.value
+  name                 = "iam_for_lambda"
+  permissions_boundary = data.aws_ssm_parameter.permissions_boundary.value
 
   assume_role_policy = <<EOF
 {
@@ -125,8 +125,8 @@ resource "aws_lambda_function" "test_lambda" {
 }
 
 resource "aws_iam_policy" "lambda_logging" {
-  name = "lambda_logging"
-  path = "/"
+  name        = "lambda_logging"
+  path        = "/"
   description = "IAM policy for logging from a lambda"
 
   policy = <<EOF
@@ -148,7 +148,7 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
-  role = aws_iam_role.iam_for_lambda.name
+  role       = aws_iam_role.iam_for_lambda.name
   policy_arn = aws_iam_policy.lambda_logging.arn
 }
 
