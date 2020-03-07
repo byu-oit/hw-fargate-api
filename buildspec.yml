@@ -21,7 +21,7 @@ phases:
     # build test lambda
     - "cd tst/codedeploy-hooks/after-allow-test-traffic"
     - "npm install"
-    - "zip -cf lambda.zip *"
+    - "zip -r lambda.zip *"
     - "cd ../../.."
     # pass vars to terraform deploy stage
     - "echo \"image_tag = \\\"$ECR_TAG_NAME\\\"\" > terraform.tfvars"
