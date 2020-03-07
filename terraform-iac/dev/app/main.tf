@@ -20,6 +20,8 @@ data "aws_ecr_repository" "my_ecr_repo" {
   name = "hello-world-api-dev"
 }
 
+#TODO: modify this module. Add a tst listener on 4443. Pass it to the internal fargate module.
+# Maybe add a var for the hook lambda while you're at it. Append hook to appspec output.
 module "my_fargate_api" {
   source              = "github.com/byu-oit/terraform-aws-standard-fargate?ref=v1.0.2"
   dept_abbr           = "oit"
@@ -116,12 +118,13 @@ EOF
 }
 
 resource "aws_lambda_function" "test_lambda" {
-  filename      = "../../../tst/codedeploy-hooks/after-allow-test-traffic/lambda.zip"
-  function_name = "hello-world-api-deploy-test-dev"
-  role          = aws_iam_role.iam_for_lambda.arn
-  handler       = "index.handler"
-  runtime       = "nodejs12.x"
-  depends_on    = [aws_iam_role_policy_attachment.lambda_logs]
+  filename         = "../../../tst/codedeploy-hooks/after-allow-test-traffic/lambda.zip"
+  function_name    = "hello-world-api-deploy-test-dev"
+  role             = aws_iam_role.iam_for_lambda.arn
+  handler          = "index.handler"
+  runtime          = "nodejs12.x"
+  source_code_hash = filebase64sha256("../../../tst/codedeploy-hooks/after-allow-test-traffic/lambda.zip")
+  depends_on       = [aws_iam_role_policy_attachment.lambda_logs]
 }
 
 resource "aws_iam_policy" "lambda_logging" {
