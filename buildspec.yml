@@ -1,0 +1,31 @@
+version: "0.2"
+artifacts:
+  files:
+  - "./terraform-iac/dev/app/*"
+  - "*.tfvars"
+  - "./tst/codedeploy-hooks/after-allow-test-traffic/lambda.zip"
+cache:
+  paths:
+    - "/root/cache/**/*"
+env:
+  variables: {}
+phases:
+  build:
+    commands:
+    # build app
+    - "export ECR_TAG_NAME=`date +\"%Y-%m-%d_%H-%M-%S\"`"
+    - "$(aws ecr get-login --no-include-email --region $AWS_REGION)"
+    - "ECR_IMAGE_NAME=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/hello-world-api-dev:$ECR_TAG_NAME"
+    - "docker build src -t $ECR_IMAGE_NAME"
+    - "docker push $ECR_IMAGE_NAME"
+    # build test lambda
+    - "cd tst/codedeploy-hooks/after-allow-test-traffic"
+    - "npm install"
+    - "zip -cf lambda.zip *"
+    - "cd ../../.."
+    # pass vars to terraform deploy stage
+    - "echo \"image_tag = \\\"$ECR_TAG_NAME\\\"\" > terraform.tfvars"
+  install:
+    commands: []
+    runtime-versions:
+      docker: "18"

@@ -23,14 +23,6 @@ provider "github" {
   token        = module.acs.github_token
 }
 
-module "buildspec" {
-  source        = "github.com/byu-oit/terraform-aws-basic-codebuild-helper?ref=v0.0.2"
-  ecr_repo_name = "hello-world-api-dev"
-  artifacts     = ["./terraform-iac/dev/app/*"]
-  pre_script    = ["cd src"]
-  post_script   = ["cd ..", "mv src/*.tfvars ."]
-}
-
 module "my_codepipeline" {
   source                        = "github.com/byu-oit/terraform-aws-fargate-codepipeline?ref=v0.0.7"
   pipeline_name                 = "hello-world-api-dev"
@@ -49,7 +41,7 @@ module "my_codepipeline" {
   source_github_token  = module.acs.github_token
 
   //Build
-  build_buildspec = module.buildspec.script
+  # use buildspec.yml from source (default)
 
   //Deploy
   deploy_terraform_application_path = "./terraform-iac/dev/app/"
