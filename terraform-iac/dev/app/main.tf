@@ -89,8 +89,14 @@ resource "aws_iam_policy" "my_dynamo_policy" {
 EOF
 }
 
+data "aws_ssm_parameter" "permissions_boundary" {
+  name = "/acs/iam/iamRolePermissionBoundary"
+}
+
+
 resource "aws_iam_role" "iam_for_lambda" {
   name = "iam_for_lambda"
+  permissions_boundary = aws_ssm_parameter.permissions_boundary.value
 
   assume_role_policy = <<EOF
 {
