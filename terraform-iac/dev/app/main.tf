@@ -120,7 +120,7 @@ resource "aws_lambda_function" "test_lambda" {
   function_name = "hello-world-api-deploy-test-dev"
   role          = aws_iam_role.iam_for_lambda.arn
   handler       = "index.handler"
-  runtime       = "nodejs8.10"
+  runtime       = "nodejs12.x"
   depends_on    = [aws_iam_role_policy_attachment.lambda_logs]
 }
 
