@@ -21,6 +21,7 @@ phases:
     # build test lambda
     - "cd tst/codedeploy-hooks/after-allow-test-traffic"
     - "npm install"
+    - "cp -R ../../../.postman ."
     - "zip -r lambda.zip *"
     - "cd ../../.."
     # pass vars to terraform deploy stage

@@ -1,7 +1,7 @@
 var newman = require('newman');
 
 exports.handler =  async function(event, context) {
-    return run_tests(".");
+    return run_tests(".postman");
 }
 
 function run_tests(postman_files_dir) {
