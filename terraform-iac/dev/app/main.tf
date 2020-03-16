@@ -20,27 +20,48 @@ data "aws_ecr_repository" "my_ecr_repo" {
   name = "hello-world-api-dev"
 }
 
-#TODO: modify this module. Add a tst listener on 4443. Pass it to the internal fargate module.
-# Maybe add a var for the hook lambda while you're at it. Append hook to appspec output.
-module "my_fargate_api" {
-  source              = "github.com/byu-oit/terraform-aws-standard-fargate?ref=v1.0.2"
-  dept_abbr           = "oit"
-  app_name            = "hello-world-api-dev"
-  env                 = "dev"
-  health_check_path   = "/health"
-  image_port          = 8080
-  container_image_url = "${data.aws_ecr_repository.my_ecr_repo.repository_url}:${var.image_tag}"
-  vpn_to_campus       = false
-  task_memory         = 1024
-  task_cpu            = 512
-  task_policies       = [aws_iam_policy.my_dynamo_policy.arn]
+module "acs" {
+  source = "github.com/byu-oit/terraform-aws-acs-info?ref=v2.0.0"
+}
 
-  container_env_variables = {
-    DYNAMO_TABLE_NAME = aws_dynamodb_table.my_dynamo_table.name
+module "my_fargate_api" {
+  source                        = "github.com/byu-oit/terraform-aws-standard-fargate?ref=v2.0.0"
+  app_name                      = "hello-world-api-dev"
+  container_port                = 8080
+  health_check_path             = "/health"
+  codedeploy_test_listener_port = 4443
+  task_policies                 = [aws_iam_policy.my_dynamo_policy.arn]
+  hosted_zone                   = module.acs.route53_zone
+  https_certificate_arn         = module.acs.certificate.arn
+  public_subnet_ids             = module.acs.public_subnet_ids
+  private_subnet_ids            = module.acs.private_subnet_ids
+  vpc_id                        = module.acs.vpc.id
+  codedeploy_service_role_arn   = module.acs.power_builder_role.arn
+  role_permissions_boundary_arn = module.acs.role_permissions_boundary.arn
+
+  primary_container_definition = {
+    name  = "hello-world-api-dev"
+    image = "${data.aws_ecr_repository.my_ecr_repo.repository_url}:${var.image_tag}"
+    ports = [8080]
+    environment_variables = {
+      DYNAMO_TABLE_NAME = aws_dynamodb_table.my_dynamo_table.name
+    }
+    secrets = {
+      "SOME_SECRET" = "/hello-world-api/dev/some-secret"
+    }
   }
 
-  container_secrets = {
-    "SOME_SECRET" = "/hello-world-api/dev/some-secret"
+  autoscaling_config = {
+    min_capacity = 1
+    max_capacity = 2
+  }
+
+  codedeploy_lifecycle_hooks = {
+    BeforeInstall         = null
+    AfterInstall          = null
+    AfterAllowTestTraffic = aws_lambda_function.test_lambda.function_name
+    BeforeAllowTraffic    = null
+    AfterAllowTraffic     = null
   }
 
   tags = {
@@ -50,7 +71,6 @@ module "my_fargate_api" {
   }
 }
 
-////TODO: Switch to use a higher level module, maybe.
 resource "aws_dynamodb_table" "my_dynamo_table" {
   name         = "hello-world-api-dev"
   hash_key     = "my_key_field"
@@ -59,8 +79,13 @@ resource "aws_dynamodb_table" "my_dynamo_table" {
     name = "my_key_field"
     type = "S"
   }
+
+  tags = {
+    env              = "dev"
+    data-sensitivity = "public"
+    repo             = "https://github.com/byu-oit/hello-world-api"
+  }
 }
-//TODO: Add tags
 
 resource "aws_iam_policy" "my_dynamo_policy" {
   name        = "hello-world-api-dynamo-dev"
@@ -94,7 +119,6 @@ EOF
 data "aws_ssm_parameter" "permissions_boundary" {
   name = "/acs/iam/iamRolePermissionBoundary"
 }
-
 
 resource "aws_iam_role" "iam_for_lambda" {
   name                 = "iam_for_lambda"
@@ -157,9 +181,4 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
 
 output "url" {
   value = module.my_fargate_api.dns_record
-}
-
-// This is necessary for the pipeline to do a CodeDeploy deployment
-output "appspec" {
-  value = module.my_fargate_api.codedeploy_appspec_json
 }
