@@ -149,8 +149,6 @@ resource "aws_lambda_function" "test_lambda" {
 
 resource "aws_iam_role_policy" "test_lambda" {
   name        = "hello-world-api-deploy-test-dev"
-  path        = "/"
-  description = ""
   role        = aws_iam_role.test_lambda.name
 
   policy = <<EOF
