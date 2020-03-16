@@ -147,6 +147,7 @@ resource "aws_lambda_function" "test_lambda" {
   role             = aws_iam_role.iam_for_lambda.arn
   handler          = "index.handler"
   runtime          = "nodejs12.x"
+  timeout          = 30
   source_code_hash = filebase64sha256("../../../tst/codedeploy-hooks/after-allow-test-traffic/lambda.zip")
   depends_on       = [aws_iam_role_policy_attachment.lambda_logs]
 }
