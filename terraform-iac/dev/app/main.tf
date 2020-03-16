@@ -116,13 +116,9 @@ resource "aws_iam_policy" "my_dynamo_policy" {
 EOF
 }
 
-data "aws_ssm_parameter" "permissions_boundary" {
-  name = "/acs/iam/iamRolePermissionBoundary"
-}
-
-resource "aws_iam_role" "iam_for_lambda" {
-  name                 = "iam_for_lambda"
-  permissions_boundary = data.aws_ssm_parameter.permissions_boundary.value
+resource "aws_iam_role" "test_lambda" {
+  name                 = "hello-world-api-deploy-test-dev"
+  permissions_boundary = module.acs.role_permissions_boundary.arn
 
   assume_role_policy = <<EOF
 {
@@ -144,18 +140,18 @@ EOF
 resource "aws_lambda_function" "test_lambda" {
   filename         = "../../../tst/codedeploy-hooks/after-allow-test-traffic/lambda.zip"
   function_name    = "hello-world-api-deploy-test-dev"
-  role             = aws_iam_role.iam_for_lambda.arn
+  role             = aws_iam_role.test_lambda.arn
   handler          = "index.handler"
   runtime          = "nodejs12.x"
   timeout          = 30
   source_code_hash = filebase64sha256("../../../tst/codedeploy-hooks/after-allow-test-traffic/lambda.zip")
-  depends_on       = [aws_iam_role_policy_attachment.lambda_logs]
 }
 
-resource "aws_iam_policy" "lambda_logging" {
-  name        = "lambda_logging"
+resource "aws_iam_role_policy" "test_lambda" {
+  name        = "hello-world-api-deploy-test-dev"
   path        = "/"
-  description = "IAM policy for logging from a lambda"
+  description = ""
+  role        = aws_iam_role.test_lambda.name
 
   policy = <<EOF
 {
@@ -169,15 +165,15 @@ resource "aws_iam_policy" "lambda_logging" {
       ],
       "Resource": "arn:aws:logs:*:*:*",
       "Effect": "Allow"
+    },
+    {
+      "Action": "codedeploy:PutLifecycleEventHookExecutionStatus",
+      "Resource": "*",
+      "Effect": "Allow"
     }
   ]
 }
 EOF
-}
-
-resource "aws_iam_role_policy_attachment" "lambda_logs" {
-  role       = aws_iam_role.iam_for_lambda.name
-  policy_arn = aws_iam_policy.lambda_logging.arn
 }
 
 output "url" {
