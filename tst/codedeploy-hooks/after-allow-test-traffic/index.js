@@ -4,7 +4,7 @@ var codedeploy = new AWS.CodeDeploy({apiVersion: '2014-10-06', region: 'us-west-
 
 exports.handler =  async function(event, context) {
     console.log(event);
-    return run_tests(".postman", event.deploymentId, event.lifecycleEventHookExecutionId);
+    return run_tests(".postman", event.DeploymentId, event.LifecycleEventHookExecutionId);
 }
 
 function run_tests(postman_files_dir, deploymentId, lifecycleEventHookExecutionId) {
