@@ -1,58 +1,48 @@
-var newman = require('newman');
-var AWS = require('aws-sdk');
-var codedeploy = new AWS.CodeDeploy({apiVersion: '2014-10-06', region: 'us-west-2'});
+const newman = require('newman')
+const AWS = require('aws-sdk')
+const codedeploy = new AWS.CodeDeploy({ apiVersion: '2014-10-06', region: 'us-west-2' })
 
-exports.handler =  async function(event, context) {
-    console.log(event);
-    return run_tests(".postman", event.DeploymentId, event.LifecycleEventHookExecutionId);
+exports.handler = async function (event, context) {
+  console.log(event)
+
+  let errorFromTests
+  await runTests('.postman').catch(err => { errorFromTests = err })
+
+  const params = {
+    deploymentId: event.DeploymentId,
+    lifecycleEventHookExecutionId: event.LifecycleEventHookExecutionId,
+    status: errorFromTests ? 'Failed' : 'Succeeded'
+  }
+  try {
+    const data = await codedeploy.putLifecycleEventHookExecutionStatus(params).promise()
+    console.log(data)
+  } catch (err) {
+    console.log(err, err.stack)
+    throw err
+  }
+
+  if (errorFromTests) throw errorFromTests // Cause the lambda to "fail"
 }
 
-function run_tests(postman_files_dir, deploymentId, lifecycleEventHookExecutionId) {
-    return new Promise(function(resolve, reject) {
-        newman.run({
-            collection: require(postman_files_dir + '/hello-world-api.postman_collection.json'),
-            environment: require(postman_files_dir + '/dev-tst.postman_environment.json'),
-            reporters: 'cli',
-            abortOnFailure: true
-        }, function (err) {
-            if (err) {
-                console.log(err);
-                var params = {
-                    deploymentId: deploymentId,
-                    lifecycleEventHookExecutionId: lifecycleEventHookExecutionId,
-                    status: "Failed"
-                };
-                codedeploy.putLifecycleEventHookExecutionStatus(params, function(err2, data) {
-                    if (err2) {
-                        console.log(err2, err2.stack); // an error occurred
-                        reject(err2);
-                    } 
-                    else {
-                        console.log(data);           // successful response
-                        reject(err);
-                    }
-                });
-            }
-            else {
-                console.log('collection run complete!');
-                var params = {
-                    deploymentId: deploymentId,
-                    lifecycleEventHookExecutionId: lifecycleEventHookExecutionId,
-                    status: "Succeeded"
-                };
-                codedeploy.putLifecycleEventHookExecutionStatus(params, function(err2, data) {
-                    if (err2) {
-                        console.log(err2, err2.stack); // an error occurred
-                        reject(err2);
-                    } 
-                    else {
-                        console.log(data);           // successful response
-                        resolve();
-                    }
-                });
-            }
-        });
-    });
+function newmanRun (options) {
+  return new Promise((resolve, reject) => {
+    newman.run(options, err => { err ? reject(err) : resolve() })
+  })
 }
 
-// run_tests("../../../.postman", "a", "b");
+async function runTests (postmanFilesDir) {
+  try {
+    await newmanRun({
+      collection: require(postmanFilesDir + '/hello-world-api.postman_collection.json'),
+      environment: require(postmanFilesDir + '/dev-tst.postman_environment.json'),
+      reporters: 'cli',
+      abortOnFailure: true
+    })
+    console.log('collection run complete!')
+  } catch (err) {
+    console.log(err)
+    throw err
+  }
+}
+
+// runTests('../../../.postman')
