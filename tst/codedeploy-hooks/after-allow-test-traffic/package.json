@@ -1,0 +1,15 @@
+{
+  "name": "after-allow-test-traffic",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.640.0",
+    "newman": "^4.6.0"
+  }
+}

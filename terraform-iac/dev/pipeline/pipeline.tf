@@ -13,9 +13,7 @@ provider "aws" {
 }
 
 module "acs" {
-  source    = "github.com/byu-oit/terraform-aws-acs-info?ref=v1.2.2"
-  dept_abbr = "oit"
-  env       = "dev"
+  source    = "github.com/byu-oit/terraform-aws-acs-info?ref=v2.0.0"
 }
 
 provider "github" {
@@ -23,18 +21,9 @@ provider "github" {
   token        = module.acs.github_token
 }
 
-module "buildspec" {
-  source        = "github.com/byu-oit/terraform-aws-basic-codebuild-helper?ref=v0.0.2"
-  ecr_repo_name = "hello-world-api-dev"
-  artifacts     = ["./terraform-iac/dev/app/*"]
-  pre_script    = ["cd src"]
-  post_script   = ["cd ..", "mv src/*.tfvars ."]
-}
-
 module "my_codepipeline" {
-  source                        = "github.com/byu-oit/terraform-aws-fargate-codepipeline?ref=v0.0.7"
+  source                        = "github.com/byu-oit/terraform-aws-fargate-codepipeline?ref=v0.1.0"
   pipeline_name                 = "hello-world-api-dev"
-  acs_env                       = "dev"
   role_permissions_boundary_arn = module.acs.role_permissions_boundary.arn
   power_builder_role_arn        = module.acs.power_builder_role.arn
 
@@ -44,12 +33,13 @@ module "my_codepipeline" {
   }
 
   //Source
+  source_github_owner  = "byu-oit"
   source_github_repo   = "hello-world-api"
   source_github_branch = "dev"
   source_github_token  = module.acs.github_token
 
   //Build
-  build_buildspec = module.buildspec.script
+  # use buildspec.yml from source (default)
 
   //Deploy
   deploy_terraform_application_path = "./terraform-iac/dev/app/"
