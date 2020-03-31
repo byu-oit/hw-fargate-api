@@ -1,5 +1,17 @@
 variable "env" {
-  type = "string"
+  type = string
+}
+
+variable "role_permissions_boundary_arn" {
+  type = string
+}
+
+variable "power_builder_role_arn" {
+  type = string
+}
+
+variable "github_token" {
+  type = string
 }
 
 locals {
@@ -7,15 +19,11 @@ locals {
   branch = var.env == "prd" ? "master" : var.env
 }
 
-module "acs" {
-  source = "github.com/byu-oit/terraform-aws-acs-info?ref=v2.0.0"
-}
-
 module "my_codepipeline" {
   source                        = "github.com/byu-oit/terraform-aws-fargate-codepipeline?ref=v0.1.0"
   pipeline_name                 = "${local.name}-${var.env}"
-  role_permissions_boundary_arn = module.acs.role_permissions_boundary.arn
-  power_builder_role_arn        = module.acs.power_builder_role.arn
+  role_permissions_boundary_arn = var.role_permissions_boundary_arn
+  power_builder_role_arn        = var.power_builder_role_arn
 
   required_tags = {
     env              = var.env
@@ -26,7 +34,7 @@ module "my_codepipeline" {
   source_github_owner  = "byu-oit"
   source_github_repo   = local.name
   source_github_branch = local.branch
-  source_github_token  = module.acs.github_token
+  source_github_token  = var.github_token
 
   //Build
   # use buildspec.yml from source (default)
