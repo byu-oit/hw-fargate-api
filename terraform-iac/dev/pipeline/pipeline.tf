@@ -13,7 +13,7 @@ provider "aws" {
 }
 
 module "acs" {
-  source    = "github.com/byu-oit/terraform-aws-acs-info?ref=v2.0.0"
+  source = "github.com/byu-oit/terraform-aws-acs-info?ref=v2.0.0"
 }
 
 provider "github" {

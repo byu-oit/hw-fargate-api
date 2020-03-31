@@ -13,13 +13,13 @@ provider "aws" {
 }
 
 variable "some_secret" {
-  type = string
+  type        = string
   description = "Some secret string that will be stored in SSM and mounted into the Fargate Tasks as an environment variable"
 }
 
 resource "aws_ssm_parameter" "some_secret" {
-  name = "/hello-world-api/prd/some-secret"
-  type = "SecureString"
+  name  = "/hello-world-api/prd/some-secret"
+  type  = "SecureString"
   value = var.some_secret
 }
 
