@@ -17,13 +17,8 @@ variable "some_secret" {
   description = "Some secret string that will be stored in SSM and mounted into the Fargate Tasks as an environment variable"
 }
 
-resource "aws_ssm_parameter" "some_secret" {
-  name  = "/hello-world-api/prd/some-secret"
-  type  = "SecureString"
-  value = var.some_secret
-}
-
-module "my_ecr" {
-  source               = "github.com/byu-oit/terraform-aws-ecr?ref=v1.1.0"
-  name                 = "hello-world-api-prd"
+module "setup" {
+  source      = "../../modules/setup/"
+  env         = "prd"
+  some_secret = var.some_secret
 }
