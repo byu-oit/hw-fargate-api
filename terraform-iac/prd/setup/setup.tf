@@ -26,24 +26,4 @@ resource "aws_ssm_parameter" "some_secret" {
 module "my_ecr" {
   source               = "github.com/byu-oit/terraform-aws-ecr?ref=v1.1.0"
   name                 = "hello-world-api-prd"
-  image_tag_mutability = "IMMUTABLE"
-
-  lifecycle_policy = <<EOF
-{
-  "rules": [
-    {
-      "action": {
-        "type": "expire"
-      },
-      "selection": {
-        "countType": "imageCountMoreThan",
-        "countNumber": 10,
-        "tagStatus": "any"
-      },
-      "description": "Only keep 10 images",
-      "rulePriority": 10
-    }
-  ]
-}
-EOF
 }
