@@ -15,7 +15,7 @@ phases:
     # build app
     - "export ECR_TAG_NAME=`date +\"%Y-%m-%d_%H-%M-%S\"`"
     - "$(aws ecr get-login --no-include-email --region $AWS_REGION)"
-    - "ECR_IMAGE_NAME=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/hello-world-api-dev:$ECR_TAG_NAME"
+    - "ECR_IMAGE_NAME=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/hello-world-api-$ENV:$ECR_TAG_NAME"
     - "docker build src -t $ECR_IMAGE_NAME"
     - "docker push $ECR_IMAGE_NAME"
     # build test lambda

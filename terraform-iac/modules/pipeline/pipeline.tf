@@ -38,6 +38,9 @@ module "my_codepipeline" {
 
   //Build
   # use buildspec.yml from source (default)
+  build_env_variables = {
+    ENV: var.env
+  }
 
   //Deploy
   deploy_terraform_application_path = "./terraform-iac/${var.env}/app/"
