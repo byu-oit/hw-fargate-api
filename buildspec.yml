@@ -2,6 +2,7 @@ version: "0.2"
 artifacts:
   files:
   - "./terraform-iac/dev/app/*"
+  - "./terraform-iac/modules/app/*"
   - "*.tfvars"
   - "./tst/codedeploy-hooks/after-allow-test-traffic/lambda.zip"
 cache:
