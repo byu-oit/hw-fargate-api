@@ -30,7 +30,7 @@ app.get('/', async (req, res) => {
     })
   } catch (err) {
     console.log(err, err.stack)
-    res.status(500).send('Error reading table')
+    res.status(500).send('Error reading table or S3')
   }
 })
 
