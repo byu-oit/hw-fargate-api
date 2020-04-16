@@ -48,7 +48,7 @@ module "my_fargate_api" {
     ports = [8080]
     environment_variables = {
       DYNAMO_TABLE_NAME = aws_dynamodb_table.my_dynamo_table.name,
-      BUCKET_NAME: aws_s3_bucket.my_s3_bucket.bucket
+      BUCKET_NAME = aws_s3_bucket.my_s3_bucket.bucket
     }
     secrets = {
       "SOME_SECRET" = "/${local.name}/${var.env}/some-secret"
