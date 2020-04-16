@@ -47,7 +47,8 @@ module "my_fargate_api" {
     image = "${data.aws_ecr_repository.my_ecr_repo.repository_url}:${var.image_tag}"
     ports = [8080]
     environment_variables = {
-      DYNAMO_TABLE_NAME = aws_dynamodb_table.my_dynamo_table.name
+      DYNAMO_TABLE_NAME = aws_dynamodb_table.my_dynamo_table.name,
+      BUCKET_NAME: aws_s3_bucket.my_s3_bucket.bucket
     }
     secrets = {
       "SOME_SECRET" = "/${local.name}/${var.env}/some-secret"
