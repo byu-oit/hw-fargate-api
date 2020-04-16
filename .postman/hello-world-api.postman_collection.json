@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "51fe16c0-f8ef-4045-b19e-3336f800c3c6",
+		"_postman_id": "868867bc-aac9-428b-9743-164cf7acfecf",
 		"name": "hello-world-api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -27,6 +27,10 @@
 			"request": {
 				"method": "GET",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "{{context}}/health",
 					"host": [
@@ -52,11 +56,15 @@
 							"});",
 							"pm.test(\"JSON fields exist\", function () {",
 							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData).to.have.all.keys('secret','table','numItems');",
+							"    pm.expect(jsonData).to.have.all.keys('secret','table','numItemsInDynamo','bucket','numObjectsInS3');",
 							"});",
 							"pm.test(\"Table name is correct\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    pm.expect(jsonData.table).to.eql(\"hello-world-api-dev\");",
+							"});",
+							"pm.test(\"Bucket name is correct\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.bucket).to.eql(\"hello-world-api-dev\");",
 							"});"
 						],
 						"type": "text/javascript"
@@ -66,6 +74,10 @@
 			"request": {
 				"method": "GET",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "{{context}}/",
 					"host": [
@@ -78,6 +90,5 @@
 			},
 			"response": []
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }
