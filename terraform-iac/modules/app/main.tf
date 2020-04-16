@@ -29,7 +29,10 @@ module "my_fargate_api" {
   container_port                = 8080
   health_check_path             = "/health"
   codedeploy_test_listener_port = 4443
-  task_policies                 = [aws_iam_policy.my_dynamo_policy.arn]
+  task_policies                 = [
+    aws_iam_policy.my_dynamo_policy.arn,
+    aws_iam_policy.my_s3_policy.arn
+  ]
   hosted_zone                   = module.acs.route53_zone
   https_certificate_arn         = module.acs.certificate.arn
   public_subnet_ids             = module.acs.public_subnet_ids
@@ -44,7 +47,8 @@ module "my_fargate_api" {
     image = "${data.aws_ecr_repository.my_ecr_repo.repository_url}:${var.image_tag}"
     ports = [8080]
     environment_variables = {
-      DYNAMO_TABLE_NAME = aws_dynamodb_table.my_dynamo_table.name
+      DYNAMO_TABLE_NAME = aws_dynamodb_table.my_dynamo_table.name,
+      BUCKET_NAME = aws_s3_bucket.my_s3_bucket.bucket
     }
     secrets = {
       "SOME_SECRET" = "/${local.name}/${var.env}/some-secret"
@@ -104,6 +108,81 @@ resource "aws_iam_policy" "my_dynamo_policy" {
 }
 EOF
 }
+
+# -----------------------------------------------------------------------------
+# START OF S3
+# Note that in my_fargate_api, we also added a policy and environment variable
+# -----------------------------------------------------------------------------
+
+resource "aws_s3_bucket" "my_s3_bucket" {
+  bucket = "${local.name}-${var.env}"
+  versioning {
+    enabled = true
+  }
+  lifecycle {
+    prevent_destroy = true
+  }
+  lifecycle_rule {
+    id = "AutoAbortFailedMultipartUpload"
+    enabled = true
+    abort_incomplete_multipart_upload_days = 10
+  }
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "default" {
+  bucket = aws_s3_bucket.my_s3_bucket.id
+  block_public_acls = true
+  block_public_policy = true
+  ignore_public_acls = true
+  restrict_public_buckets = true
+}
+
+resource aws_iam_policy "my_s3_policy" {
+  name = "${local.name}-s3-${var.env}"
+  description = "A policy to allow access to s3 to this bucket: ${aws_s3_bucket.my_s3_bucket.bucket}"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "${aws_s3_bucket.my_s3_bucket.arn}"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:GetObjectVersion"
+        "s3:DeleteObjectVersion",
+        "s3:DeleteObject",
+        "s3:PutObject"
+      ],
+      "Resource": [
+        "${aws_s3_bucket.my_s3_bucket.arn}/*"
+      ]
+    }
+  ]
+}
+EOF
+}
+
+# -----------------------------------------------------------------------------
+# END OF S3
+# Note that in my_fargate_api, we also added a policy and environment variable
+# -----------------------------------------------------------------------------
 
 resource "aws_iam_role" "test_lambda" {
   name                 = "${local.name}-deploy-test-${var.env}"
