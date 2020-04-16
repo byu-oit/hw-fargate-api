@@ -109,6 +109,11 @@ resource "aws_iam_policy" "my_dynamo_policy" {
 EOF
 }
 
+# -----------------------------------------------------------------------------
+# START OF S3
+# Note that in my_fargate_api, we also added a policy and environment variable
+# -----------------------------------------------------------------------------
+
 resource "aws_s3_bucket" "my_s3_bucket" {
   bucket = "${local.name}-${var.env}"
   versioning {
@@ -173,6 +178,11 @@ resource aws_iam_policy "my_s3_policy" {
 }
 EOF
 }
+
+# -----------------------------------------------------------------------------
+# END OF S3
+# Note that in my_fargate_api, we also added a policy and environment variable
+# -----------------------------------------------------------------------------
 
 resource "aws_iam_role" "test_lambda" {
   name                 = "${local.name}-deploy-test-${var.env}"
