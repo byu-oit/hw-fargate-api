@@ -148,12 +148,26 @@ resource aws_iam_policy "my_s3_policy" {
   "Version": "2012-10-17",
   "Statement": [
     {
-        "Effect": "Allow",
-        "Action": [ "*" ],
-        "Resource": [
-          "${aws_s3_bucket.my_s3_bucket.arn}",
-          "${aws_s3_bucket.my_s3_bucket.arn}/*"
-        ]
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "${aws_s3_bucket.my_s3_bucket.arn}"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:GetObjectVersion"
+        "s3:DeleteObjectVersion",
+        "s3:DeleteObject",
+        "s3:PutObject"
+      ],
+      "Resource": [
+        "${aws_s3_bucket.my_s3_bucket.arn}/*"
+      ]
     }
   ]
 }
