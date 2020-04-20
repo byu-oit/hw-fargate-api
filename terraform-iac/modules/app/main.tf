@@ -144,7 +144,7 @@ resource "aws_s3_bucket_public_access_block" "default" {
   restrict_public_buckets = true
 }
 
-resource aws_iam_policy "my_s3_policy" {
+resource "aws_iam_policy" "my_s3_policy" {
   name = "${local.name}-s3-${var.env}"
   description = "A policy to allow access to s3 to this bucket: ${aws_s3_bucket.my_s3_bucket.bucket}"
 
