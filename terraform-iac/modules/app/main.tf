@@ -165,7 +165,7 @@ resource "aws_iam_policy" "my_s3_policy" {
       "Effect": "Allow",
       "Action": [
         "s3:GetObject",
-        "s3:GetObjectVersion"
+        "s3:GetObjectVersion",
         "s3:DeleteObjectVersion",
         "s3:DeleteObject",
         "s3:PutObject"
