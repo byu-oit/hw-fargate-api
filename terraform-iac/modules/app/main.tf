@@ -53,7 +53,7 @@ module "my_fargate_api" {
     secrets = {
       "SOME_SECRET" = "/${local.name}/${var.env}/some-secret"
     }
-		efs_volume_mounts = null
+    efs_volume_mounts = null
   }
 
   autoscaling_config = {
