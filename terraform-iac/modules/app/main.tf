@@ -20,7 +20,7 @@ data "aws_ecr_repository" "my_ecr_repo" {
 }
 
 module "acs" {
-  source = "github.com/byu-oit/terraform-aws-acs-info?ref=v2.0.0"
+  source = "github.com/byu-oit/terraform-aws-acs-info?ref=v2.1.0"
 }
 
 module "my_fargate_api" {
@@ -29,7 +29,7 @@ module "my_fargate_api" {
   container_port                = 8080
   health_check_path             = "/health"
   codedeploy_test_listener_port = 4443
-  task_policies                 = [
+  task_policies = [
     aws_iam_policy.my_dynamo_policy.arn,
     aws_iam_policy.my_s3_policy.arn
   ]
@@ -48,7 +48,7 @@ module "my_fargate_api" {
     ports = [8080]
     environment_variables = {
       DYNAMO_TABLE_NAME = aws_dynamodb_table.my_dynamo_table.name,
-      BUCKET_NAME = aws_s3_bucket.my_s3_bucket.bucket
+      BUCKET_NAME       = aws_s3_bucket.my_s3_bucket.bucket
     }
     secrets = {
       "SOME_SECRET" = "/${local.name}/${var.env}/some-secret"
@@ -123,8 +123,8 @@ resource "aws_s3_bucket" "my_s3_bucket" {
     prevent_destroy = true
   }
   lifecycle_rule {
-    id = "AutoAbortFailedMultipartUpload"
-    enabled = true
+    id                                     = "AutoAbortFailedMultipartUpload"
+    enabled                                = true
     abort_incomplete_multipart_upload_days = 10
   }
   server_side_encryption_configuration {
@@ -137,15 +137,15 @@ resource "aws_s3_bucket" "my_s3_bucket" {
 }
 
 resource "aws_s3_bucket_public_access_block" "default" {
-  bucket = aws_s3_bucket.my_s3_bucket.id
-  block_public_acls = true
-  block_public_policy = true
-  ignore_public_acls = true
+  bucket                  = aws_s3_bucket.my_s3_bucket.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
   restrict_public_buckets = true
 }
 
 resource "aws_iam_policy" "my_s3_policy" {
-  name = "${local.name}-s3-${var.env}"
+  name        = "${local.name}-s3-${var.env}"
   description = "A policy to allow access to s3 to this bucket: ${aws_s3_bucket.my_s3_bucket.bucket}"
 
   policy = <<EOF
