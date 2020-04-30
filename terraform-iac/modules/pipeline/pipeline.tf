@@ -39,7 +39,7 @@ module "my_codepipeline" {
   //Build
   # use buildspec.yml from source (default)
   build_env_variables = {
-    ENV: var.env
+    ENV : var.env
   }
 
   //Deploy
