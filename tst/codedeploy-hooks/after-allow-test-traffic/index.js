@@ -33,8 +33,8 @@ function newmanRun (options) {
 async function runTests (postmanFilesDir) {
   try {
     await newmanRun({
-      collection: require(postmanFilesDir + '/hello-world-api.postman_collection.json'),
-      environment: require(postmanFilesDir + '/dev-tst.postman_environment.json'),
+      collection: require(`${postmanFilesDir}/hello-world-api.postman_collection.json`),
+      environment: require(`${postmanFilesDir}/${process.env.ENV}-tst.postman_environment.json`),
       reporters: 'cli',
       abortOnFailure: true
     })

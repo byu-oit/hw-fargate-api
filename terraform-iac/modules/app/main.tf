@@ -214,6 +214,11 @@ resource "aws_lambda_function" "test_lambda" {
   runtime          = "nodejs12.x"
   timeout          = 30
   source_code_hash = filebase64sha256("../../../tst/codedeploy-hooks/after-allow-test-traffic/lambda.zip")
+  environment {
+    variables = {
+      "ENV" = var.env
+    }
+  }
 }
 
 resource "aws_iam_role_policy" "test_lambda" {
