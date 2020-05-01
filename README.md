@@ -19,7 +19,7 @@ git clone https://github.com/byu-oit/my-new-repo
 cd my-new-repo
 git checkout -b dev
 ```
-* Find all of the `.tf` files under `terraform-iac/dev/` and:
+* Find all of the `.tf` files under `terraform-iac/dev/` and `terraform-iac/modules/`and:
   * replace `<account_number>` with your account number.
   * replace `hello-world-api` with the name of your repo.
 * Commit/push your changes
@@ -40,14 +40,25 @@ terraform apply
 
 In the AWS Console, see if you can find the resources from `setup.tf` (ECR, SSM Param).
 
-### Deploy the application
+### Deploy the pipeline
 
-This is optional. You can also just let the pipeline deploy it for you. But I usually deploy the app manually the first time. It's easier to troubleshoot deployment misconfigurations this way.
+```
+cd ../pipeline/
+terraform init
+terraform apply
+```
 
+In the AWS Console, find the CodePipeline. Look at the "details" of each stage as it is executing, to learn what the stage does.
+
+See if you can find each of the resources from `pipeline.tf`.
+
+### View the deployed application
+
+Anytime after the `Terraform` phase succeeds:
 ```
 cd ../app/
 terraform init
-terraform apply
+terraform output
 ```
 
 This will output a DNS Name. Enter this in a browser. It will probably return `503 Service Unavailable`. It takes some time for the ECS Tasks to spin up and for the ALB to recognize that they are healthy.
@@ -65,18 +76,6 @@ In the AWS Console, see if you can find the ECS Service and see the state of its
 Once the Tasks are running, you should be able to hit the app's URL and get a JSON response. Between `index.js` and `main.tf`, can you find what pieces are necessary to make this data available to the app?
 
 In the AWS Console, see if you can find the other resources from `main.tf`.
-
-### Deploy the pipeline
-
-```
-cd ../pipeline/
-terraform init
-terraform apply
-```
-
-In the AWS Console, find the CodePipeline. Look at the "details" of each stage as it is executing, to learn what the stage does.
-
-See if you can find each of the resources from `pipeline.tf`.
 
 ### Push a change to your application
 
