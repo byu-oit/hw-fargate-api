@@ -249,5 +249,5 @@ EOF
 }
 
 output "url" {
-  value = module.my_fargate_api.dns_record
+  value = module.my_fargate_api.dns_record.name
 }
