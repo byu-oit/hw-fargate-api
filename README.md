@@ -5,23 +5,25 @@ Example of creating and deploying an API with Docker and Terraform on AWS.
 
 * Install [Terraform](https://www.terraform.io/downloads.html)
 * Install the [awslogin](https://pypi.org/project/byu-awslogin/) CLI tool
-* Login to a dev account (with awslogin)
+* Log into a dev account (with awslogin)
 * Ensure your account has a [Terraform State S3 Backend](https://github.com/byu-oit/terraform-aws-backend-s3) deployed.
 
 ## Setup
-* Create a new repo from this template (you need your own repo so that you can push changes and have CodePipeline deploy them)
+* Create a new repo [using this template](https://github.com/byu-oit/hello-world-api/generate) (You need your own repo so that you can push changes and have CodePipeline deploy them)
 * Clone your new repo
 ```
 git clone https://github.com/byu-oit/my-new-repo
 ```
-* Checkout the dev branch
+* Check out the `dev` branch 
 ```
 cd my-new-repo
 git checkout -b dev
 ```
-* Find all of the `.tf` files under `terraform-iac/dev/` and `terraform-iac/modules/`and:
-  * replace `<account_number>` with your account number.
-  * replace `hello-world-api` with the name of your repo.
+* Find and replace across the repo:
+  * replace `<account_number>` with your AWS account number, using your `dev` account in `/terraform-iac/dev` and your `prd` account in `/terraform-iac/prd`
+  * replace `hello-world-api` with the name of your repo
+  * replace `byu-oit-terraform-dev` with the name of your `dev` AWS account
+  * replace `byu-oit-terraform-prd` with the name of your `prd` AWS account
 * Commit/push your changes
 ```
 git commit -am "update template with repo specific details" 
