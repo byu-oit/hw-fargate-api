@@ -1,0 +1,30 @@
+# https://dependabot.com/docs/config-file/
+
+version: 1
+
+update_configs:
+  - package_manager: "javascript"
+    directory: "/src"
+    update_schedule: "daily"
+    target_branch: "dev" # Our dev pipeline runs off the dev branch, production runs off of master
+    # Requesting reviews from yourself makes Dependabot PRs easy to find (https://github.com/pulls/review-requested)
+#    default_reviewers:
+#      - "YourGitHubUsername"
+    ignored_updates:
+      - match:
+          dependency_name: "aws-sdk" # To avoid a bunch of pull request spam
+          version_requirement: "2.x"
+  - package_manager: "docker"
+    directory: "/src"
+    update_schedule: "daily"
+    target_branch: "dev" # Our dev pipeline runs off the dev branch, production runs off of master
+#    default_reviewers:
+#      - "YourGitHubUsername"
+
+    # TODO: Get rid of these ignored_updates in October 2020, once Node 14 is LTS
+    # https://nodejs.org/en/about/releases/
+    # We're doing this so that we can get PRs for updated Node 12 images
+    ignored_updates:
+      - match:
+          dependency_name: "node"
+          version_requirement: ">=13"
