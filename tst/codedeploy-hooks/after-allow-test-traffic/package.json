@@ -9,7 +9,7 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "aws-sdk": "^2.640.0",
-    "newman": "^4.6.0"
+    "aws-sdk": "^2.676.0",
+    "newman": "^5.0.0"
   }
 }

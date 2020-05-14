@@ -29,6 +29,5 @@ override.tf.json
 # example: *tfplan*
 
 node_modules
-package-lock.json
 .DS_Store
 .idea
