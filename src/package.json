@@ -16,7 +16,7 @@
     "url": "git+https://github.com/byu-oit/hello-world-docker-api.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/byu-oit/hello-world-docker-api/issues"
   },
