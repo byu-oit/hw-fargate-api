@@ -2,7 +2,7 @@ name: Dev CI/CD Pipeline
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ github-actions ]
 env:
   tf_version: '0.12.24'
   tf_working_dir: './terraform-iac/dev/app'
