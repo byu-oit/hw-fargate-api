@@ -5,6 +5,10 @@ const codedeploy = new AWS.CodeDeploy({ apiVersion: '2014-10-06', region: 'us-we
 exports.handler = async function (event, context) {
   console.log(event)
 
+  // Workaround for CodeDeploy bug.
+  // Give the ALB 10 seconds to make sure the test TG has switched to the new code.
+  await sleep(10000)
+
   let errorFromTests
   await runTests('.postman').catch(err => { errorFromTests = err })
 
@@ -43,6 +47,10 @@ async function runTests (postmanFilesDir) {
     console.log(err)
     throw err
   }
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 // runTests('../../../.postman')
