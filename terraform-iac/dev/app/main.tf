@@ -25,3 +25,15 @@ module "app" {
 output "url" {
   value = module.app.url
 }
+
+output "codedeploy_app_name" {
+  value = module.app.codedeploy_app_name
+}
+
+output "codedeploy_deployment_group_name" {
+  value = module.app.codedeploy_deployment_group_name
+}
+
+output "codedeploy_appspec_json_file" {
+  value = module.app.codedeploy_appspec_json_file
+}
