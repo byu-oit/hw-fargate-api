@@ -1,17 +1,18 @@
-name: CD Pipeline
+name: Dev CI/CD Pipeline
 
 on:
   push:
-    branches: [ master, dev ]
+    branches: [ dev ]
 env:
   tf_version: '0.12.24'
   tf_working_dir: './terraform-iac/dev/app'
-  template_id: 'Codepipeline-Standard-Change'
+  template_id: 'Codepipeline-Standard-Change' # Change this to the Standard Change Template for your project
+  ecr_repo_name: 'hello-world-api-dev'
 
 jobs:
 
   build_and_deploy:
-    name: Build and push docker image to ECR.
+    name: Build and deploy Fargate API to dev
     runs-on: ubuntu-latest
     steps:
 
@@ -41,7 +42,7 @@ jobs:
     - name: Build and Push the Docker image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPO: test-gh-tf-dev
+        ECR_REPO: ${{ env.ecr_repo_name }}
         IMAGE_TAG: ${{ steps.date.outputs.timestamp }}
       run: |
         docker build src --file src/Dockerfile --tag $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
@@ -52,7 +53,7 @@ jobs:
       run: |
         npm install
         cp -R ../../../.postman .
-        zip -r lambda.zip * .*
+        zip -r lambda.zip * .postman
 
     - name: 'Terraform Setup'
       uses: hashicorp/setup-terraform@v1
@@ -79,12 +80,14 @@ jobs:
       working-directory: ${{ env.tf_working_dir }}
       run: terraform apply plan
 
+    # TODO: Pull CodeDeploy app and deployment group names from Terraform Outputs
+
     - name: 'CodeDeploy'
       id: deploy
       uses: ./.github/actions/codedeploy
       with:
-        application-name: test-gh-tf-dev-codedeploy
-        deployment-group-name: test-gh-tf-dev-deployment-group
+        application-name: hello-world-api-dev-codedeploy
+        deployment-group-name: hello-world-api-dev-deployment-group
         appspec-file: ${{ env.tf_working_dir }}/appspec.json
 
     - name: End Standard Change
