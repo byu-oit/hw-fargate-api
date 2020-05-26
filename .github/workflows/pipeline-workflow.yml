@@ -1,0 +1,107 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches: [ master, dev ]
+env:
+  tf_version: '0.12.24'
+  tf_working_dir: './terraform-iac/dev/app'
+  template_id: 'Codepipeline-Standard-Change'
+
+jobs:
+
+  build_and_deploy:
+    name: Build and push docker image to ECR.
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Check out
+      uses: actions/checkout@v2
+
+    - name: Disallow Concurrent Runs
+      uses: ./.github/actions/disallow-concurrent-runs
+      with:
+        token: ${{ github.token }}
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_KEY }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET }}
+        aws-region: us-west-2
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Get current timestamp
+      id: date
+      run: echo "::set-output name=timestamp::$(date +'%Y-%m-%d_%H-%M-%S')"
+
+    - name: Build and Push the Docker image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPO: test-gh-tf-dev
+        IMAGE_TAG: ${{ steps.date.outputs.timestamp }}
+      run: |
+        docker build src --file src/Dockerfile --tag $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+
+    - name: Build Test Lambda
+      working-directory: tst/codedeploy-hooks/after-allow-test-traffic
+      run: |
+        npm install
+        cp -R ../../../.postman .
+        zip -r lambda.zip * .*
+
+    - name: 'Terraform Setup'
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: ${{ env.tf_version }}
+
+    - name: 'Terraform Init'
+      working-directory: ${{ env.tf_working_dir }}
+      run: terraform init
+
+    - name: 'Terraform Plan'
+      working-directory: ${{ env.tf_working_dir }}
+      run: terraform plan -var 'image_tag=${{ steps.date.outputs.timestamp }}' -out=plan
+
+    - name: Start Standard Change
+      uses: ./.github/actions/start-standard-change
+      id: start-standard-change
+      with:
+        client-key: ${{ secrets.CLIENT_KEY }}
+        client-secret: ${{ secrets.CLIENT_SECRET }}
+        template-id: ${{ env.template_id }}
+
+    - name: 'Terraform Apply'
+      working-directory: ${{ env.tf_working_dir }}
+      run: terraform apply plan
+
+    - name: 'CodeDeploy'
+      id: deploy
+      uses: ./.github/actions/codedeploy
+      with:
+        application-name: test-gh-tf-dev-codedeploy
+        deployment-group-name: test-gh-tf-dev-deployment-group
+        appspec-file: ${{ env.tf_working_dir }}/appspec.json
+
+    - name: End Standard Change
+      uses: ./.github/actions/end-standard-change
+      if: ${{ always() && steps.start-standard-change.outcome == 'success' }} # Run if RFC started, even if the deploy failed
+      with:
+        client-key: ${{ secrets.CLIENT_KEY }}
+        client-secret: ${{ secrets.CLIENT_SECRET }}
+        change-sys-id: ${{ steps.start-standard-change.outputs.change-sys-id }}
+        work-start: ${{ steps.start-standard-change.outputs.work-start }}
+        success: ${{ steps.deploy.outcome == 'success' }}
+
+    - name: Slack
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        fields: repo,message,commit,author,action,eventName,ref,workflow # selectable (default: repo,message)
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+      if: always() # Pick up events even if the job fails or is canceled.

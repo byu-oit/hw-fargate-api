@@ -1,0 +1,15 @@
+{
+  "name": "codedeploy",
+  "version": "1.0.0",
+  "description": "codedeploy github action",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Scott Hutchings",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@actions/core": "^1.2.4",
+    "aws-sdk": "^2.677.0"
+  }
+}

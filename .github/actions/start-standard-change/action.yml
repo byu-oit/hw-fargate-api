@@ -1,0 +1,26 @@
+name: 'BYU ServiceNow - Start Standard Change RFC'
+description: 'Creates a Standard Change RFC in BYUs ServiceNow system.'
+inputs:
+  client-key:
+    description: 'The WSO2 Client Key to use when calling the ServiceNow API'
+    required: true
+  client-secret:
+    description: 'The WSO2 Client Secret to use when calling the ServiceNow API'
+    required: true
+  template-id:
+    description: 'The alias or sys_id of the standard change template (32 chars).' # To get the sys_id, select an existing template in ServiceNow and it'll be in the URL between sys_id%3D and %26. Existing templates can be found here: https://it.byu.edu/nav_to.do?uri=%2Fu_standard_change_template_list.do
+    required: true
+  minutes-until-planned-end:
+    description: 'The number of minutes from the planned start time to the planned end time.' # We'll plan to start immediately, but when do we plan to end?
+    required: false
+    default: '15'
+outputs:
+  change-sys-id:
+    description: 'The ID of the Standard Change RFC (Ex: "7bb66e551bb81c10be7cb992cc4bcb9d")'
+  rfc-number:
+    description: 'The RFC Number (Ex: "RFC0031813")'
+  work-start:
+    description: 'The date and time the task was started, in Utah time (Ex: "2020-05-14 17:17:39")'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'

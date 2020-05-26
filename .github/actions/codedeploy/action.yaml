@@ -1,0 +1,18 @@
+name: 'CodeDeploy'
+description: 'Create a CodeDeploy Deployment'
+inputs:
+  application-name:
+    description: 'CodeDeploy Application Name'
+    required: true
+  deployment-group-name:
+    description: 'CodeDeploy Deployment Group Name'
+    required: true
+  appspec-file:
+    description: 'Appspec file'
+    required: true
+#outputs:
+#  time: # id of output
+#    description: 'The time we greeted you'
+runs:
+  using: 'node12'
+  main: 'index.js'
