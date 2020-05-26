@@ -27,8 +27,8 @@ jobs:
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        aws-access-key-id: ${{ secrets.byu-oit-terraform-dev-key }}
-        aws-secret-access-key: ${{ secrets.byu-oit-terraform-dev-secret }}
+        aws-access-key-id: ${{ secrets.byu_oit_terraform_dev_key }}
+        aws-secret-access-key: ${{ secrets.byu_oit_terraform_dev_secret }}
         aws-region: us-west-2
 
     - name: Login to Amazon ECR
