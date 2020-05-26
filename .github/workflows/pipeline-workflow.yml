@@ -27,8 +27,8 @@ jobs:
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        aws-access-key-id: ${{ secrets.AWS_KEY }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET }}
+        aws-access-key-id: ${{ secrets.byu-oit-terraform-dev-key }}
+        aws-secret-access-key: ${{ secrets.byu-oit-terraform-dev-secret }}
         aws-region: us-west-2
 
     - name: Login to Amazon ECR
@@ -72,8 +72,8 @@ jobs:
       uses: ./.github/actions/start-standard-change
       id: start-standard-change
       with:
-        client-key: ${{ secrets.CLIENT_KEY }}
-        client-secret: ${{ secrets.CLIENT_SECRET }}
+        client-key: ${{ secrets.standard_change_sandbox_client_key }}
+        client-secret: ${{ secrets.standard_change_sandbox_client_secret }}
         template-id: ${{ env.template_id }}
 
     - name: 'Terraform Apply'
@@ -99,8 +99,8 @@ jobs:
       uses: ./.github/actions/end-standard-change
       if: ${{ always() && steps.start-standard-change.outcome == 'success' }} # Run if RFC started, even if the deploy failed
       with:
-        client-key: ${{ secrets.CLIENT_KEY }}
-        client-secret: ${{ secrets.CLIENT_SECRET }}
+        client-key: ${{ secrets.standard_change_sandbox_client_key }}
+        client-secret: ${{ secrets.standard_change_sandbox_client_secret }}
         change-sys-id: ${{ steps.start-standard-change.outputs.change-sys-id }}
         work-start: ${{ steps.start-standard-change.outputs.work-start }}
         success: ${{ steps.deploy.outcome == 'success' }}
@@ -111,5 +111,5 @@ jobs:
         status: ${{ job.status }}
         fields: repo,message,commit,author,action,eventName,ref,workflow # selectable (default: repo,message)
       env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+        SLACK_WEBHOOK_URL: ${{ secrets.slack_webhook_url }} # required
       if: always() # Pick up events even if the job fails or is canceled.
