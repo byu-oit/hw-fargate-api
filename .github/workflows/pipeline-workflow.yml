@@ -85,7 +85,7 @@ jobs:
       run: |
         echo "::set-output name=codedeploy-app-name::$(terraform output codedeploy_app_name)"
         echo "::set-output name=codedeploy-deployment-group-name::$(terraform output codedeploy_deployment_group_name)"
-        echo "::set-output name=codedeploy-appspec-json-file::$(terraform output codedeploy_appspec-json-file)"
+        echo "::set-output name=codedeploy-appspec-json-file::$(terraform output codedeploy_appspec_json_file)"
 
     - name: 'CodeDeploy'
       id: deploy
