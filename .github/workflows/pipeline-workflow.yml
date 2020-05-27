@@ -14,7 +14,7 @@ jobs:
     steps:
 
     - name: Setup DEV Environment Variables
-      if: contains(["refs/heads/dev", "refs/heads/github-actions"], github.ref)
+      if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/github-actions' 
       run: |
         echo "::set-env name=aws_key::${{ secrets.byu_oit_terraform_dev_key }}"
         echo "::set-env name=aws_secret::${{ secrets.byu_oit_terraform_dev_secret }}"
@@ -26,7 +26,7 @@ jobs:
         echo "::set-env name=slack_channel::C0AGQEZMF" #slack-bot-testing
 
     - name: Setup PRD Environment Variables
-      if: contains(["refs/heads/master"], github.ref)
+      if: github.ref == 'refs/heads/master'
       run: |
         echo "::set-env name=aws_key::${{ secrets.byu_oit_terraform_prd_key }}"
         echo "::set-env name=aws_secret::${{ secrets.byu_oit_terraform_prd_secret }}"
