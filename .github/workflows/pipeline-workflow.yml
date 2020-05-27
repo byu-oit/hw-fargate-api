@@ -2,7 +2,7 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ master, dev ]
+    branches: [ master, dev, github-actions ]
 env:
   tf_version: '0.12.24'
 
@@ -14,7 +14,7 @@ jobs:
     steps:
 
     - name: Setup DEV Environment Variables
-      if: github.ref == 'refs/heads/dev'
+      if: github.ref == 'refs/heads/dev' || github.ref == 'refs.heads/github-actions'
       run: |
         echo "::set-env name=aws_key::${{ secrets.byu_oit_terraform_dev_key }}"
         echo "::set-env name=aws_secret::${{ secrets.byu_oit_terraform_dev_secret }}"
@@ -23,7 +23,7 @@ jobs:
         echo "::set-env name=rfc_client_key::${{ secrets.standard_change_sandbox_client_key }}"
         echo "::set-env name=rfc_client_secret::${{ secrets.standard_change_sandbox_client_secret }}"
         echo "::set-env name=rfc_template_id::Codepipeline-Standard-Change"
-        echo "::set-env name=slack_channel::C0AGQEZMF" #slack-bot-testing
+        echo "::set-env name=slack_channel::#slack-bot-testing" 
 
     - name: Setup PRD Environment Variables
       if: github.ref == 'refs/heads/master'
@@ -35,7 +35,7 @@ jobs:
         echo "::set-env name=rfc_client_key::${{ secrets.standard_change_production_client_key }}"
         echo "::set-env name=rfc_client_secret::${{ secrets.standard_change_production_client_secret }}"
         echo "::set-env name=rfc_template_id::Codepipeline-Standard-Change"
-        echo "::set-env name=slack_channel::C014455NV40" #github-actions
+        echo "::set-env name=slack_channel::#slack-bot-testing" #slack-bot-testing
 
     - name: Check out
       uses: actions/checkout@v2
