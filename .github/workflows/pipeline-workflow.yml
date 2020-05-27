@@ -84,9 +84,12 @@ jobs:
       id: terraform-outputs
       working-directory: ${{ env.tf_working_dir }}
       run: |
-        echo ::set-output name=codedeploy-app-name::$(terraform output codedeploy_app_name)
-        echo ::set-output name=codedeploy-deployment-group-name::$(terraform output codedeploy_deployment_group_name)
-        echo ::set-output name=codedeploy-appspec-json-file::$(terraform output codedeploy_appspec_json_file)
+        codedeploy_app_name=$(terraform output codedeploy_app_name)
+        echo "::set-output name=codedeploy-app-name::$codedeploy_app_name"
+        codedeploy_deployment_group_name=$(terraform output codedeploy_deployment_group_name)
+        echo "::set-output name=codedeploy-deployment-group-name::$codedeploy_deployment_group_name"
+        codedeploy_appspec_json_file=$(terraform output codedeploy_appspec_json_file)
+        echo "::set-output name=codedeploy-appspec-json-file::$codedeploy_appspec_json_file"
 
     - name: 'CodeDeploy'
       id: deploy
