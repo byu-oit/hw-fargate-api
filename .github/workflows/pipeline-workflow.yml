@@ -2,7 +2,7 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ master, dev, github-actions ]
+    branches: [ master, dev ]
 env:
   tf_version: '0.12.24'
 
@@ -14,7 +14,7 @@ jobs:
     steps:
 
     - name: Setup DEV Environment Variables
-      if: github.ref == 'refs/heads/dev' || github.ref == 'refs.heads/github-actions'
+      if: github.ref == 'refs/heads/dev'
       run: |
         echo "::set-env name=aws_key::${{ secrets.byu_oit_terraform_dev_key }}"
         echo "::set-env name=aws_secret::${{ secrets.byu_oit_terraform_dev_secret }}"
