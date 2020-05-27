@@ -90,7 +90,7 @@ jobs:
 
     - name: 'Get CodeDeploy Appspec JSON File'
       working-directory: ${{ env.tf_working_dir }}
-        echo "::set-env name=codedeploy_appspec_json_file::$(terraform output codedeploy_appspec_json_file)"
+      run: echo "::set-env name=codedeploy_appspec_json_file::$(terraform output codedeploy_appspec_json_file)"
 
     - name: 'CodeDeploy'
       id: deploy
