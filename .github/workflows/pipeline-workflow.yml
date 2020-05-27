@@ -84,9 +84,9 @@ jobs:
       id: tfout
       working-directory: ${{ env.tf_working_dir }}
       run: |
-        echo "::set-output name=app::$(echo 'hello-world-api-dev-codedeploy')"
-        echo "::set-output name=group::$(echo 'hello-world-api-dev-deployment-group')"
-        echo "::set-output name=file::$(echo '/home/runner/work/hello-world-api/hello-world-api/terraform-iac/dev/app/appspec.json')"
+      echo "::set-output name=app::`terraform output codedeploy_app_name`"
+      echo "::set-output name=group::`terraform output codedeploy_deployment_group_name`"
+      echo "::set-output name=file::`terraform output codedeploy_appspec_json_file`"
 
     - name: 'CodeDeploy'
       id: deploy
