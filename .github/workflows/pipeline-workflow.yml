@@ -80,24 +80,28 @@ jobs:
       working-directory: ${{ env.tf_working_dir }}
       run: terraform apply plan
 
-    - name: 'Terraform Outputs'
-      id: tfout
+    - name: 'Get CD App Name'
+      id: cd-app-name
       working-directory: ${{ env.tf_working_dir }}
-      run: |
-        terraform output codedeploy_app_name > codedeploy_app_name.txt
-        terraform output codedeploy_deployment_group_name > codedeploy_deployment_group_name.txt
-        terraform output codedeploy_appspec_json_file > codedeploy_appspec_json_file.txt
-        echo "::set-output name=app::$(cat codedeploy_app_name.txt)"
-        echo "::set-output name=group::$(cat codedeploy_deployment_group_name.txt)"
-        echo "::set-output name=file::$(cat codedeploy_appspec_json_file.txt)"
+      run: terraform output codedeploy_app_name
+
+    - name: 'Get CD Deployment Group Name'
+      id: cd-group-name
+      working-directory: ${{ env.tf_working_dir }}
+      run: terraform output codedeploy_deployment_group_name
+
+    - name: 'Get CD Appspec File'
+      id: cd-appspec-file
+      working-directory: ${{ env.tf_working_dir }}
+      run: terraform output codedeploy_appspec_json_file
 
     - name: 'CodeDeploy'
       id: deploy
       uses: ./.github/actions/codedeploy
       with:
-        application-name: ${{ steps.tfout.outputs.app }}
-        deployment-group-name: ${{ steps.tfout.outputs.group }}
-        appspec-file: ${{ steps.tfout.outputs.file }}
+        application-name: ${{ steps.cd-app-name.outputs.stdout }}
+        deployment-group-name: ${{ steps.cd-group-name.outputs.stdout }}
+        appspec-file: ${{ steps.cd-appspec-file.outputs.stdout }}
 
     - name: End Standard Change
       uses: ./.github/actions/end-standard-change
