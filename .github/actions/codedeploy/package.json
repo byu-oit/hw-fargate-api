@@ -4,6 +4,7 @@
   "description": "codedeploy github action",
   "main": "index.js",
   "scripts": {
+    "package": "ncc build index.js -m -o dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Scott Hutchings",
@@ -11,5 +12,8 @@
   "dependencies": {
     "@actions/core": "^1.2.4",
     "aws-sdk": "^2.677.0"
+  },
+  "devDependencies": {
+    "@zeit/ncc": "^0.22.3"
   }
 }
