@@ -94,7 +94,7 @@ jobs:
       with:
         application-name: ${{ steps.terraform-outputs.outputs.codedeploy-app-name }}
         deployment-group-name: ${{ steps.terraform-outputs.outputs.codedeploy-deployment-group-name }}
-        appspec-file: ${{ steps.terraform-outputs.outputs.file.codedeploy-appspec-json-file }}
+        appspec-file: ${{ steps.terraform-outputs.outputs.codedeploy-appspec-json-file }}
 
     - name: End Standard Change
       uses: ./.github/actions/end-standard-change
