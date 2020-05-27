@@ -1,13 +1,10 @@
-name: Dev CI/CD Pipeline
+name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ github-actions ]
+    branches: [ master, dev, github-actions ]
 env:
   tf_version: '0.12.24'
-  tf_working_dir: './terraform-iac/dev/app'
-  template_id: 'Codepipeline-Standard-Change' # Change this to the Standard Change Template for your project
-  ecr_repo_name: 'hello-world-api-dev'
 
 jobs:
 
@@ -15,6 +12,30 @@ jobs:
     name: Build and deploy Fargate API to dev
     runs-on: ubuntu-latest
     steps:
+
+    - name: Setup DEV Environment Variables
+      if: contains(['refs/heads/dev', 'refs/heads/github-actions'], github.ref)
+      run: |
+        echo "::set-env name=aws_key::${{ secrets.byu_oit_terraform_dev_key }}"
+        echo "::set-env name=aws_secret::${{ secrets.byu_oit_terraform_dev_secret }}"
+        echo "::set-env name=ecr_repo_name::hello-world-api-dev"
+        echo "::set-env name=tf_working_dir::./terraform-iac/dev/app"
+        echo "::set-env name=rfc_client_key::${{ secrets.standard_change_sandbox_client_key }}"
+        echo "::set-env name=rfc_client_secret::${{ secrets.standard_change_sandbox_client_secret }}"
+        echo "::set-env name=rfc_template_id::Codepipeline-Standard-Change"
+        echo "::set-env name=slack_channel::C0AGQEZMF" #slack-bot-testing
+
+    - name: Setup PRD Environment Variables
+      if: contains(['refs/heads/master'], github.ref)
+      run: |
+        echo "::set-env name=aws_key::${{ secrets.byu_oit_terraform_prd_key }}"
+        echo "::set-env name=aws_secret::${{ secrets.byu_oit_terraform_prd_secret }}"
+        echo "::set-env name=ecr_repo_name::hello-world-api-prd"
+        echo "::set-env name=tf_working_dir::./terraform-iac/prd/app"
+        echo "::set-env name=rfc_client_key::${{ secrets.standard_change_production_client_key }}"
+        echo "::set-env name=rfc_client_secret::${{ secrets.standard_change_production_client_secret }}"
+        echo "::set-env name=rfc_template_id::Codepipeline-Standard-Change"
+        echo "::set-env name=slack_channel::C014455NV40" #github-actions
 
     - name: Check out
       uses: actions/checkout@v2
@@ -27,8 +48,8 @@ jobs:
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        aws-access-key-id: ${{ secrets.byu_oit_terraform_dev_key }}
-        aws-secret-access-key: ${{ secrets.byu_oit_terraform_dev_secret }}
+        aws-access-key-id: ${{ env.aws_key }}
+        aws-secret-access-key: ${{ env.aws_secret }}
         aws-region: us-west-2
 
     - name: Login to Amazon ECR
@@ -72,9 +93,9 @@ jobs:
       uses: ./.github/actions/start-standard-change
       id: start-standard-change
       with:
-        client-key: ${{ secrets.standard_change_sandbox_client_key }}
-        client-secret: ${{ secrets.standard_change_sandbox_client_secret }}
-        template-id: ${{ env.template_id }}
+        client-key: ${{ env.rfc_client_key }}
+        client-secret: ${{ env.rfc_client_secret }}
+        template-id: ${{ env.rfc_template_id }}
 
     - name: 'Terraform Apply'
       working-directory: ${{ env.tf_working_dir }}
@@ -107,8 +128,8 @@ jobs:
       uses: ./.github/actions/end-standard-change
       if: ${{ always() && steps.start-standard-change.outcome == 'success' }} # Run if RFC started, even if the deploy failed
       with:
-        client-key: ${{ secrets.standard_change_sandbox_client_key }}
-        client-secret: ${{ secrets.standard_change_sandbox_client_secret }}
+        client-key: ${{ env.rfc_client_key }}
+        client-secret: ${{ env.rfc_client_secret }}
         change-sys-id: ${{ steps.start-standard-change.outputs.change-sys-id }}
         work-start: ${{ steps.start-standard-change.outputs.work-start }}
         success: ${{ steps.deploy.outcome == 'success' }}
@@ -118,6 +139,7 @@ jobs:
       with:
         status: ${{ job.status }}
         fields: repo,message,commit,author,action,eventName,ref,workflow # selectable (default: repo,message)
+        channel: ${{ env.slack_channel }}
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.slack_webhook_url }} # required
       if: always() # Pick up events even if the job fails or is canceled.
