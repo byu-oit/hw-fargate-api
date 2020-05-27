@@ -17,9 +17,10 @@ variable "image_tag" {
 }
 
 module "app" {
-  source    = "../../modules/app/"
-  env       = "dev"
-  image_tag = var.image_tag
+  source                           = "../../modules/app/"
+  env                              = "dev"
+  image_tag                        = var.image_tag
+  codedeploy_termination_wait_time = 0
 }
 
 output "url" {

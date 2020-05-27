@@ -6,6 +6,10 @@ variable "image_tag" {
   type = string
 }
 
+variable "codedeploy_termination_wait_time" {
+  type = number
+}
+
 locals {
   name = "hello-world-api"
   tags = {
@@ -33,14 +37,15 @@ module "my_fargate_api" {
     aws_iam_policy.my_dynamo_policy.arn,
     aws_iam_policy.my_s3_policy.arn
   ]
-  hosted_zone                   = module.acs.route53_zone
-  https_certificate_arn         = module.acs.certificate.arn
-  public_subnet_ids             = module.acs.public_subnet_ids
-  private_subnet_ids            = module.acs.private_subnet_ids
-  vpc_id                        = module.acs.vpc.id
-  codedeploy_service_role_arn   = module.acs.power_builder_role.arn
-  role_permissions_boundary_arn = module.acs.role_permissions_boundary.arn
-  tags                          = local.tags
+  hosted_zone                      = module.acs.route53_zone
+  https_certificate_arn            = module.acs.certificate.arn
+  public_subnet_ids                = module.acs.public_subnet_ids
+  private_subnet_ids               = module.acs.private_subnet_ids
+  vpc_id                           = module.acs.vpc.id
+  codedeploy_service_role_arn      = module.acs.power_builder_role.arn
+  codedeploy_termination_wait_time = var.codedeploy_termination_wait_time
+  role_permissions_boundary_arn    = module.acs.role_permissions_boundary.arn
+  tags                             = local.tags
 
   primary_container_definition = {
     name  = "${local.name}-${var.env}"
