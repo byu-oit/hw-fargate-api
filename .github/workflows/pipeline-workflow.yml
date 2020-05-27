@@ -80,21 +80,25 @@ jobs:
       working-directory: ${{ env.tf_working_dir }}
       run: terraform apply plan
 
-    - name: 'Terraform Outputs'
-      id: tfout
+    - name: 'Get CodeDeploy App Name'
       working-directory: ${{ env.tf_working_dir }}
-      run: |
-        echo "::set-output name=app::$(terraform output codedeploy_app_name)"
-        echo "::set-output name=group::$(terraform output codedeploy_deployment_group_name)"
-        echo "::set-output name=file::$(terraform output codedeploy_appspec_json_file)"
+      run: echo "::set-env name=codedeploy_app_name::$(terraform output codedeploy_app_name)"
+
+    - name: 'Get CodeDeploy Deployment Group Name'
+      working-directory: ${{ env.tf_working_dir }}
+      run: echo "::set-env name=codedeploy_deployment_group_name::$(terraform output codedeploy_deployment_group_name)"
+
+    - name: 'Get CodeDeploy Appspec JSON File'
+      working-directory: ${{ env.tf_working_dir }}
+        echo "::set-env name=codedeploy_appspec_json_file::$(terraform output codedeploy_appspec_json_file)"
 
     - name: 'CodeDeploy'
       id: deploy
       uses: ./.github/actions/codedeploy
       with:
-        application-name: ${{ steps.tfout.outputs.app }}
-        deployment-group-name: ${{ steps.tfout.outputs.group }}
-        appspec-file: ${{ steps.tfout.outputs.file }}
+        application-name: ${{ env.codedeploy_app_name }}
+        deployment-group-name: ${{ env.codedeploy_deployment_group_name }}
+        appspec-file: ${{ env.codedeploy_appspec_json_file }}
 
     - name: End Standard Change
       uses: ./.github/actions/end-standard-change
