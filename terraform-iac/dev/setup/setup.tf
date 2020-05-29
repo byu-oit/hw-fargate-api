@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
-    bucket         = "terraform-state-storage-977306314792" #TODO: remove account number
-    dynamodb_table = "terraform-state-lock-977306314792" #TODO: remove account number
+    bucket         = "terraform-state-storage-<account_number>"
+    dynamodb_table = "terraform-state-lock-<account_number>"
     key            = "hello-world-api-dev/setup.tfstate"
     region         = "us-west-2"
   }
