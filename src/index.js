@@ -15,7 +15,7 @@ app.get('/health', (req, res) => {
 
 app.get('/', async (req, res) => {
   const dynamoParams = { TableName: process.env.DYNAMO_TABLE_NAME }
-  const bucketParams = { Bucket : process.env.BUCKET_NAME }
+  const bucketParams = { Bucket: process.env.BUCKET_NAME }
   try {
     const [dynamoData, s3Data] = await Promise.all([
       dynamodb.scan(dynamoParams).promise(),
