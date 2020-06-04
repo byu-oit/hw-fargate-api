@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
     branches: [ dev, master ]
-    types: [ opened, reopened, synchronized, edited ]
+    types: [ opened, reopened, synchronize, edited ]
 env:
   node_version: '12.x'
   tf_version: '0.12.26'
