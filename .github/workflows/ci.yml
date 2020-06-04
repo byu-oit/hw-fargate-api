@@ -15,14 +15,14 @@ jobs:
     steps:
 
     - name: Setup DEV Environment Variables
-      if: github.ref == 'refs/heads/dev'
+      if: github.base_ref == 'dev'
       run: |
         echo "::set-env name=aws_key::${{ secrets.byu_oit_terraform_dev_key }}"
         echo "::set-env name=aws_secret::${{ secrets.byu_oit_terraform_dev_secret }}"
         echo "::set-env name=tf_working_dir::./terraform-iac/dev/app"
 
     - name: Setup PRD Environment Variables
-      if: github.ref == 'refs/heads/master'
+      if: github.base_ref == 'master'
       run: |
         echo "::set-env name=aws_key::${{ secrets.byu_oit_terraform_prd_key }}"
         echo "::set-env name=aws_secret::${{ secrets.byu_oit_terraform_prd_secret }}"
