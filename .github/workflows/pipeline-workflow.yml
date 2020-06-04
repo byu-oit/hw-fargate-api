@@ -9,7 +9,7 @@ env:
 jobs:
 
   build_and_deploy:
-    name: Build and deploy Fargate API to dev
+    name: Build and deploy Fargate API
     runs-on: ubuntu-latest
     steps:
 
@@ -76,16 +76,16 @@ jobs:
         cp -R ../../../.postman .
         zip -r lambda.zip * .postman
 
-    - name: 'Terraform Setup'
+    - name: Terraform Setup
       uses: hashicorp/setup-terraform@v1
       with:
         terraform_version: ${{ env.tf_version }}
 
-    - name: 'Terraform Init'
+    - name: Terraform Init
       working-directory: ${{ env.tf_working_dir }}
       run: terraform init
 
-    - name: 'Terraform Plan'
+    - name: Terraform Plan
       working-directory: ${{ env.tf_working_dir }}
       run: terraform plan -var 'image_tag=${{ steps.date.outputs.timestamp }}' -out=plan
 
@@ -97,26 +97,26 @@ jobs:
         client-secret: ${{ env.rfc_client_secret }}
         template-id: ${{ env.rfc_template_id }}
 
-    - name: 'Terraform Apply'
+    - name: Terraform Apply
       working-directory: ${{ env.tf_working_dir }}
       run: terraform apply plan
 
-    - name: 'Get CD App Name'
+    - name: Get CD App Name
       id: cd-app-name
       working-directory: ${{ env.tf_working_dir }}
       run: terraform output codedeploy_app_name
 
-    - name: 'Get CD Deployment Group Name'
+    - name: Get CD Deployment Group Name
       id: cd-group-name
       working-directory: ${{ env.tf_working_dir }}
       run: terraform output codedeploy_deployment_group_name
 
-    - name: 'Get CD Appspec File'
+    - name: Get CD Appspec File
       id: cd-appspec-file
       working-directory: ${{ env.tf_working_dir }}
       run: terraform output codedeploy_appspec_json_file
 
-    - name: 'CodeDeploy'
+    - name: CodeDeploy
       id: deploy
       uses: byu-oit/github-action-codedeploy@v1
       with:
