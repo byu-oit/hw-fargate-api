@@ -17,6 +17,6 @@ resource "aws_ssm_parameter" "some_secret" {
 }
 
 module "my_ecr" {
-  source = "github.com/byu-oit/terraform-aws-ecr?ref=v1.1.0"
+  source = "github.com/byu-oit/terraform-aws-ecr?ref=v1.1.1"
   name   = "${local.name}-${var.env}"
 }

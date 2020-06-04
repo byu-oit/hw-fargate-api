@@ -47,21 +47,20 @@ terraform apply
 
 In the AWS Console, see if you can find the resources from `setup.tf` (ECR, SSM Param).
 
-### Deploy the pipeline
+### Enable GitHub Actions on your repo
 
-```
-cd ../pipeline/
-terraform init
-terraform apply
-```
+* In GitHub, go to the `Actions` tab for your repo (e.g. https://github.com/byu-oit/my-repo/actions)
+* Click the `Enable Actions on this repo` button
 
-In the AWS Console, find the CodePipeline. Look at the "details" of each stage as it is executing, to learn what the stage does.
+If you look at `.github/workflows/pipeline-workflow.yml`, you'll see that it is setup to run on pushes to the dev branch. Because you have already pushed to the dev branch, this workflow should be running now.
 
-See if you can find each of the resources from `pipeline.tf`.
+* In GitHub, click on the workflow run (it has the same name as the last commit message you pushed)
+* Click on the `Build and deploy Fargate API to dev` job
+* Expand any of the steps to see what they are doing
 
 ### View the deployed application
 
-Anytime after the `Terraform` phase succeeds:
+Anytime after the `Terraform Apply` step succeeds:
 ```
 cd ../app/
 terraform init
@@ -93,11 +92,11 @@ git commit -am "try deploying a change"
 git push
 ```
 
-In the AWS Console, watch the CodePipeline deploy. The CodeDeploy stage is particularly interesting. Once CodeDeploy says that the Replacement tasks are serving traffic, hit your application in the browser and see if your change worked. If the service is broken, look at the stopped ECS Tasks in the ECS Console to see if you can figure out why.
+In GitHub Actions, watch the deploy steps run (you have a new push, so you'll have to go back and select the new workflow run instance and the job again). Once it gets to the CodeDeploy step, you can watch the deploy happen in the CodeDeploy console in AWS. Once CodeDeploy says that production traffic has been switched over, hit your application in the browser and see if your change worked. If the service is broken, look at the stopped ECS Tasks in the ECS Console to see if you can figure out why.
 
 > Note: 
 >
-> It's always best to test your changes locally before pushing to GitHub and AWS. Testing locally will significantly increase your productivity as you won't be constantly waiting for CodePipeline to deploy, just to discover bugs.
+> It's always best to test your changes locally before pushing to GitHub and AWS. Testing locally will significantly increase your productivity as you won't be constantly waiting for GitHub Actions and CodeDeploy to deploy, just to discover bugs.
 >
 > You can either test locally inside Docker, or with Node directly on your computer. Whichever method you choose, you'll have to setup the environment variables that ECS makes available to your code when it runs in AWS. You can find these environment variables in `index.js` and `main.tf`.
 
