@@ -113,7 +113,7 @@ jobs:
       uses: aws-actions/configure-aws-credentials@v1
       with:
         aws-access-key-id: ${{ needs.env.outputs.aws_key }}
-        aws-secret-access-key: ${{ needs.env.ouptuts.aws_secret }}
+        aws-secret-access-key: ${{ needs.env.outputs.aws_secret }}
         aws-region: us-west-2
 
     - name: Build Test Lambda
