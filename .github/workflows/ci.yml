@@ -34,7 +34,7 @@ jobs:
       tf_working_dir: ${{ env.tf_working_dir }} 
 
   test:
-    name: Test 
+    name: NPM Test 
     runs-on: ubuntu-latest
     steps: 
 
@@ -54,7 +54,7 @@ jobs:
       run: npm t 
 
   audit:
-    name: Audit 
+    name: NPM Audit 
     runs-on: ubuntu-latest
     steps:
 
@@ -70,7 +70,7 @@ jobs:
       run: npm audit --audit-level=critical
 
   lint:
-    name: Lint 
+    name: NPM Lint 
     runs-on: ubuntu-latest
     steps:
 
@@ -135,7 +135,7 @@ jobs:
     - name: Build Test Lambda
       working-directory: tst/codedeploy-hooks/after-allow-test-traffic
       run: |
-        npm install
+        npm install --production
         cp -R ../../../.postman .
         zip -r lambda.zip * .postman
 
