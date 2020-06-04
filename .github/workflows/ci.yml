@@ -53,6 +53,22 @@ jobs:
       working-directory: src
       run: npm t 
 
+  audit:
+    name: Audit 
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ env.node_version }}
+
+    - name: npm audit
+      working-directory: src
+      run: npm audit --audit-level=critical
+
   lint:
     name: Lint 
     runs-on: ubuntu-latest
@@ -135,3 +151,5 @@ jobs:
     - name: Terraform Plan
       working-directory: ${{ needs.env.outputs.tf_working_dir }}
       run: terraform plan -var 'image_tag=test' -input=false
+
+    # TODO: Post plan back to PR
