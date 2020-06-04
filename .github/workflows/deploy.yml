@@ -87,7 +87,7 @@ jobs:
 
     - name: Terraform Plan
       working-directory: ${{ env.tf_working_dir }}
-      run: terraform plan -var 'image_tag=${{ steps.date.outputs.timestamp }}' -out=plan
+      run: terraform plan -var 'image_tag=${{ steps.date.outputs.timestamp }}' -out=plan -input=false
 
     - name: Start Standard Change
       uses: byu-oit/github-action-start-standard-change@v1
