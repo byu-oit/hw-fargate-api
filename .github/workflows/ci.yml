@@ -151,6 +151,8 @@ jobs:
 
     - name: Terraform Plan
       working-directory: ${{ needs.env.outputs.tf_working_dir }}
-      run: terraform plan -var 'image_tag=test' -input=false
+      run: >
+        terraform plan -var 'image_tag=test' -input=false
+        | sed -e '0,/Refreshing/s//::group::Refreshing/' -e '0,/---/s//::endgroup::\n---/'
 
     # TODO: Post plan back to PR
