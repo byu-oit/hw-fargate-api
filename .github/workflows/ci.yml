@@ -153,7 +153,8 @@ jobs:
       working-directory: ${{ needs.env.outputs.tf_working_dir }}
       run: >
         terraform plan -var 'image_tag=test' -input=false
-        | sed -e '0,/Refreshing/s//::group::Refreshing/' -e '0,/---/s//::endgroup::\n---/' ;
-        exit ${PIPESTATUS[0]}
+        | sed -e '0,/Refreshing/s//::group::Refreshing/'
+        | awk 'BEGIN{RS="";ORS="\n\n"}/Refreshing state.../{$0=$0"\n::endgroup::"}7'
+        ; exit ${PIPESTATUS[0]}
 
     # TODO: Post plan back to PR
