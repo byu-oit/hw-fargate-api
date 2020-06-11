@@ -15,14 +15,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - name: Setup DEV Environment Variables
+    - name: Set up DEV Environment Variables
       if: github.base_ref == 'dev'
       run: |
         echo "::set-env name=aws_key_name::byu_oit_terraform_dev_key"
         echo "::set-env name=aws_secret_name::byu_oit_terraform_dev_secret"
         echo "::set-env name=tf_working_dir::./terraform-iac/dev/app"
 
-    - name: Setup PRD Environment Variables
+    - name: Set up PRD Environment Variables
       if: github.base_ref == 'master'
       run: |
         echo "::set-env name=aws_key_name::byu_oit_terraform_prd_key"
@@ -41,7 +41,7 @@ jobs:
 
     - uses: actions/checkout@v2
 
-    - name: Setup Node.js
+    - name: Set up Node.js
       uses: actions/setup-node@v1
       with:
         node-version: ${{ env.node_version }}
@@ -61,7 +61,7 @@ jobs:
 
     - uses: actions/checkout@v2
 
-    - name: Setup Node.js
+    - name: Set up Node.js
       uses: actions/setup-node@v1
       with:
         node-version: ${{ env.node_version }}
@@ -77,7 +77,7 @@ jobs:
 
     - uses: actions/checkout@v2
 
-    - name: Setup Node.js
+    - name: Set up Node.js
       uses: actions/setup-node@v1
       with:
         node-version: ${{ env.node_version }}
