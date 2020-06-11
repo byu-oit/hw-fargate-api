@@ -9,11 +9,11 @@ env:
 jobs:
 
   build_and_deploy:
-    name: Build and deploy Fargate API
+    name: Build and Deploy Fargate API
     runs-on: ubuntu-latest
     steps:
 
-    - name: Setup DEV Environment Variables
+    - name: Set up DEV Environment Variables
       if: github.ref == 'refs/heads/dev'
       run: |
         echo "::set-env name=aws_key::${{ secrets.byu_oit_terraform_dev_key }}"
@@ -25,7 +25,7 @@ jobs:
         echo "::set-env name=rfc_template_id::Codepipeline-Standard-Change"
         echo "::set-env name=slack_channel::C0AGQEZMF" #slack-bot-testing
 
-    - name: Setup PRD Environment Variables
+    - name: Set up PRD Environment Variables
       if: github.ref == 'refs/heads/master'
       run: |
         echo "::set-env name=aws_key::${{ secrets.byu_oit_terraform_prd_key }}"
@@ -52,11 +52,11 @@ jobs:
         aws-secret-access-key: ${{ env.aws_secret }}
         aws-region: us-west-2
 
-    - name: Login to Amazon ECR
+    - name: Log into Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Get current timestamp
+    - name: Get Current Timestamp
       id: date
       run: echo "::set-output name=timestamp::$(date +'%Y-%m-%d_%H-%M-%S')"
 
@@ -126,7 +126,7 @@ jobs:
 
     - name: End Standard Change
       uses: byu-oit/github-action-end-standard-change@v1
-      if: ${{ always() && steps.start-standard-change.outcome == 'success' }} # Run if RFC started, even if the deploy failed
+      if: always() && steps.start-standard-change.outcome == 'success' # Run if RFC started, even if the deploy failed
       with:
         client-key: ${{ env.rfc_client_key }}
         client-secret: ${{ env.rfc_client_secret }}
