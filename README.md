@@ -27,6 +27,7 @@ git checkout -b dev
 * Find and replace across the repo:
   * replace `<account_number>` with your AWS account number, using your `dev` account in `/terraform-iac/dev` and your `prd` account in `/terraform-iac/prd`
   * replace `hello-world-api` with the name of your repo
+  * rename the `.postman/hello-world-api.postman_collection.json` file with the name of your repo
   * replace `byu-oit-terraform-dev` with the name of your `dev` AWS account
   * replace `byu-oit-terraform-prd` with the name of your `prd` AWS account
 * Commit/push your changes
