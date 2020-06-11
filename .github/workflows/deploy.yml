@@ -134,12 +134,10 @@ jobs:
         work-start: ${{ steps.start-standard-change.outputs.work-start }}
         success: ${{ steps.deploy.outcome == 'success' }}
 
-    - name: Slack
-      uses: 8398a7/action-slack@v3
+    - name: Send Slack Notification
+      uses: byu-oit/github-action-slack@v1
+      if: always()
       with:
         status: ${{ job.status }}
-        fields: repo,message,commit,author,action,eventName,ref,workflow # selectable (default: repo,message)
         channel: ${{ env.slack_channel }}
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.slack_webhook_url }} # required
-      if: always() # Pick up events even if the job fails or is canceled.
+        webhook-url: ${{ secrets.slack_webhook_url }}
