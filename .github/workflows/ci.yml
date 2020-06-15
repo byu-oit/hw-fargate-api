@@ -116,6 +116,16 @@ jobs:
         working-directory: src
         run: npm run lint
 
+  docker:
+    name: Docker Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: docker build
+        run: |
+          docker build src --file src/Dockerfile
+
   format:
     name: Terraform Format
     runs-on: ubuntu-latest
