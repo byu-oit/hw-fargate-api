@@ -3,7 +3,7 @@ terraform {
   backend "s3" {
     bucket         = "terraform-state-storage-977306314792"
     dynamodb_table = "terraform-state-lock-977306314792"
-    key            = "hello-world-api-dev/app.tfstate"
+    key            = "hello-world-api-stg/app.tfstate"
     region         = "us-west-2"
   }
 }
@@ -19,7 +19,7 @@ variable "image_tag" {
 
 module "app" {
   source                           = "../../modules/app/"
-  env                              = "dev"
+  env                              = "stg"
   image_tag                        = var.image_tag
   codedeploy_termination_wait_time = 0
 }

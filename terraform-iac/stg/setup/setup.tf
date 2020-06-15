@@ -2,7 +2,7 @@ terraform {
   backend "s3" {
     bucket         = "terraform-state-storage-977306314792"
     dynamodb_table = "terraform-state-lock-977306314792"
-    key            = "hello-world-api-dev/setup.tfstate"
+    key            = "hello-world-api-stg/setup.tfstate"
     region         = "us-west-2"
   }
 }
@@ -19,6 +19,6 @@ variable "some_secret" {
 
 module "setup" {
   source      = "../../modules/setup/"
-  env         = "dev"
+  env         = "stg"
   some_secret = var.some_secret
 }
