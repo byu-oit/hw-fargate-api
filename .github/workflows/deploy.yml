@@ -2,39 +2,97 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [master, dev]
+    branches: [dev, stg, master]
 env:
+  node_version: "12.x"
   tf_version: "0.12.26" # must match value in terraform-iac/*/app/main.tf
 
 jobs:
-  build_and_deploy:
-    name: Build and deploy Fargate API
+  env:
+    name: Set Env Vars
     runs-on: ubuntu-latest
     steps:
       - name: Setup DEV Environment Variables
         if: github.ref == 'refs/heads/dev'
         run: |
-          echo "::set-env name=aws_key::${{ secrets.byu_oit_terraform_dev_key }}"
-          echo "::set-env name=aws_secret::${{ secrets.byu_oit_terraform_dev_secret }}"
-          echo "::set-env name=ecr_repo_name::hello-world-api-dev"
-          echo "::set-env name=tf_working_dir::./terraform-iac/dev/app"
-          echo "::set-env name=rfc_client_key::${{ secrets.standard_change_sandbox_client_key }}"
-          echo "::set-env name=rfc_client_secret::${{ secrets.standard_change_sandbox_client_secret }}"
-          echo "::set-env name=rfc_template_id::Codepipeline-Standard-Change"
-          echo "::set-env name=slack_channel::C0AGQEZMF" #slack-bot-testing
+          matrix='{
+            "env":[
+              {
+                "ecr_repo_name":"hello-world-api-dev",
+                "tf_working_dir":"./terraform-iac/dev/app",
+                "aws_key_name":"byu_oit_terraform_dev_key",
+                "aws_secret_name":"byu_oit_terraform_dev_secret",
+                "rfc_key_name":"standard_change_sandbox_client_key",
+                "rfc_secret_name":"standard_change_sandbox_client_secret",
+                "rfc_template_id":"Codepipeline-Standard-Change",
+                "slack_channel":"#slack-bot-testing"
+              }
+            ]
+          }'
+          echo "::set-env name=matrix::`echo $matrix | jq -c .`"
 
-      - name: Setup PRD Environment Variables
-        if: github.ref == 'refs/heads/master'
+      - name: Setup STG Environment Variables
+        if: github.ref == 'refs/heads/stg'
         run: |
-          echo "::set-env name=aws_key::${{ secrets.byu_oit_terraform_prd_key }}"
-          echo "::set-env name=aws_secret::${{ secrets.byu_oit_terraform_prd_secret }}"
-          echo "::set-env name=ecr_repo_name::hello-world-api-prd"
-          echo "::set-env name=tf_working_dir::./terraform-iac/prd/app"
-          echo "::set-env name=rfc_client_key::${{ secrets.standard_change_production_client_key }}"
-          echo "::set-env name=rfc_client_secret::${{ secrets.standard_change_production_client_secret }}"
-          echo "::set-env name=rfc_template_id::Codepipeline-Standard-Change"
-          echo "::set-env name=slack_channel::C0AGQEZMF" #slack-bot-testing
+          matrix='{
+            "env":[
+              {
+                "ecr_repo_name":"hello-world-api-stg",
+                "tf_working_dir":"./terraform-iac/stg/app",
+                "aws_key_name":"byu_oit_terraform_dev_key",
+                "aws_secret_name":"byu_oit_terraform_dev_secret",
+                "rfc_key_name":"standard_change_sandbox_client_key",
+                "rfc_secret_name":"standard_change_sandbox_client_secret",
+                "rfc_template_id":"Codepipeline-Standard-Change",
+                "slack_channel":"#slack-bot-testing"
+              }
+            ]
+          }'
+          echo "::set-env name=matrix::`echo $matrix | jq -c .`"
 
+      - name: Setup PRD/CPY Environment Variables
+        if: github.ref == 'refs/heads/master'
+        # TODO: When prd really is production, in prd environment (first block below):
+        # * Change standard_change_sandbox_client_key to standard_change_production_client_key
+        # * Change standard_change_sandbox_client_secret to standard_change_production_client_secret
+        # You probably don't want to do this in cpy (second block), or you will get two RFCs everytime you push to master
+        run: |
+          matrix='{
+            "env":[
+              {
+                "ecr_repo_name":"hello-world-api-prd",
+                "tf_working_dir":"./terraform-iac/prd/app",
+                "aws_key_name":"byu_oit_terraform_prd_key",
+                "aws_secret_name":"byu_oit_terraform_prd_secret",
+                "rfc_key_name":"standard_change_sandbox_client_key",
+                "rfc_secret_name":"standard_change_sandbox_client_secret",
+                "rfc_template_id":"Codepipeline-Standard-Change",
+                "slack_channel":"#slack-bot-testing"
+              },
+              {
+                "ecr_repo_name":"hello-world-api-cpy",
+                "tf_working_dir":"./terraform-iac/cpy/app",
+                "aws_key_name":"byu_oit_terraform_prd_key",
+                "aws_secret_name":"byu_oit_terraform_prd_secret",
+                "rfc_key_name":"standard_change_sandbox_client_key",
+                "rfc_secret_name":"standard_change_sandbox_client_secret",
+                "rfc_template_id":"Codepipeline-Standard-Change",
+                "slack_channel":"#slack-bot-testing"
+              }
+            ]
+          }'
+          echo "::set-env name=matrix::`echo $matrix | jq -c .`"
+
+    outputs:
+      matrix: ${{ env.matrix }}
+
+  build_and_deploy:
+    name: Build and deploy Fargate API
+    runs-on: ubuntu-latest
+    needs: env
+    strategy:
+      matrix: ${{ fromJson(needs.env.outputs.matrix) }}
+    steps:
       - name: Check out
         uses: actions/checkout@v2
 
@@ -46,8 +104,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ env.aws_key }}
-          aws-secret-access-key: ${{ env.aws_secret }}
+          aws-access-key-id: ${{ secrets[matrix.env.aws_key_name] }}
+          aws-secret-access-key: ${{ secrets[matrix.env.aws_secret_name] }}
           aws-region: us-west-2
 
       - name: Login to Amazon ECR
@@ -61,11 +119,16 @@ jobs:
       - name: Build and Push the Docker image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPO: ${{ env.ecr_repo_name }}
+          ECR_REPO: ${{ matrix.env.ecr_repo_name }}
           IMAGE_TAG: ${{ steps.date.outputs.timestamp }}
         run: |
           docker build src --file src/Dockerfile --tag $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.node_version }}
 
       - name: Build Test Lambda
         working-directory: tst/codedeploy-hooks/after-allow-test-traffic
@@ -80,38 +143,42 @@ jobs:
           terraform_version: ${{ env.tf_version }}
 
       - name: Terraform Init
-        working-directory: ${{ env.tf_working_dir }}
+        working-directory: ${{ matrix.env.tf_working_dir }}
         run: terraform init
 
+      - name: Terraform Format
+        working-directory: ${{ matrix.env.tf_working_dir }}
+        run: terraform fmt -check
+
       - name: Terraform Plan
-        working-directory: ${{ env.tf_working_dir }}
-        run: terraform plan -var 'image_tag=${{ steps.date.outputs.timestamp }}' -out=plan -input=false
+        working-directory: ${{ matrix.env.tf_working_dir }}
+        run: terraform plan -var 'image_tag=${{ steps.date.outputs.timestamp }}' -input=false -out=plan
 
       - name: Start Standard Change
         uses: byu-oit/github-action-start-standard-change@v1
         id: start-standard-change
         with:
-          client-key: ${{ env.rfc_client_key }}
-          client-secret: ${{ env.rfc_client_secret }}
-          template-id: ${{ env.rfc_template_id }}
+          client-key: ${{ secrets[matrix.env.rfc_key_name] }}
+          client-secret: ${{ secrets[matrix.env.rfc_secret_name] }}
+          template-id: ${{ matrix.env.rfc_template_id }}
 
       - name: Terraform Apply
-        working-directory: ${{ env.tf_working_dir }}
+        working-directory: ${{ matrix.env.tf_working_dir }}
         run: terraform apply plan
 
       - name: Get CD App Name
         id: cd-app-name
-        working-directory: ${{ env.tf_working_dir }}
+        working-directory: ${{ matrix.env.tf_working_dir }}
         run: terraform output codedeploy_app_name
 
       - name: Get CD Deployment Group Name
         id: cd-group-name
-        working-directory: ${{ env.tf_working_dir }}
+        working-directory: ${{ matrix.env.tf_working_dir }}
         run: terraform output codedeploy_deployment_group_name
 
       - name: Get CD Appspec File
         id: cd-appspec-file
-        working-directory: ${{ env.tf_working_dir }}
+        working-directory: ${{ matrix.env.tf_working_dir }}
         run: terraform output codedeploy_appspec_json_file
 
       - name: CodeDeploy
@@ -126,8 +193,8 @@ jobs:
         uses: byu-oit/github-action-end-standard-change@v1
         if: ${{ always() && steps.start-standard-change.outcome == 'success' }} # Run if RFC started, even if the deploy failed
         with:
-          client-key: ${{ env.rfc_client_key }}
-          client-secret: ${{ env.rfc_client_secret }}
+          client-key: ${{ secrets[matrix.env.rfc_key_name] }}
+          client-secret: ${{ secrets[matrix.env.rfc_secret_name] }}
           change-sys-id: ${{ steps.start-standard-change.outputs.change-sys-id }}
           work-start: ${{ steps.start-standard-change.outputs.work-start }}
           success: ${{ steps.deploy.outcome == 'success' }}
@@ -137,5 +204,5 @@ jobs:
         if: always()
         with:
           status: ${{ job.status }}
-          channel: ${{ env.slack_channel }}
+          channel: ${{ matrix.env.slack_channel }}
           webhook-url: ${{ secrets.slack_webhook_url }}
