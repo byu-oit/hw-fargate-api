@@ -174,5 +174,5 @@ jobs:
 
       - name: Terraform Plan
         working-directory: ${{ matrix.env.tf_working_dir }}
-        run: terraform plan -input=false
+        run: terraform plan -var 'image_tag=ci_test' -input=false
     # TODO: Post plan back to PR
