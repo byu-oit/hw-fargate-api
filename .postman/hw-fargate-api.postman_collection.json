@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "868867bc-aac9-428b-9743-164cf7acfecf",
-		"name": "hello-world-api",
+		"name": "hw-fargate-api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -61,12 +61,12 @@
 							"pm.test(\"Table name is correct\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    var env = pm.variables.get(\"env\");",
-							"    pm.expect(jsonData.table).to.eql(`hello-world-api-${env}`);",
+							"    pm.expect(jsonData.table).to.eql(`hw-fargate-api-${env}`);",
 							"});",
 							"pm.test(\"Bucket name is correct\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    var env = pm.variables.get(\"env\");",
-							"    pm.expect(jsonData.bucket).to.eql(`hello-world-api-${env}`);",
+							"    pm.expect(jsonData.bucket).to.eql(`hw-fargate-api-${env}`);",
 							"});"
 						],
 						"type": "text/javascript"

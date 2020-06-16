@@ -18,7 +18,7 @@ jobs:
           matrix='{
             "env":[
               {
-                "ecr_repo_name":"hello-world-api-dev",
+                "ecr_repo_name":"hw-fargate-api-dev",
                 "tf_working_dir":"./terraform-iac/dev/app",
                 "aws_key_name":"byu_oit_terraform_dev_key",
                 "aws_secret_name":"byu_oit_terraform_dev_secret",
@@ -37,7 +37,7 @@ jobs:
           matrix='{
             "env":[
               {
-                "ecr_repo_name":"hello-world-api-stg",
+                "ecr_repo_name":"hw-fargate-api-stg",
                 "tf_working_dir":"./terraform-iac/stg/app",
                 "aws_key_name":"byu_oit_terraform_dev_key",
                 "aws_secret_name":"byu_oit_terraform_dev_secret",
@@ -60,7 +60,7 @@ jobs:
           matrix='{
             "env":[
               {
-                "ecr_repo_name":"hello-world-api-prd",
+                "ecr_repo_name":"hw-fargate-api-prd",
                 "tf_working_dir":"./terraform-iac/prd/app",
                 "aws_key_name":"byu_oit_terraform_prd_key",
                 "aws_secret_name":"byu_oit_terraform_prd_secret",
@@ -70,7 +70,7 @@ jobs:
                 "slack_channel":"#slack-bot-testing"
               },
               {
-                "ecr_repo_name":"hello-world-api-cpy",
+                "ecr_repo_name":"hw-fargate-api-cpy",
                 "tf_working_dir":"./terraform-iac/cpy/app",
                 "aws_key_name":"byu_oit_terraform_prd_key",
                 "aws_secret_name":"byu_oit_terraform_prd_secret",
