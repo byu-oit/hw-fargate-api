@@ -13,7 +13,7 @@ jobs:
     name: Set Env Vars
     runs-on: ubuntu-latest
     steps:
-      - name: Setup DEV Environment Variables
+      - name: Set up DEV Environment Variables
         if: github.base_ref == 'dev'
         run: |
           matrix='{
@@ -27,7 +27,7 @@ jobs:
           }'
           echo "::set-env name=matrix::`echo $matrix | jq -c .`"
 
-      - name: Setup STG Environment Variables
+      - name: Set up STG Environment Variables
         if: github.base_ref == 'stg'
         run: |
           matrix='{
@@ -41,7 +41,7 @@ jobs:
           }'
           echo "::set-env name=matrix::`echo $matrix | jq -c .`"
 
-      - name: Setup PRD/CPY Environment Variables
+      - name: Set up PRD/CPY Environment Variables
         if: github.base_ref == 'master'
         run: |
           matrix='{
@@ -69,7 +69,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.node_version }}
@@ -88,7 +88,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.node_version }}
@@ -103,7 +103,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.node_version }}
