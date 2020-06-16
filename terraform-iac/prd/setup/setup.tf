@@ -2,7 +2,7 @@ terraform {
   backend "s3" {
     bucket         = "terraform-state-storage-539738229445"
     dynamodb_table = "terraform-state-lock-539738229445"
-    key            = "hello-world-api-prd/ecr.tfstate"
+    key            = "hw-fargate-api-prd/ecr.tfstate"
     region         = "us-west-2"
   }
 }

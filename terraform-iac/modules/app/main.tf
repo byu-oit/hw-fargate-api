@@ -11,7 +11,7 @@ variable "codedeploy_termination_wait_time" {
 }
 
 locals {
-  name = "hello-world-api"
+  name = "hw-fargate-api"
   tags = {
     env              = "${var.env}"
     data-sensitivity = "public"
