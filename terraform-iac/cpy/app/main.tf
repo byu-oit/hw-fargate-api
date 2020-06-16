@@ -1,9 +1,9 @@
 terraform {
   required_version = "0.12.26"
   backend "s3" {
-    bucket         = "terraform-state-storage-977306314792"
-    dynamodb_table = "terraform-state-lock-977306314792"
-    key            = "hello-world-api-dev/app.tfstate"
+    bucket         = "terraform-state-storage-539738229445"
+    dynamodb_table = "terraform-state-lock-539738229445"
+    key            = "hello-world-api-cpy/app.tfstate"
     region         = "us-west-2"
   }
 }
@@ -19,9 +19,9 @@ variable "image_tag" {
 
 module "app" {
   source                           = "../../modules/app/"
-  env                              = "dev"
+  env                              = "cpy"
   image_tag                        = var.image_tag
-  codedeploy_termination_wait_time = 0
+  codedeploy_termination_wait_time = 15
 }
 
 output "url" {
