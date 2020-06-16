@@ -60,7 +60,7 @@ In the AWS Console, see if you can find the resources from `setup.tf` (ECR, SSM 
 * In GitHub, go to the `Actions` tab for your repo (e.g. https://github.com/byu-oit/my-repo/actions)
 * Click the `Enable Actions on this repo` button
 
-If you look at `.github/workflows/pipeline-workflow.yml`, you'll see that it is setup to run on pushes to the dev branch. Because you have already pushed to the dev branch, this workflow should be running now.
+If you look at `.github/workflows/deploy.yml`, you'll see that it is setup to run on pushes to the dev branch. Because you have already pushed to the dev branch, this workflow should be running now.
 
 * In GitHub, click on the workflow run (it has the same name as the last commit message you pushed)
 * Click on the `Build and deploy Fargate API to dev` job
