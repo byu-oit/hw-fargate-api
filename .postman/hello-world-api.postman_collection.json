@@ -60,11 +60,11 @@
 							"});",
 							"pm.test(\"Table name is correct\", function () {",
 							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.table).to.eql(\"hello-world-api-dev\");",
+							"    pm.expect(jsonData.table).to.eql(\"hello-world-api-{{env}}\");",
 							"});",
 							"pm.test(\"Bucket name is correct\", function () {",
 							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.bucket).to.eql(\"hello-world-api-dev\");",
+							"    pm.expect(jsonData.bucket).to.eql(\"hello-world-api-{{env}}\");",
 							"});"
 						],
 						"type": "text/javascript"
