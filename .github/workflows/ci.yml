@@ -141,8 +141,8 @@ jobs:
           terraform_version: ${{ env.tf_version }}
 
       - name: Terraform Format
-        working-directory: ${{ matrix.tf_working_dir }}
-        run: terraform fmt -check
+        working-directory: "./"
+        run: terraform fmt -check -recursive
 
   plan:
     name: Terraform Plan
