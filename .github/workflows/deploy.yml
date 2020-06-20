@@ -147,8 +147,8 @@ jobs:
         run: terraform init
 
       - name: Terraform Format
-        working-directory: ${{ matrix.env.tf_working_dir }}
-        run: terraform fmt -check
+        working-directory: "./"
+        run: terraform fmt -check -recursive
 
       - name: Terraform Plan
         working-directory: ${{ matrix.env.tf_working_dir }}
