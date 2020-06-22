@@ -64,7 +64,7 @@ jobs:
       matrix: ${{ env.matrix }}
 
   src-test:
-    name: Test App Lambda
+    name: Test App
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -83,7 +83,7 @@ jobs:
         run: npm test
 
   src-audit:
-    name: Audit App Lambda
+    name: Audit App
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -98,7 +98,7 @@ jobs:
         run: npm audit --audit-level=critical
 
   src-lint:
-    name: Lint App Lambda
+    name: Lint App
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -212,12 +212,6 @@ jobs:
           aws-access-key-id: ${{ secrets[matrix.env.aws_key_name] }}
           aws-secret-access-key: ${{ secrets[matrix.env.aws_secret_name] }}
           aws-region: us-west-2
-
-      - name: Build App Lambda
-        working-directory: src
-        run: |
-          npm install --production
-          zip -r lambda.zip *
 
       - name: Build Test Lambda
         working-directory: tst/codedeploy-hooks/after-allow-test-traffic
