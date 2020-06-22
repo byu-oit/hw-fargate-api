@@ -63,8 +63,8 @@ jobs:
     outputs:
       matrix: ${{ env.matrix }}
 
-  test:
-    name: NPM Test
+  src-test:
+    name: Test App Lambda
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -76,14 +76,14 @@ jobs:
 
       - name: npm install
         working-directory: src
-        run: npm i
+        run: npm install
 
       - name: npm test
         working-directory: src
-        run: npm t
+        run: npm test
 
-  audit:
-    name: NPM Audit
+  src-audit:
+    name: Audit App Lambda
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -97,8 +97,8 @@ jobs:
         working-directory: src
         run: npm audit --audit-level=critical
 
-  lint:
-    name: NPM Lint
+  src-lint:
+    name: Lint App Lambda
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -110,10 +110,63 @@ jobs:
 
       - name: npm install
         working-directory: src
-        run: npm i
+        run: npm install
 
       - name: npm lint
         working-directory: src
+        run: npm run lint
+
+  tst-test:
+    name: Test Test Lambda
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.node_version }}
+
+      - name: npm install
+        working-directory: tst/codedeploy-hooks/after-allow-test-traffic
+        run: npm install
+
+      - name: npm test
+        working-directory: tst/codedeploy-hooks/after-allow-test-traffic
+        run: npm test
+
+  tst-audit:
+    name: Audit Test Lambda
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.node_version }}
+
+      - name: npm audit
+        working-directory: tst/codedeploy-hooks/after-allow-test-traffic
+        run: npm audit --audit-level=critical
+
+  tst-lint:
+    name: Lint Test Lambda
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.node_version }}
+
+      - name: npm install
+        working-directory: tst/codedeploy-hooks/after-allow-test-traffic
+        run: npm install
+
+      - name: npm lint
+        working-directory: tst/codedeploy-hooks/after-allow-test-traffic
         run: npm run lint
 
   docker:
