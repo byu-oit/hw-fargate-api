@@ -101,6 +101,49 @@ jobs:
         with:
           token: ${{ github.token }}
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.node_version }}
+
+      - name: Audit App
+        working-directory: src
+        run: npm audit --audit-level=critical
+
+      - name: Build App
+        working-directory: src
+        run: npm install --production
+
+      - name: Lint App
+        working-directory: src
+        run: npm run lint
+
+      - name: Test App
+        working-directory: src
+        run: npm test
+
+      - name: Audit Test Lambda
+        working-directory: tst/codedeploy-hooks/after-allow-test-traffic
+        run: npm audit --audit-level=critical
+
+      - name: Build Test Lambda
+        working-directory: tst/codedeploy-hooks/after-allow-test-traffic
+        run: |
+          npm install --production
+          cp -R ../../../.postman .
+
+      - name: Lint Test Lambda
+        working-directory: tst/codedeploy-hooks/after-allow-test-traffic
+        run: npm run lint
+
+      - name: Test Test Lambda
+        working-directory: tst/codedeploy-hooks/after-allow-test-traffic
+        run: npm test
+
+      - name: Package Test Lambda
+        working-directory: tst/codedeploy-hooks/after-allow-test-traffic
+        run: zip -r lambda.zip * .postman
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -124,18 +167,6 @@ jobs:
         run: |
           docker build src --file src/Dockerfile --tag $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ env.node_version }}
-
-      - name: Build Test Lambda
-        working-directory: tst/codedeploy-hooks/after-allow-test-traffic
-        run: |
-          npm install --production
-          cp -R ../../../.postman .
-          zip -r lambda.zip * .postman
 
       - name: Terraform Setup
         uses: hashicorp/setup-terraform@v1
