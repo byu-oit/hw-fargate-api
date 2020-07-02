@@ -214,7 +214,7 @@ jobs:
 
       - name: CodeDeploy
         id: deploy
-        uses: byu-oit/github-action-codedeploy@v1
+        uses: byu-oit/github-action-codedeploy@ci # TODO change back to v1
         with:
           application-name: ${{ steps.cd-app-name.outputs.stdout }}
           deployment-group-name: ${{ steps.cd-group-name.outputs.stdout }}
