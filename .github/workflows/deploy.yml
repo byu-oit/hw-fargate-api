@@ -122,28 +122,6 @@ jobs:
         working-directory: src
         run: npm test
 
-      - name: Audit Test Lambda
-        working-directory: tst/codedeploy-hooks/after-allow-test-traffic
-        run: npm audit --audit-level=critical
-
-      - name: Build Test Lambda
-        working-directory: tst/codedeploy-hooks/after-allow-test-traffic
-        run: |
-          npm install --production
-          cp -R ../../../.postman .
-
-      - name: Lint Test Lambda
-        working-directory: tst/codedeploy-hooks/after-allow-test-traffic
-        run: npm run lint
-
-      - name: Test Test Lambda
-        working-directory: tst/codedeploy-hooks/after-allow-test-traffic
-        run: npm test
-
-      - name: Package Test Lambda
-        working-directory: tst/codedeploy-hooks/after-allow-test-traffic
-        run: zip -r lambda.zip * .postman
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
