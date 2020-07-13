@@ -116,59 +116,6 @@ jobs:
         working-directory: src
         run: npm run lint
 
-  tst-test:
-    name: Test Test Lambda
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ env.node_version }}
-
-      - name: npm install
-        working-directory: tst/codedeploy-hooks/after-allow-test-traffic
-        run: npm install
-
-      - name: npm test
-        working-directory: tst/codedeploy-hooks/after-allow-test-traffic
-        run: npm test
-
-  tst-audit:
-    name: Audit Test Lambda
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ env.node_version }}
-
-      - name: npm audit
-        working-directory: tst/codedeploy-hooks/after-allow-test-traffic
-        run: npm audit --audit-level=critical
-
-  tst-lint:
-    name: Lint Test Lambda
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ env.node_version }}
-
-      - name: npm install
-        working-directory: tst/codedeploy-hooks/after-allow-test-traffic
-        run: npm install
-
-      - name: npm lint
-        working-directory: tst/codedeploy-hooks/after-allow-test-traffic
-        run: npm run lint
-
   docker:
     name: Docker Build
     runs-on: ubuntu-latest
@@ -212,13 +159,6 @@ jobs:
           aws-access-key-id: ${{ secrets[matrix.env.aws_key_name] }}
           aws-secret-access-key: ${{ secrets[matrix.env.aws_secret_name] }}
           aws-region: us-west-2
-
-      - name: Build Test Lambda
-        working-directory: tst/codedeploy-hooks/after-allow-test-traffic
-        run: |
-          npm install --production
-          cp -R ../../../.postman .
-          zip -r lambda.zip * .postman
 
       - name: Terraform Setup
         uses: hashicorp/setup-terraform@v1
