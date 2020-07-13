@@ -61,12 +61,12 @@
 							"pm.test(\"Table name is correct\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    var env = pm.variables.get(\"env\");",
-							"    pm.expect(jsonData.table).to.eql(`hw-fargate-api-$${env}`);",
+							"    pm.expect(jsonData.table).to.eql(`hw-fargate-api-${env}`);",
 							"});",
 							"pm.test(\"Bucket name is correct\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    var env = pm.variables.get(\"env\");",
-							"    pm.expect(jsonData.bucket).to.eql(`hw-fargate-api-$${env}`);",
+							"    pm.expect(jsonData.bucket).to.eql(`hw-fargate-api-${env}`);",
 							"});"
 						],
 						"type": "text/javascript"
