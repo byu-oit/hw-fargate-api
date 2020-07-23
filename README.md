@@ -11,6 +11,8 @@ Example of creating and deploying an API with Docker and Terraform on AWS.
 ## Setup
 * Create a new repo [using this template](https://github.com/byu-oit/hw-fargate-api/generate).
 
+  Make sure to check the box that says "Include all branches".
+
   You need your own repo so that you can push changes and have CodePipeline deploy them.
   
   Keep your repo name relatively short. Since we're creating AWS resources based off the name, we've seen [issues with repo names longer than about 24 characters](https://github.com/byu-oit/hw-fargate-api/issues/22).
@@ -22,7 +24,7 @@ git clone https://github.com/byu-oit/my-new-repo
 * Check out the `dev` branch 
 ```
 cd my-new-repo
-git checkout -b dev
+git checkout dev
 ```
 * Find and replace across the repo:
   * replace `977306314792` with your dev AWS account number
