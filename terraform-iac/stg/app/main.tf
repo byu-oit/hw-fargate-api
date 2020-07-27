@@ -22,6 +22,8 @@ module "app" {
   env                              = "stg"
   image_tag                        = var.image_tag
   codedeploy_termination_wait_time = 0
+  deploy_test_postman_collection   = ".postman/hw-fargate-api.postman_collection.json"
+  deploy_test_postman_environment  = ".postman/stg-tst.postman_environment.json"
 }
 
 output "url" {
