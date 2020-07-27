@@ -22,8 +22,8 @@ module "app" {
   env                              = "prd"
   image_tag                        = var.image_tag
   codedeploy_termination_wait_time = 15
-  deploy_test_postman_collection   = ".postman/hw-fargate-api.postman_collection.json"
-  deploy_test_postman_environment  = ".postman/prd-tst.postman_environment.json"
+  deploy_test_postman_collection   = "../../../.postman/hw-fargate-api.postman_collection.json"
+  deploy_test_postman_environment  = "../../../.postman/prd-tst.postman_environment.json"
 }
 
 output "url" {
