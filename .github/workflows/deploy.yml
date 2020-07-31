@@ -206,7 +206,7 @@ jobs:
           client-secret: ${{ secrets[matrix.env.rfc_secret_name] }}
           change-sys-id: ${{ steps.start-standard-change.outputs.change-sys-id }}
           work-start: ${{ steps.start-standard-change.outputs.work-start }}
-          success: ${{ steps.deploy.outcome == 'success' }}
+          success: ${{ job.status == 'success' }}
 
       - name: Send Slack Notification
         uses: byu-oit/github-action-slack@v1
