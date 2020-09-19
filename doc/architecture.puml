@@ -21,7 +21,7 @@ participant "ServiceNow" as sn
 participant "Slack" as slack
 
 dev -> repo: push feature branch
-group "CI"
+group "Continuous Integration (CI)"
     dev -> repo: create pr
     repo -> gha: create pr event
     gha -> gha+: ci.yml
@@ -38,7 +38,7 @@ group "CI"
     gha -> repo-: pr comment
 end
 
-group "CD"
+group "Continuous Deployment (CD)"
     dev -> repo: merge pr
     repo -> gha: branch push event
     gha -> gha+: deploy.yml
