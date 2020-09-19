@@ -110,3 +110,9 @@ In GitHub Actions, watch the deploy steps run (you have a new push, so you'll ha
 By digging through the `.tf` files, you'll see what resources are being created. You should spend some time searching through the AWS Console for each of these resources. The goal is to start making connections between the Terraform syntax and the actual AWS resources that are created.
 
 Several OIT created Terraform modules are used. You can look these modules up in our GitHub Organization. There you can see what resources each of these modules creates. You can look those up in the AWS Console too.
+
+## Deployment details
+
+There are a lot of moving parts in the CI/CD pipeline for this project. This diagram shows the interaction between various services during a deployment.
+
+![CI/CD Sequence Diagram](doc/Fargate API CI CD.png)
