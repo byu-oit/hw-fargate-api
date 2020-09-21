@@ -65,6 +65,8 @@ group Continuous Deployment (CD)
             service -> td: get version
             td --> service: version
             service -> original+: create original task
+            original -> ecr: docker pull
+            ecr --> original: image
             gha -> alb: create alb (pointing to original task)
         end
         gha -> codedeploy: create/update codedeploy
