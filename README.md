@@ -25,7 +25,6 @@ cd my-new-repo
 git checkout -b dev
 ```
 * Find and replace across the repo:
- <!-- TODO: Fix this -->
   * replace `977306314792` with your dev AWS account number
   * replace `539738229445` with your prd AWS account number
   * replace `hw-fargate-api` with the name of your repo
@@ -54,9 +53,7 @@ In the AWS Console, see if you can find the resources from `setup.tf` (ECR, SSM 
 
 ### Enable GitHub Actions on your repo
 
-* Send a Slack message to #devops-tooling, requesting that GitHub Secrets be added to your repo. Include:
-  * The name of your GitHub repo
-  * The name of your AWS accounts
+* Use this [order form](https://it.byu.edu/it?id=sc_cat_item&sys_id=d20809201b2d141069fbbaecdc4bcb84) to give your repo access to the secrets that will let it deploy into your AWS accounts. Fill out the form twice to give access to both your `dev` and `prd` accounts.
 * In GitHub, go to the `Actions` tab for your repo (e.g. https://github.com/byu-oit/my-repo/actions)
 * Click the `Enable Actions on this repo` button
 
@@ -113,3 +110,9 @@ In GitHub Actions, watch the deploy steps run (you have a new push, so you'll ha
 By digging through the `.tf` files, you'll see what resources are being created. You should spend some time searching through the AWS Console for each of these resources. The goal is to start making connections between the Terraform syntax and the actual AWS resources that are created.
 
 Several OIT created Terraform modules are used. You can look these modules up in our GitHub Organization. There you can see what resources each of these modules creates. You can look those up in the AWS Console too.
+
+## Deployment details
+
+There are a lot of moving parts in the CI/CD pipeline for this project. This diagram shows the interaction between various services during a deployment.
+
+![CI/CD Sequence Diagram](doc/Fargate%20API%20CI%20CD.png)

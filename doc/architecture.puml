@@ -1,0 +1,113 @@
+@startuml
+
+title Fargate API CI/CD
+
+participant "Developer workstation" as dev
+box "GitHub"
+    participant "Repository" as repo
+    participant "GitHub Actions" as gha
+end box
+box "AWS"
+    participant "ECR" as ecr
+    participant "CodeDeploy" as codedeploy
+    participant "Fargate Cluster/Service" as service
+    participant "Fargate Task Definition" as td
+    participant "Fargate Original Task" as original
+    participant "Fargate Replacement Task" as replacement
+    participant "ALB" as alb
+    participant "Test Lambda" as lambda
+end box
+participant "ServiceNow" as sn
+participant "Slack" as slack
+
+dev -> repo: push feature branch
+group Continuous Integration (CI)
+    dev -> repo: create pr
+    repo -> gha: create pr event
+    gha -> gha+: ci.yml
+    group build
+        gha -> gha: build
+    end
+    group test
+        gha -> gha: lint
+        gha -> gha: audit
+        gha -> gha: test
+        gha -> gha: terraform fmt
+        gha -> gha: terraform plan
+    end
+    gha -> repo-: pr comment
+end
+
+group Continuous Deployment (CD)
+    dev -> repo: merge pr
+    repo -> gha: branch push event
+    gha -> gha+: deploy.yml
+    group build
+        gha -> gha: build
+    end
+    group test
+        gha -> gha: lint
+        gha -> gha: audit
+        gha -> gha: test
+        gha -> gha: terraform fmt
+        gha -> gha: terraform plan
+    end
+    group docker
+        gha -> gha: docker build
+        gha -> ecr: docker push
+    end
+    gha -> sn+: start standard change
+    group deploy infrastructure
+        gha -> gha: terraform apply
+        gha -> td: create task definition version
+        group only on initial creation
+            gha -> service: create cluster/service
+            service -> td: get version
+            td --> service: version
+            service -> original+: create original task
+            original -> ecr: docker pull
+            ecr --> original: image
+            gha -> alb: create alb (pointing to original task)
+        end
+        gha -> codedeploy: create/update codedeploy
+        gha -> lambda: create/update test lambda
+    end
+    group deploy application
+        gha -> codedeploy+: deploy app
+        codedeploy -> replacement+: create replacement task
+        replacement -> ecr: docker pull
+        ecr --> replacement: image
+        codedeploy -> alb: point test listener at replacement task
+        codedeploy -> lambda-: run test lambda
+        activate lambda
+        group Postman
+            lambda -> alb: call test listener
+            alb -> replacement: call replacement task
+            replacement --> alb: response
+            alb --> lambda: response
+            lambda -> lambda: assert
+        end
+        alt Assertions pass
+            lambda -> codedeploy-: succeed deployment
+            activate codedeploy
+            codedeploy -> alb: point real listener at replacement task
+            codedeploy -> codedeploy: termination wait time
+            codedeploy -> original: terminate original task
+            deactivate original
+            codedeploy --> gha-: return success
+        end
+        alt Assertions fail
+            lambda -> codedeploy+: fail deployment
+            codedeploy -> alb: point test listener back at original task
+            codedeploy -> replacement: terminate replacement task
+            deactivate replacement
+            codedeploy --> gha-: return failure
+        end
+    end
+    gha -> sn: complete standard change (success/failure)
+    deactivate sn
+    gha -> slack-: post success/failure to slack
+end
+
+
+@enduml
