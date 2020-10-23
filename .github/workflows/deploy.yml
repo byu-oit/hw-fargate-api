@@ -132,6 +132,7 @@ jobs:
           aws-access-key-id: ${{ secrets[matrix.env.aws_key_name] }}
           aws-secret-access-key: ${{ secrets[matrix.env.aws_secret_name] }}
           aws-region: us-west-2
+          role-skip-session-tagging: true
           role-to-assume: ${{ matrix.env.deploy_role_name }}
 
       - name: Log into Amazon ECR
