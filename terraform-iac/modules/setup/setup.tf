@@ -30,9 +30,9 @@ data "aws_iam_user" "github_actions" {
 }
 
 resource "aws_iam_role" "deploy" {
-  name = "${local.name}-deploy"
+  name                 = "${local.name}-deploy"
   permissions_boundary = data.aws_iam_policy.power_user.arn
-  assume_role_policy = <<EOF
+  assume_role_policy   = <<EOF
 {
     "Version": "2012-10-17",
     "Statement": [
