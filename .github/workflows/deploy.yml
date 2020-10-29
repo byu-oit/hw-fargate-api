@@ -4,7 +4,7 @@ on:
   push:
     branches: [dev, stg, master]
 env:
-  node_version: "12.x"
+  node_version: "14.x"
   tf_version: "0.12.26" # must match value in terraform-iac/*/app/main.tf
 
 jobs:

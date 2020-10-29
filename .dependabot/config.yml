@@ -21,10 +21,10 @@ update_configs:
 #    default_reviewers:
 #      - "YourGitHubUsername"
 
-    # TODO: Get rid of these ignored_updates in October 2020, once Node 14 is LTS
+    # TODO: Get rid of these ignored_updates in October 2021, once Node 16 is LTS
     # https://nodejs.org/en/about/releases/
-    # We're doing this so that we can get PRs for updated Node 12 images
+    # We're doing this so that we can get PRs for updated Node 14 images
     ignored_updates:
       - match:
           dependency_name: "node"
-          version_requirement: ">=13"
+          version_requirement: ">=15"
