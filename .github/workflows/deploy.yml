@@ -163,6 +163,14 @@ jobs:
         working-directory: ${{ matrix.env.tf_working_dir }}
         run: terraform plan -var 'image_tag=${{ steps.date.outputs.timestamp }}' -input=false -out=plan
 
+      - name: Analyze Terraform Plan
+        uses: byu-oit/github-action-tf-plan-analyzer@v1
+        with:
+          working-directory: ${{ matrix.env.tf_working_dir }}
+          terraform-plan-file: plan
+          divvycloud-username: ${{ secrets.DIVVYCLOUD_USERNAME }}
+          divvycloud-password: ${{ secrets.DIVVYCLOUD_PASSWORD }}
+
       - name: Start Standard Change
         uses: byu-oit/github-action-start-standard-change@v1
         id: start-standard-change
