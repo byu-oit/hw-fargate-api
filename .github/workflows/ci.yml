@@ -136,7 +136,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Terraform Setup
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v1.2.1
         with:
           terraform_version: ${{ env.tf_version }}
 
@@ -161,7 +161,7 @@ jobs:
           aws-region: us-west-2
 
       - name: Terraform Setup
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v1.2.1
         with:
           terraform_version: ${{ env.tf_version }}
 
