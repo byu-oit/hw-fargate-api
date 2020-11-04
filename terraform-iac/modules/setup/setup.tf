@@ -45,3 +45,32 @@ resource "aws_iam_role" "deploy" {
 EOF
 }
 
+resource "aws_iam_role_policy_attachment" "deploy_s3_state" {
+  role       = aws_iam_role.deploy.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+}
+
+resource "aws_iam_role_policy_attachment" "deploy_ecs" {
+  role       = aws_iam_role.deploy.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonECS_FullAccess"
+}
+
+resource "aws_iam_role_policy_attachment" "deploy_dynamo" {
+  role       = aws_iam_role.deploy.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+}
+
+resource "aws_iam_role_policy_attachment" "deploy_lambda" {
+  role       = aws_iam_role.deploy.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSLambdaFullAccess"
+}
+
+resource "aws_iam_role_policy_attachment" "deploy_iam" {
+  role       = aws_iam_role.deploy.name
+  policy_arn = "arn:aws:iam::aws:policy/IAMFullAccess"
+}
+
+resource "aws_iam_role_policy_attachment" "deploy_ssm" {
+  role       = aws_iam_role.deploy.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
+}
