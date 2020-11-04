@@ -134,6 +134,7 @@ jobs:
           aws-region: us-west-2
           role-skip-session-tagging: true
           role-to-assume: ${{ matrix.env.deploy_role_name }}
+          role-duration-seconds: 3600
 
       - name: Log into Amazon ECR
         id: login-ecr
