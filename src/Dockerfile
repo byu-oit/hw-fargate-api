@@ -1,7 +1,7 @@
-FROM node:12.18.4
+FROM node:14.15.0
 WORKDIR /usr/app
 
-COPY package.json .
+COPY package*.json ./
 RUN npm install --production
 
 COPY index.js .
