@@ -174,14 +174,14 @@ jobs:
         run: terraform plan -var 'image_tag=ci_test' -input=false -out plan
 
       - name: Comment Terraform Plan
-        uses: byu-oit/github-action-tf-plan-comment@v2
+        uses: byu-oit/github-action-tf-plan-comment@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           working-directory: ${{ matrix.env.tf_working_dir }}
           terraform-plan-file: plan
 
       - name: Analyze Terraform Plan
-        uses: byu-oit/github-action-tf-plan-analyzer@v1
+        uses: byu-oit/github-action-tf-plan-analyzer@v2
         with:
           working-directory: ${{ matrix.env.tf_working_dir }}
           terraform-plan-file: plan
