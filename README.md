@@ -6,7 +6,8 @@ Example of creating and deploying an API with Docker and Terraform on AWS.
 * Install [Terraform](https://www.terraform.io/downloads.html)
 * Install the [awslogin](https://pypi.org/project/byu-awslogin/) CLI tool
 * Log into a dev account (with awslogin)
-* Ensure your account has a [Terraform State S3 Backend](https://github.com/byu-oit/terraform-aws-backend-s3) deployed.
+* Ensure your account has a [Terraform State S3 Backend](https://github.com/byu-oit/terraform-aws-backend-s3) deployed
+* If you're outside the [`byu-oit` GitHub organization](https://github.com/byu-oit), obtain a DivvyCloud username and password from the Cloud Office at cloudoffice@byu.edu
 
 ## Setup
 * Create a new repo [using this template](https://github.com/byu-oit/hw-fargate-api/generate).
