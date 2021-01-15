@@ -99,7 +99,7 @@ resource "aws_appautoscaling_policy" "ecs_policy" {
     predefined_metric_specification {
       predefined_metric_type = "ALBRequestCountPerTarget"
     }
-    traget_value = 200.0
+    target_value = 200.0
   }
 }
 
