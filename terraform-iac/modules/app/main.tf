@@ -95,7 +95,7 @@ resource "aws_appautoscaling_policy" "ecs_policy" {
   scalable_dimension = aws_appautoscaling_target.ecs_target.scalable_dimension
   service_namespace  = aws_appautoscaling_target.ecs_target.service_namespace
 
-  target_tracking_configuration {
+  target_tracking_scaling_policy_configuration {
     predefined_metric_specification {
       predefined_metric_type = "ALBRequestCountPerTarget"
     }
