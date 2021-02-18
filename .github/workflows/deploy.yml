@@ -4,8 +4,9 @@ on:
   push:
     branches: [dev, stg, master]
 env:
+  DOCKER_BUILDKIT: 1
   node_version: "14.x"
-  tf_version: "0.12.26" # must match value in terraform-iac/*/app/main.tf
+  tf_version: "0.14.7" # must match value in terraform-iac/*/app/main.tf
 
 jobs:
   env:
@@ -102,9 +103,16 @@ jobs:
           token: ${{ github.token }}
 
       - name: Set up Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2.1.4
         with:
           node-version: ${{ env.node_version }}
+
+      - uses: actions/cache@v2.1.4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Audit App
         working-directory: src
@@ -112,7 +120,7 @@ jobs:
 
       - name: Build App
         working-directory: src
-        run: npm install --production
+        run: npm ci --production --prefer-offline
 
       - name: Lint App
         working-directory: src
@@ -137,14 +145,37 @@ jobs:
         id: date
         run: echo "::set-output name=timestamp::$(date +'%Y-%m-%d_%H-%M-%S')"
 
-      - name: Build and Push the Docker image
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Build and push the Docker image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPO: ${{ matrix.env.ecr_repo_name }}
           IMAGE_TAG: ${{ steps.date.outputs.timestamp }}
+        uses: docker/build-push-action@v2
+        with:
+          context: src
+          push: true
+          tags: $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+
+      - # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+        name: Move cache
         run: |
-          docker build src --file src/Dockerfile --tag $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
-          docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
       - name: Terraform Setup
         uses: hashicorp/setup-terraform@v1

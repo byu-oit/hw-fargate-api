@@ -1,0 +1,22 @@
+version: 2
+
+updates:
+  # App
+  - package-ecosystem: "npm"
+    directory: "/src"
+    schedule:
+      interval: "daily"
+    target-branch: "dev" # Our dev pipeline runs off the dev branch, production runs off of master
+    # Requesting reviews from yourself makes Dependabot PRs easy to find (https://github.com/pulls/review-requested)
+#    reviewers:
+#      - "YourGitHubUsername"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/" # For GitHub Actions, set the directory to / to check for workflow files in .github/workflows. (GitHub Docs)
+    schedule:
+      interval: "daily"
+    target-branch: "dev" # Our dev pipeline runs off the dev branch, production runs off of master
+    # Requesting reviews from yourself makes Dependabot PRs easy to find (https://github.com/pulls/review-requested)
+#    reviewers:
+#      - "YourGitHubUsername"

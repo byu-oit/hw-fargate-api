@@ -2,7 +2,7 @@ FROM node:14.15.5
 WORKDIR /usr/app
 
 COPY package*.json ./
-RUN npm install --production
+RUN npm ci --production
 
 COPY index.js .
 
