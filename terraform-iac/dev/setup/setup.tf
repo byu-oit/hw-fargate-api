@@ -2,13 +2,18 @@ terraform {
   backend "s3" {
     bucket         = "terraform-state-storage-977306314792"
     dynamodb_table = "terraform-state-lock-977306314792"
-    key            = "hw-fargate-api-dev/setup.tfstate"
+    key            = "hw-fargate-api/dev/setup.tfstate"
     region         = "us-west-2"
+  }
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 3.0"
+    }
   }
 }
 
 provider "aws" {
-  version = ">= 3.0"
   region  = "us-west-2"
 }
 
