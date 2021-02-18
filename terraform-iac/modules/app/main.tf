@@ -152,9 +152,9 @@ resource "aws_s3_bucket" "my_s3_bucket" {
   versioning {
     enabled = true
   }
-//  lifecycle {
-//    prevent_destroy = true
-//  }
+  //  lifecycle {
+  //    prevent_destroy = true
+  //  }
   lifecycle_rule {
     id                                     = "AutoAbortFailedMultipartUpload"
     enabled                                = true
