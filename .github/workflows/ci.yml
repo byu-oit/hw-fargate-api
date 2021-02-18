@@ -6,7 +6,7 @@ on:
     types: [opened, reopened, synchronize, edited]
 env:
   node_version: "14.x"
-  tf_version: "0.12.26" # must match value in terraform-iac/*/app/main.tf
+  tf_version: "0.14.7" # must match value in terraform-iac/*/app/main.tf
 
 jobs:
   env:
