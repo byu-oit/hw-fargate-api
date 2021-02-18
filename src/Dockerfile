@@ -1,8 +1,8 @@
-FROM node:14.15.1
+FROM node:14.15.5-alpine
 WORKDIR /usr/app
 
 COPY package*.json ./
-RUN npm install --production
+RUN npm ci --production
 
 COPY index.js .
 
