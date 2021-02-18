@@ -54,8 +54,6 @@ module "my_fargate_api" {
   codedeploy_termination_wait_time = var.codedeploy_termination_wait_time
   role_permissions_boundary_arn    = module.acs.role_permissions_boundary.arn
   tags                             = local.tags
-  lb_logging_enabled               = true
-  lb_logging_bucket_name           = aws_s3_bucket.my_lb_logs.bucket
 
   primary_container_definition = {
     name  = "${local.name}-${var.env}"
@@ -83,12 +81,6 @@ module "my_fargate_api" {
     BeforeAllowTraffic    = null
     AfterAllowTraffic     = null
   }
-}
-
-resource "aws_s3_bucket" "my_lb_logs" {
-  bucket = "${local.name}-${var.env}-lb-logs"
-  acl    = "log-delivery-write"
-  tags   = local.tags
 }
 
 resource "aws_dynamodb_table" "my_dynamo_table" {
