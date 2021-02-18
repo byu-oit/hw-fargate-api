@@ -137,7 +137,7 @@ EOF
 # -----------------------------------------------------------------------------
 
 resource "aws_s3_bucket" "my_s3_bucket_logs" {
-  bucket = "${local.name}-${var.env}"
+  bucket = "${local.name}-${var.env}-logs"
   acl    = "log-delivery-write"
   tags   = local.tags
 }
