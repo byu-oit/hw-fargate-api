@@ -5,7 +5,6 @@ on:
     branches: [dev, stg, master]
     types: [opened, reopened, synchronize, edited]
 env:
-  DOCKER_BUILDKIT: 1
   node_version: "14.x"
   tf_version: "0.14.7" # must match value in terraform-iac/*/app/main.tf
 
