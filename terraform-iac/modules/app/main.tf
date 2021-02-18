@@ -86,7 +86,7 @@ module "my_fargate_api" {
 }
 
 resource "aws_s3_bucket" "my_lb_logs" {
-  bucket = "${local.name}-${var.env}"
+  bucket = "${local.name}-${var.env}-lb-logs"
   acl    = "log-delivery-write"
   tags   = local.tags
 }
