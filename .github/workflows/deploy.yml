@@ -4,7 +4,6 @@ on:
   push:
     branches: [dev, stg, master]
 env:
-  DOCKER_BUILDKIT: 1
   node_version: "14.x"
   tf_version: "0.14.7" # must match value in terraform-iac/*/app/main.tf
 
@@ -165,7 +164,7 @@ jobs:
         with:
           context: src
           push: true
-          tags: $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+          tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPO}}:${{ env.IMAGE_TAG }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
 
