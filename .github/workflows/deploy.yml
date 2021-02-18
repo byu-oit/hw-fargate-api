@@ -102,9 +102,16 @@ jobs:
           token: ${{ github.token }}
 
       - name: Set up Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2.1.4
         with:
           node-version: ${{ env.node_version }}
+
+      - uses: actions/cache@v2.1.4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Audit App
         working-directory: src
@@ -112,7 +119,7 @@ jobs:
 
       - name: Build App
         working-directory: src
-        run: npm install --production
+        run: npm ci --production --prefer-offline
 
       - name: Lint App
         working-directory: src
