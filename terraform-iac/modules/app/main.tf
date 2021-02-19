@@ -21,7 +21,7 @@ variable "deploy_test_postman_environment" {
 locals {
   name = "hw-fargate-api"
   tags = {
-    env              = "${var.env}"
+    env              = var.env
     data-sensitivity = "public"
     repo             = "https://github.com/byu-oit/${local.name}"
   }
@@ -36,7 +36,7 @@ module "acs" {
 }
 
 module "my_fargate_api" {
-  source                        = "github.com/byu-oit/terraform-aws-fargate-api?ref=v3.1.2"
+  source                        = "github.com/byu-oit/terraform-aws-fargate-api?ref=v3.2.0"
   app_name                      = "${local.name}-${var.env}"
   container_port                = 8080
   health_check_path             = "/health"
@@ -128,14 +128,25 @@ EOF
 # Note that in my_fargate_api, we also added a policy and environment variable
 # -----------------------------------------------------------------------------
 
+resource "aws_s3_bucket" "my_s3_bucket_logs" {
+  bucket = "${local.name}-${var.env}-logs"
+  acl    = "log-delivery-write"
+  tags   = local.tags
+}
+
 resource "aws_s3_bucket" "my_s3_bucket" {
   bucket = "${local.name}-${var.env}"
+  tags   = local.tags
+  logging {
+    target_bucket = aws_s3_bucket.my_s3_bucket_logs.id
+    target_prefix = "log/"
+  }
   versioning {
     enabled = true
   }
-  lifecycle {
-    prevent_destroy = true
-  }
+  //  lifecycle {
+  //    prevent_destroy = true
+  //  }
   lifecycle_rule {
     id                                     = "AutoAbortFailedMultipartUpload"
     enabled                                = true
@@ -199,11 +210,12 @@ EOF
 # -----------------------------------------------------------------------------
 
 module "postman_test_lambda" {
-  source                        = "github.com/byu-oit/terraform-aws-postman-test-lambda?ref=v2.1.0"
+  source                        = "github.com/byu-oit/terraform-aws-postman-test-lambda?ref=v2.3.1"
   app_name                      = "${local.name}-deploy-test-${var.env}"
   postman_collection_file       = var.deploy_test_postman_collection
   postman_environment_file      = var.deploy_test_postman_environment
   role_permissions_boundary_arn = module.acs.role_permissions_boundary.arn
+  tags                          = local.tags
 }
 
 output "url" {
