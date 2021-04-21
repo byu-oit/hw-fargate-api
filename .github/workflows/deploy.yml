@@ -6,7 +6,7 @@ on:
 env:
   node_version: "14.x"
   tf_version: "0.14.7" # must match value in terraform-iac/*/app/main.tf
-
+concurrency: ${{ github.ref }}
 jobs:
   env:
     name: Set Env Vars
@@ -95,11 +95,6 @@ jobs:
     steps:
       - name: Check out
         uses: actions/checkout@v2
-
-      - name: Disallow Concurrent Runs
-        uses: byu-oit/github-action-disallow-concurrent-runs@v2
-        with:
-          token: ${{ github.token }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v2.1.5
