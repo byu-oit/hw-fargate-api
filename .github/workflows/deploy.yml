@@ -102,11 +102,11 @@ jobs:
           token: ${{ github.token }}
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2.1.5
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ env.node_version }}
 
-      - uses: actions/cache@v2.1.4
+      - uses: actions/cache@v2
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
