@@ -6,9 +6,6 @@ updates:
     schedule:
       interval: daily
     target-branch: dev
-    ignore:
-      - dependency-name: aws-sdk
-        update-types: ['update:semver-patch'] # Ignore all
 
   - package-ecosystem: docker
     directory: '/src'

@@ -1,8 +1,9 @@
 const express = require('express')
+const { DynamoDB } = require('@aws-sdk/client-dynamodb')
+const { S3 } = require('@aws-sdk/client-s3')
 const app = express()
-const AWS = require('aws-sdk')
-const dynamodb = new AWS.DynamoDB({ region: 'us-west-2' })
-const s3 = new AWS.S3()
+const dynamodb = new DynamoDB({ region: 'us-west-2' })
+const s3 = new S3({})
 
 app.use((req, res, next) => {
   console.log(`${req.method} called on ${req.path} on ${new Date().toISOString()}`)
@@ -18,8 +19,8 @@ app.get('/', async (req, res) => {
   const bucketParams = { Bucket: process.env.BUCKET_NAME }
   try {
     const [dynamoData, s3Data] = await Promise.all([
-      dynamodb.scan(dynamoParams).promise(),
-      s3.listObjectsV2(bucketParams).promise()
+      dynamodb.scan(dynamoParams),
+      s3.listObjectsV2(bucketParams)
     ])
     res.send({
       secret: process.env.SOME_SECRET,
