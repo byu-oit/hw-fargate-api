@@ -14,7 +14,7 @@ updates:
     target-branch: dev
     ignore:
       - dependency-name: node
-        update-types: ['update:semver-major'] # Stay within major version
+        update-types: ['version-update:semver-major'] # Stay within major version
 
   - package-ecosystem: github-actions
     directory: '/' # Check files in .github/workflows
