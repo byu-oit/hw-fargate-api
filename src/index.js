@@ -1,9 +1,9 @@
 const express = require('express')
-const { DynamoDB } = require('@aws-sdk/client-dynamodb')
-const { S3 } = require('@aws-sdk/client-s3')
+const { DynamoDBClient, ScanCommand } = require('@aws-sdk/client-dynamodb')
+const { S3Client, ListObjectsV2Command } = require('@aws-sdk/client-s3')
 const app = express()
-const dynamodb = new DynamoDB({ region: 'us-west-2' })
-const s3 = new S3({})
+const dynamodb = new DynamoDBClient({ region: 'us-west-2' })
+const s3 = new S3Client({})
 
 app.use((req, res, next) => {
   console.log(`${req.method} called on ${req.path} on ${new Date().toISOString()}`)
@@ -15,12 +15,12 @@ app.get('/health', (req, res) => {
 })
 
 app.get('/', async (req, res) => {
-  const dynamoParams = { TableName: process.env.DYNAMO_TABLE_NAME }
-  const bucketParams = { Bucket: process.env.BUCKET_NAME }
+  const scanCommand = new ScanCommand({ TableName: process.env.DYNAMO_TABLE_NAME })
+  const listObjectsV2Command = new ListObjectsV2Command({ Bucket: process.env.BUCKET_NAME })
   try {
     const [dynamoData, s3Data] = await Promise.all([
-      dynamodb.scan(dynamoParams),
-      s3.listObjectsV2(bucketParams)
+      dynamodb.send(scanCommand),
+      s3.send(listObjectsV2Command)
     ])
     res.send({
       secret: process.env.SOME_SECRET,
