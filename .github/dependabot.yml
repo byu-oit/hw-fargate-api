@@ -1,22 +1,27 @@
 version: 2
 
 updates:
-  # App
-  - package-ecosystem: "npm"
-    directory: "/src"
+  - package-ecosystem: npm
+    directory: '/src'
     schedule:
-      interval: "daily"
-    target-branch: "dev" # Our dev pipeline runs off the dev branch, production runs off of master
-    # Requesting reviews from yourself makes Dependabot PRs easy to find (https://github.com/pulls/review-requested)
-#    reviewers:
-#      - "YourGitHubUsername"
+      interval: daily
+    target-branch: dev
 
-  # GitHub Actions
-  - package-ecosystem: "github-actions"
-    directory: "/" # For GitHub Actions, set the directory to / to check for workflow files in .github/workflows. (GitHub Docs)
+  - package-ecosystem: docker
+    directory: '/src'
     schedule:
-      interval: "daily"
-    target-branch: "dev" # Our dev pipeline runs off the dev branch, production runs off of master
-    # Requesting reviews from yourself makes Dependabot PRs easy to find (https://github.com/pulls/review-requested)
+      interval: daily
+    target-branch: dev
+    ignore:
+      - dependency-name: node
+        update-types: ['version-update:semver-major'] # Stay within major version
+
+  - package-ecosystem: github-actions
+    directory: '/' # Check files in .github/workflows
+    schedule:
+      interval: daily
+    target-branch: dev
+
+# For each of these, requesting reviews from yourself makes Dependabot PRs easier to find (https://github.com/pulls/review-requested)
 #    reviewers:
 #      - "YourGitHubUsername"
