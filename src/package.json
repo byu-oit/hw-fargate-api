@@ -1,7 +1,9 @@
 {
-  "name": "hello-world-docker-api",
+  "name": "hw-fargate-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "Example of creating and deploying an API with Docker and Terraform on AWS",
+  "author": "",
+  "license": "Apache-2.0",
   "main": "index.js",
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.18.0",
@@ -17,12 +19,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/byu-oit/hello-world-docker-api.git"
+    "url": "git+https://github.com/byu-oit/hw-fargate-api.git"
   },
-  "author": "",
-  "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/byu-oit/hello-world-docker-api/issues"
+    "url": "https://github.com/byu-oit/hw-fargate-api/issues"
   },
-  "homepage": "https://github.com/byu-oit/hello-world-docker-api#readme"
+  "homepage": "https://github.com/byu-oit/hw-fargate-api#readme"
 }
