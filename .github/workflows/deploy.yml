@@ -87,7 +87,7 @@ jobs:
       matrix: ${{ env.matrix }}
 
   build_and_deploy:
-    name: Build and Deploy Fargate API
+    name: Build and Deploy
     runs-on: ubuntu-latest
     needs: env
     strategy:
@@ -109,19 +109,19 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Audit App
+      - name: Audit
         working-directory: src
         run: npm audit --audit-level=critical
 
-      - name: Build App
+      - name: Build
         working-directory: src
         run: npm ci --production --prefer-offline
 
-      - name: Lint App
+      - name: Lint
         working-directory: src
         run: npm run lint
 
-      - name: Test App
+      - name: Test
         working-directory: src
         run: npm test
 
