@@ -1,3 +1,4 @@
+'use strict'
 const express = require('express')
 const { DynamoDBClient, ScanCommand } = require('@aws-sdk/client-dynamodb')
 const { S3Client, ListObjectsV2Command } = require('@aws-sdk/client-s3')
@@ -35,6 +36,4 @@ app.get('/', async (req, res) => {
   }
 })
 
-app.listen(8080, () => {
-  console.log('listening on port 8080')
-})
+module.exports = app
