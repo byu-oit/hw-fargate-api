@@ -5,17 +5,35 @@
   "author": "",
   "license": "Apache-2.0",
   "main": "index.js",
+  "scripts": {
+    "lint": "standard --verbose | snazzy",
+    "test": "jest"
+  },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.18.0",
     "@aws-sdk/client-s3": "^3.18.0",
     "express": "^4.17.1"
   },
   "devDependencies": {
+    "jest": "^27.0.4",
+    "snazzy": "^9.0.0",
     "standard": "^16.0.3"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\"",
-    "lint": "npx standard"
+  "jest": {
+    "collectCoverage": true,
+    "coverageDirectory": "coverage",
+    "coverageReporters": [
+      "text"
+    ],
+    "passWithNoTests": true,
+    "testEnvironment": "node",
+    "verbose": true
+  },
+  "standard": {
+    "env": {
+      "jest": true,
+      "node": true
+    }
   },
   "repository": {
     "type": "git",
