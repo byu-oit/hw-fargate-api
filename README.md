@@ -1,11 +1,11 @@
 # hw-fargate-api
-Example of creating and deploying an API with Docker and Terraform on AWS.
+Example of creating and deploying an API with Docker and Terraform on AWS
 
 ## Prerequisites
 
 * Install [Terraform](https://www.terraform.io/downloads.html)
-* Install the [awslogin](https://pypi.org/project/byu-awslogin/) CLI tool
-* Log into a dev account (with awslogin)
+* Install the [AWS CLI](https://aws.amazon.com/cli/)
+* Log into your `dev` account (with [`aws sso login`](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/sso/login.html))
 * Ensure your account has a [Terraform State S3 Backend](https://github.com/byu-oit/terraform-aws-backend-s3) deployed
 * If you're outside the [`byu-oit` GitHub organization](https://github.com/byu-oit), obtain a DivvyCloud username and password from the Cloud Office at cloudoffice@byu.edu
 
@@ -26,14 +26,17 @@ cd my-new-repo
 git checkout -b dev
 ```
 * Find and replace across the repo:
-  * replace `977306314792` with your dev AWS account number
-  * replace `539738229445` with your prd AWS account number
+  * replace `977306314792` with your `dev` AWS account number
+  * replace `539738229445` with your `prd` AWS account number
   * replace `hw-fargate-api` with the name of your repo
-  * rename the `.postman/hw-fargate-api.postman_collection.json` file with the name of your repo
   * replace `byu-oit-terraform-dev` with the name of your `dev` AWS account
   * replace `byu_oit_terraform_dev` with the name of your `dev` AWS account (with underscores)
   * replace `byu-oit-terraform-prd` with the name of your `prd` AWS account
   * replace `byu_oit_terraform_prd` with the name of your `prd` AWS account (with underscores)
+  * replace `#slack-bot-testing` with the name the Slack channel where you want to send deployment notifications
+  * replace `Codepipeline-Standard-Change` with your [Standard Change Template ID](https://it.byu.edu/nav_to.do?uri=%2Fu_standard_change_template_list.do) - If you need to create a new template, ask in [#servicenow](https://byu-oit.slack.com/archives/C18T2SYTT) for help getting it into the [sandbox ServiceNow environment](https://support-test.byu.edu/)
+* _Rename_ [`.postman/hw-fargate-api.postman_collection.json`](.postman/hw-fargate-api.postman_collection.json) with the name of your repo replacing `hw-fargate-api` in the filename
+* Add yourself (or your team) as a [Dependabot reviewer](https://docs.github.com/en/code-security/supply-chain-security/keeping-your-dependencies-updated-automatically/configuration-options-for-dependency-updates#reviewers) in [`dependabot.yml`](.github/dependabot.yml)
 * Commit/push your changes
 ```
 git commit -am "update template with repo specific details" 
@@ -58,10 +61,10 @@ In the AWS Console, see if you can find the resources from `setup.tf` (ECR, SSM 
 * In GitHub, go to the `Actions` tab for your repo (e.g. https://github.com/byu-oit/my-repo/actions)
 * Click the `Enable Actions on this repo` button
 
-If you look at `.github/workflows/deploy.yml`, you'll see that it is setup to run on pushes to the dev branch. Because you have already pushed to the dev branch, this workflow should be running now.
+If you look at [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), you'll see that it is set up to run on pushes to the `dev` branch. Because you have already pushed to the `dev` branch, this workflow should be running now.
 
 * In GitHub, click on the workflow run (it has the same name as the last commit message you pushed)
-* Click on the `Build and deploy Fargate API to dev` job
+* Click on the `Build and Deploy` job
 * Expand any of the steps to see what they are doing
 
 ### View the deployed application
