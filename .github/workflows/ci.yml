@@ -63,8 +63,8 @@ jobs:
     outputs:
       matrix: ${{ env.matrix }}
 
-  src-test:
-    name: Test App
+  test:
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -89,8 +89,8 @@ jobs:
         working-directory: src
         run: npm test
 
-  src-audit:
-    name: Audit App
+  audit:
+    name: Audit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -104,8 +104,8 @@ jobs:
         working-directory: src
         run: npm audit --audit-level=critical
 
-  src-lint:
-    name: Lint App
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
