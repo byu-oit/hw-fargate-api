@@ -22,6 +22,30 @@ updates:
       interval: daily
     target-branch: dev
 
+#  - package-ecosystem: terraform
+#    directory: '/terraform-iac/dev/app'
+#    schedule:
+#      interval: daily
+#    target-branch: dev
+
+#  - package-ecosystem: terraform
+#    directory: '/terraform-iac/dev/setup'
+#    schedule:
+#      interval: daily
+#    target-branch: dev
+
+  - package-ecosystem: terraform
+    directory: '/terraform-iac/modules/app'
+    schedule:
+      interval: daily
+    target-branch: dev
+
+  - package-ecosystem: terraform
+    directory: '/terraform-iac/modules/setup'
+    schedule:
+      interval: daily
+    target-branch: dev
+
 # For each of these, requesting reviews from yourself makes Dependabot PRs easier to find (https://github.com/pulls/review-requested)
 #    reviewers:
 #      - "YourGitHubUsername"
