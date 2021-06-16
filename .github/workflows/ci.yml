@@ -6,7 +6,8 @@ on:
     types: [opened, reopened, synchronize, edited]
 env:
   node_version: "14.x"
-  tf_version: "0.14.7" # must match value in terraform-iac/*/app/main.tf
+  tf_version: "1.0.0" # must match value in terraform-iac/*/app/main.tf
+  FORCE_COLOR: 3
 
 jobs:
   env:
@@ -63,8 +64,8 @@ jobs:
     outputs:
       matrix: ${{ env.matrix }}
 
-  src-test:
-    name: Test App
+  test:
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -89,8 +90,8 @@ jobs:
         working-directory: src
         run: npm test
 
-  src-audit:
-    name: Audit App
+  audit:
+    name: Audit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -104,8 +105,8 @@ jobs:
         working-directory: src
         run: npm audit --audit-level=critical
 
-  src-lint:
-    name: Lint App
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

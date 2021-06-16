@@ -1,28 +1,47 @@
 {
-  "name": "hello-world-docker-api",
+  "name": "hw-fargate-api",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Example of creating and deploying an API with Docker and Terraform on AWS",
+  "author": "",
+  "license": "Apache-2.0",
+  "main": "server.js",
+  "scripts": {
+    "lint": "standard --verbose | snazzy",
+    "test": "jest"
+  },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.18.0",
     "@aws-sdk/client-s3": "^3.18.0",
     "express": "^4.17.1"
   },
   "devDependencies": {
-    "standard": "^16.0.3"
+    "jest": "^27.0.4",
+    "snazzy": "^9.0.0",
+    "standard": "^16.0.3",
+    "supertest": "^6.1.3"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\"",
-    "lint": "npx standard"
+  "jest": {
+    "collectCoverage": true,
+    "coverageDirectory": "coverage",
+    "coverageReporters": [
+      "text"
+    ],
+    "passWithNoTests": true,
+    "testEnvironment": "node",
+    "verbose": true
+  },
+  "standard": {
+    "env": {
+      "jest": true,
+      "node": true
+    }
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/byu-oit/hello-world-docker-api.git"
+    "url": "git+https://github.com/byu-oit/hw-fargate-api.git"
   },
-  "author": "",
-  "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/byu-oit/hello-world-docker-api/issues"
+    "url": "https://github.com/byu-oit/hw-fargate-api/issues"
   },
-  "homepage": "https://github.com/byu-oit/hello-world-docker-api#readme"
+  "homepage": "https://github.com/byu-oit/hw-fargate-api#readme"
 }
