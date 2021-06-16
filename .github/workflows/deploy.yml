@@ -116,7 +116,7 @@ jobs:
 
       - name: Build
         working-directory: src
-        run: npm ci --production --prefer-offline
+        run: npm ci --prefer-offline
 
       - name: Lint
         working-directory: src
