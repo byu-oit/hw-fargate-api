@@ -210,7 +210,7 @@ EOF
 # -----------------------------------------------------------------------------
 
 module "postman_test_lambda" {
-  source   = "github.com/byu-oit/terraform-aws-postman-test-lambda?ref=v3.0.1"
+  source   = "github.com/byu-oit/terraform-aws-postman-test-lambda?ref=v3.0.2"
   app_name = "${local.name}-deploy-test-${var.env}"
   postman_collections = [
     {
