@@ -24,6 +24,7 @@
     "collectCoverage": true,
     "coverageDirectory": "coverage",
     "coverageReporters": [
+      "lcov",
       "text"
     ],
     "passWithNoTests": true,
