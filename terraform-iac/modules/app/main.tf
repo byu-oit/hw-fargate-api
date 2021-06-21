@@ -32,11 +32,11 @@ data "aws_ecr_repository" "my_ecr_repo" {
 }
 
 module "acs" {
-  source = "github.com/byu-oit/terraform-aws-acs-info?ref=v3.1.0"
+  source = "github.com/byu-oit/terraform-aws-acs-info?ref=v3.2.0"
 }
 
 module "my_fargate_api" {
-  source                        = "github.com/byu-oit/terraform-aws-fargate-api?ref=v3.2.0"
+  source                        = "github.com/byu-oit/terraform-aws-fargate-api?ref=v3.2.2"
   app_name                      = "${local.name}-${var.env}"
   container_port                = 8080
   health_check_path             = "/health"
@@ -210,10 +210,14 @@ EOF
 # -----------------------------------------------------------------------------
 
 module "postman_test_lambda" {
-  source                        = "github.com/byu-oit/terraform-aws-postman-test-lambda?ref=v2.4.0"
-  app_name                      = "${local.name}-deploy-test-${var.env}"
-  postman_collection_file       = var.deploy_test_postman_collection
-  postman_environment_file      = var.deploy_test_postman_environment
+  source   = "github.com/byu-oit/terraform-aws-postman-test-lambda?ref=v3.0.2"
+  app_name = "${local.name}-deploy-test-${var.env}"
+  postman_collections = [
+    {
+      collection  = var.deploy_test_postman_collection
+      environment = var.deploy_test_postman_environment
+    }
+  ]
   role_permissions_boundary_arn = module.acs.role_permissions_boundary.arn
   tags                          = local.tags
 }
