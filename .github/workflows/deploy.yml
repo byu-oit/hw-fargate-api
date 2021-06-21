@@ -126,6 +126,12 @@ jobs:
         working-directory: src
         run: npm test
 
+      - name: Report test coverage to Codecov
+        uses: codecov/codecov-action@v1
+        if: env.CODECOV_TOKEN
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
