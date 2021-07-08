@@ -19,6 +19,7 @@ jobs:
           matrix='{
             "env":[
               {
+                "environment_name":"dev",
                 "ecr_repo_name":"hw-fargate-api-dev",
                 "tf_working_dir":"./terraform-iac/dev/app",
                 "aws_key_name":"byu_oit_terraform_dev_key",
@@ -38,6 +39,7 @@ jobs:
           matrix='{
             "env":[
               {
+                "environment_name":"stg",
                 "ecr_repo_name":"hw-fargate-api-stg",
                 "tf_working_dir":"./terraform-iac/stg/app",
                 "aws_key_name":"byu_oit_terraform_dev_key",
@@ -61,6 +63,7 @@ jobs:
           matrix='{
             "env":[
               {
+                "environment_name":"prd",
                 "ecr_repo_name":"hw-fargate-api-prd",
                 "tf_working_dir":"./terraform-iac/prd/app",
                 "aws_key_name":"byu_oit_terraform_prd_key",
@@ -71,6 +74,7 @@ jobs:
                 "slack_channel":"#slack-bot-testing"
               },
               {
+                "environment_name":"cpy",
                 "ecr_repo_name":"hw-fargate-api-cpy",
                 "tf_working_dir":"./terraform-iac/cpy/app",
                 "aws_key_name":"byu_oit_terraform_prd_key",
@@ -94,6 +98,9 @@ jobs:
     strategy:
       matrix: ${{ fromJson(needs.env.outputs.matrix) }}
       fail-fast: false
+    environment:
+      name: ${{ matrix.env.environment_name }}
+      url: https://${{ steps.url.outputs.stdout }}
     steps:
       - name: Check out
         uses: actions/checkout@v2
@@ -230,6 +237,11 @@ jobs:
         id: cd-appspec-file
         working-directory: ${{ matrix.env.tf_working_dir }}
         run: terraform output -json codedeploy_appspec_json_file | tr -d '"'
+
+      - name: Get URL
+        id: url
+        working-directory: ${{ matrix.env.tf_working_dir }}
+        run: terraform output -json url | tr -d '"'
 
       - name: CodeDeploy
         id: deploy
