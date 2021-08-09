@@ -74,13 +74,8 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ env.node_version }}
-
-      - uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          cache: npm
+          cache-dependency-path: '**/package-lock.json'
 
       - name: npm ci
         working-directory: src
@@ -107,6 +102,8 @@ jobs:
         with:
           node-version: ${{ env.node_version }}
 
+      # We don't need to install deps to audit them
+
       - name: npm audit
         working-directory: src
         run: npm audit --audit-level=critical
@@ -121,13 +118,8 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ env.node_version }}
-
-      - uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          cache: npm
+          cache-dependency-path: '**/package-lock.json'
 
       - name: npm ci
         working-directory: src
