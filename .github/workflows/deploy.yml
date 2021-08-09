@@ -109,13 +109,8 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ env.node_version }}
-
-      - uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          cache: npm
+          cache-dependency-path: '**/package-lock.json'
 
       - name: Audit
         working-directory: src
