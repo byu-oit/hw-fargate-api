@@ -36,7 +36,7 @@ module "acs" {
 }
 
 module "my_fargate_api" {
-  source                        = "github.com/byu-oit/terraform-aws-fargate-api?ref=v3.3.0"
+  source                        = "github.com/byu-oit/terraform-aws-fargate-api?ref=v3.3.1"
   app_name                      = "${local.name}-${var.env}"
   container_port                = 8080
   health_check_path             = "/health"
@@ -132,6 +132,26 @@ resource "aws_s3_bucket" "my_s3_bucket_logs" {
   bucket = "${local.name}-${var.env}-logs"
   acl    = "log-delivery-write"
   tags   = local.tags
+  lifecycle_rule {
+    id                                     = "AutoAbortFailedMultipartUpload"
+    enabled                                = true
+    abort_incomplete_multipart_upload_days = 10
+  }
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "default_logs" {
+  bucket                  = aws_s3_bucket.my_s3_bucket_logs.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
 resource "aws_s3_bucket" "my_s3_bucket" {
@@ -210,7 +230,7 @@ EOF
 # -----------------------------------------------------------------------------
 
 module "postman_test_lambda" {
-  source   = "github.com/byu-oit/terraform-aws-postman-test-lambda?ref=v3.2.0"
+  source   = "github.com/byu-oit/terraform-aws-postman-test-lambda?ref=v3.2.2"
   app_name = "${local.name}-${var.env}"
   postman_collections = [
     {
