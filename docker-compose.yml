@@ -1,0 +1,16 @@
+version: '3'
+services:
+  src:
+    build: ./src
+    ports:
+      - '8080:8080'
+    volumes:
+      - ~/.aws:/home/node/.aws # Use AWS credentials from host
+    environment:
+      # Environment variables and secrets from primary_container_definition in terraform-iac/modules/app/main.tf
+      DYNAMO_TABLE_NAME: hw-fargate-api-dev
+      BUCKET_NAME: hw-fargate-api-dev
+      SOME_SECRET: something
+
+      # When deployed, Fargate will inject secrets as env vars. Locally, we just provide env vars to the container.
+      # Do not commit secrets to the repository. Consider using an .env file.
