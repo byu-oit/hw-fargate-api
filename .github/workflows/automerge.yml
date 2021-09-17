@@ -1,0 +1,35 @@
+name: Dependabot Automerge
+
+on:
+  pull_request:
+    branches: [ dev ]
+env:
+  node_version: "14.x"
+
+jobs:
+  automerge:
+    name: Test and Automerge
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.node_version }}
+          cache: npm
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: npm ci
+        working-directory: src
+        run: npm ci --prefer-offline
+
+      - name: npm test
+        working-directory: src
+        run: npm test
+
+      - name: Auto-merge Dependabot Pull Request
+        uses: fastify/github-action-merge-dependabot@v2.4.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          target: patch
