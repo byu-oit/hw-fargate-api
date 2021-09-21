@@ -8,6 +8,7 @@ Example of creating and deploying an API with Docker and Terraform on AWS
 * Log into your `dev` account (with [`aws sso login`](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/sso/login.html))
 * Ensure your account has a [Terraform State S3 Backend](https://github.com/byu-oit/terraform-aws-backend-s3) deployed
 * If you're outside the [`byu-oit` GitHub organization](https://github.com/byu-oit), obtain a DivvyCloud username and password from the Cloud Office at cloudoffice@byu.edu
+* Enable automated dependapbot security updates under Settings > Security & Analysis. Then install the [automerge app](https://github.com/apps/dependabot-merge-action) in your organization if you're not part of the `byu-oit` organization.
 
 ## Setup
 * Create a new repo [using this template](https://github.com/byu-oit/hw-fargate-api/generate).
