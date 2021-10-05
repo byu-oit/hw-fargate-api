@@ -7,7 +7,9 @@ Example of creating and deploying an API with Docker and Terraform on AWS
 * Install the [AWS CLI](https://aws.amazon.com/cli/)
 * Log into your `dev` account (with [`aws sso login`](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/sso/login.html))
 * Ensure your account has a [Terraform State S3 Backend](https://github.com/byu-oit/terraform-aws-backend-s3) deployed
-* If you're outside the [`byu-oit` GitHub organization](https://github.com/byu-oit), obtain a DivvyCloud username and password from the Cloud Office at cloudoffice@byu.edu
+* If you're outside the [`byu-oit` GitHub organization](https://github.com/byu-oit):
+  * Obtain a DivvyCloud username and password from the Cloud Office at cloudoffice@byu.edu
+  * Install [the GitHub App used for auto-merging Dependabot pull requests](https://github.com/apps/dependabot-merge-action) to your organization
 
 ## Setup
 * Create a new repo [using this template](https://github.com/byu-oit/hw-fargate-api/generate).
@@ -17,11 +19,11 @@ Example of creating and deploying an API with Docker and Terraform on AWS
   Keep your repo name relatively short. Since we're creating AWS resources based off the name, we've seen [issues with repo names longer than about 24 characters](https://github.com/byu-oit/hw-fargate-api/issues/22).
 
 * Clone your new repo
-```
+```sh
 git clone https://github.com/byu-oit/my-new-repo
 ```
 * Check out the `dev` branch 
-```
+```sh
 cd my-new-repo
 git checkout -b dev
 ```
@@ -37,17 +39,17 @@ git checkout -b dev
   * replace `Codepipeline-Standard-Change` with your [Standard Change Template ID](https://it.byu.edu/nav_to.do?uri=%2Fu_standard_change_template_list.do) - If you need to create a new template, ask in [#servicenow](https://byu-oit.slack.com/archives/C18T2SYTT) for help getting it into the [sandbox ServiceNow environment](https://support-test.byu.edu/)
 * _Rename_ [`.postman/hw-fargate-api.postman_collection.json`](.postman/hw-fargate-api.postman_collection.json) with the name of your repo replacing `hw-fargate-api` in the filename
 * Add yourself (or your team) as a [Dependabot reviewer](https://docs.github.com/en/code-security/supply-chain-security/keeping-your-dependencies-updated-automatically/configuration-options-for-dependency-updates#reviewers) in [`dependabot.yml`](.github/dependabot.yml)
-* Commit/push your changes
-```
-git commit -am "update template with repo specific details" 
-git push
+* Enable [Dependabot Security updates](https://github.com/byu-oit/hw-fargate-api/settings/security_analysis) if you're outside the [`byu-oit` GitHub organization](https://github.com/byu-oit)
+* Commit your changes
+```sh
+git commit -am "Update template with repo specific details" 
 ```
 
 ## Deployment
 
 ### Deploy the "one time setup" resources
 
-```
+```sh
 cd terraform-iac/dev/setup/
 terraform init
 terraform apply
@@ -55,13 +57,22 @@ terraform apply
 
 In the AWS Console, see if you can find the resources from `setup.tf` (ECR, SSM Param).
 
+### Get AWS Credentials
+
+* Use this [order form](https://it.byu.edu/it?id=sc_cat_item&sys_id=d20809201b2d141069fbbaecdc4bcb84) to give your repo access to the secrets that will let it deploy into your AWS accounts. Fill out the form twice to give access to both your `dev` and `prd` accounts. Please read the instructions on the form carefully - it's finicky.
+
 ### Enable GitHub Actions on your repo
 
-* Use this [order form](https://it.byu.edu/it?id=sc_cat_item&sys_id=d20809201b2d141069fbbaecdc4bcb84) to give your repo access to the secrets that will let it deploy into your AWS accounts. Fill out the form twice to give access to both your `dev` and `prd` accounts.
-* In GitHub, go to the `Actions` tab for your repo (e.g. https://github.com/byu-oit/my-repo/actions)
+* In GitHub, go to the [`Actions` tab](https://github.com/byu-oit/hw-fargate-api/actions) for your repo (e.g. https://github.com/byu-oit/my-repo/actions)
 * Click the `Enable Actions on this repo` button
 
-If you look at [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), you'll see that it is set up to run on pushes to the `dev` branch. Because you have already pushed to the `dev` branch, this workflow should be running now.
+### Push your changes
+
+```sh
+git push -u origin dev
+```
+
+If you look at [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), you'll see that it is set up to run on pushes to the `dev` branch. Because you pushed to the `dev` branch, this workflow should be running now.
 
 * In GitHub, click on the workflow run (it has the same name as the last commit message you pushed)
 * Click on the `Build and Deploy` job
@@ -70,7 +81,7 @@ If you look at [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), y
 ### View the deployed application
 
 Anytime after the `Terraform Apply` step succeeds:
-```
+```sh
 cd ../app/
 terraform init
 terraform output
@@ -96,7 +107,7 @@ In the AWS Console, see if you can find the other resources from `main.tf`.
 
 Make a small change to `index.js` (try adding a `console.log`, a simple key/value pair to the JSON response, or a new path). Commit and push this change to the `dev` branch.
 
-```
+```sh
 git commit -am "try deploying a change"
 git push
 ```
