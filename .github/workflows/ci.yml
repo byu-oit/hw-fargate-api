@@ -2,7 +2,7 @@ name: CI
 
 on:
   pull_request:
-    branches: [dev, stg, master]
+    branches: [dev, stg, prd]
     types: [opened, reopened, synchronize, edited]
 env:
   node_version: "14.x"
@@ -43,7 +43,7 @@ jobs:
           echo matrix=`echo $matrix | jq -c .` >> $GITHUB_ENV
 
       - name: Set up PRD/CPY Environment Variables
-        if: github.base_ref == 'master'
+        if: github.base_ref == 'prd'
         run: |
           matrix='{
             "env":[

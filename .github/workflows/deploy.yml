@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   push:
-    branches: [dev, stg, master]
+    branches: [dev, stg, prd]
 env:
   node_version: "14.x"
   tf_version: "1.0.10" # must match value in terraform-iac/*/app/main.tf
@@ -54,11 +54,11 @@ jobs:
           echo matrix=`echo $matrix | jq -c .` >> $GITHUB_ENV
 
       - name: Set up PRD/CPY Environment Variables
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/prd'
         # TODO: When prd really is production, in prd environment (first block below):
         # * Change standard_change_sandbox_client_key to standard_change_production_client_key
         # * Change standard_change_sandbox_client_secret to standard_change_production_client_secret
-        # You probably don't want to do this in cpy (second block), or you will get two RFCs everytime you push to master
+        # You probably don't want to do this in cpy (second block), or you will get two RFCs everytime you push to prd
         run: |
           matrix='{
             "env":[
