@@ -171,6 +171,8 @@ jobs:
     strategy:
       matrix: ${{ fromJson(needs.env.outputs.matrix) }}
       fail-fast: false
+    permissions:
+      pull-requests: write
     steps:
       - uses: actions/checkout@v2
 
