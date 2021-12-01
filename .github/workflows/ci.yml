@@ -197,7 +197,7 @@ jobs:
       - name: Comment Terraform Plan
         uses: byu-oit/github-action-tf-plan-comment@v1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ github.token }}
           working-directory: ${{ matrix.env.tf_working_dir }}
           terraform-plan-file: plan
 
