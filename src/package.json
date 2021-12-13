@@ -15,7 +15,7 @@
     "express": "^4.17.1"
   },
   "devDependencies": {
-    "jest": "^27.4.3",
+    "jest": "^27.4.5",
     "snazzy": "^9.0.0",
     "standard": "^16.0.4",
     "supertest": "^6.1.6"
