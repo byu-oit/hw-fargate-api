@@ -206,7 +206,7 @@ jobs:
           terraform-plan-file: plan
 
       - name: Analyze Terraform Plan
-        uses: byu-oit/github-action-tf-plan-analyzer@v2
+        uses: byu-oit/github-action-tf-plan-analyzer@saas
         with:
           working-directory: ${{ matrix.env.tf_working_dir }}
           terraform-plan-file: plan
