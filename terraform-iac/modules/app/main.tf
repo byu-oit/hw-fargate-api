@@ -18,6 +18,10 @@ variable "deploy_test_postman_environment" {
   type = string
 }
 
+variable "log_retention_days" {
+  type = number
+}
+
 locals {
   name = "hw-fargate-api"
   tags = {
@@ -137,6 +141,13 @@ resource "aws_s3_bucket" "my_s3_bucket_logs" {
     enabled                                = true
     abort_incomplete_multipart_upload_days = 10
   }
+  lifecycle_rule {
+    id      = "ExpireOldLogs"
+    enabled = true
+    expiration {
+      days = var.log_retention_days
+    }
+  }
   server_side_encryption_configuration {
     rule {
       apply_server_side_encryption_by_default {
@@ -230,7 +241,7 @@ EOF
 # -----------------------------------------------------------------------------
 
 module "postman_test_lambda" {
-  source   = "github.com/byu-oit/terraform-aws-postman-test-lambda?ref=v3.2.3"
+  source   = "github.com/byu-oit/terraform-aws-postman-test-lambda?ref=v3.2.4"
   app_name = "${local.name}-${var.env}"
   postman_collections = [
     {
@@ -239,6 +250,7 @@ module "postman_test_lambda" {
     }
   ]
   role_permissions_boundary_arn = module.acs.role_permissions_boundary.arn
+  log_retention_in_days         = var.log_retention_days
   tags                          = local.tags
 }
 
