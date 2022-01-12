@@ -57,6 +57,7 @@ module "my_fargate_api" {
   codedeploy_service_role_arn      = module.acs.power_builder_role.arn
   codedeploy_termination_wait_time = var.codedeploy_termination_wait_time
   role_permissions_boundary_arn    = module.acs.role_permissions_boundary.arn
+  log_retention_in_days            = var.log_retention_days
   tags                             = local.tags
 
   primary_container_definition = {
