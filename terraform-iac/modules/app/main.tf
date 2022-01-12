@@ -18,6 +18,10 @@ variable "deploy_test_postman_environment" {
   type = string
 }
 
+variable "log_retention_days" {
+  type = number
+}
+
 locals {
   name = "hw-fargate-api"
   tags = {
@@ -136,6 +140,13 @@ resource "aws_s3_bucket" "my_s3_bucket_logs" {
     id                                     = "AutoAbortFailedMultipartUpload"
     enabled                                = true
     abort_incomplete_multipart_upload_days = 10
+  }
+  lifecycle_rule {
+    id      = "ExpireOldLogs"
+    enabled = true
+    expiration {
+      days = var.log_retention_days
+    }
   }
   server_side_encryption_configuration {
     rule {
