@@ -241,7 +241,7 @@ EOF
 # -----------------------------------------------------------------------------
 
 module "postman_test_lambda" {
-  source   = "github.com/byu-oit/terraform-aws-postman-test-lambda?ref=v3.2.3"
+  source   = "github.com/byu-oit/terraform-aws-postman-test-lambda?ref=v3.2.4"
   app_name = "${local.name}-${var.env}"
   postman_collections = [
     {
@@ -250,6 +250,7 @@ module "postman_test_lambda" {
     }
   ]
   role_permissions_boundary_arn = module.acs.role_permissions_boundary.arn
+  log_retention_in_days         = var.log_retention_days
   tags                          = local.tags
 }
 
