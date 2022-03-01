@@ -103,7 +103,7 @@ jobs:
       url: https://${{ steps.url.outputs.stdout }}
     steps:
       - name: Check out
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
