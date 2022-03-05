@@ -49,7 +49,8 @@ resource "aws_iam_role" "gha" {
       "Principal": {"Federated": "${data.aws_ssm_parameter.gha_oidc_arn.value}"},
       "Action": "sts:AssumeRoleWithWebIdentity",
       "Condition": {
-        "StringLike": {
+        "ForAllValues:StringEquals": {
+          "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
           "token.actions.githubusercontent.com:sub": "repo:byu-oit/${local.name}:*"
         }
       }
