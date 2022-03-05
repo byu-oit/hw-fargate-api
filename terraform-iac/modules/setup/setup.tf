@@ -16,7 +16,8 @@ locals {
 }
 
 module "acs" {
-  source = "github.com/byu-oit/terraform-aws-acs-info?ref=v3.4.0"
+  source = "github.com/byu-oit/terraform-aws-acs-info?ref=gha-oidc"
+  #source = "github.com/byu-oit/terraform-aws-acs-info?ref=v3.5.0"
 }
 
 resource "aws_ssm_parameter" "some_secret" {
@@ -32,10 +33,6 @@ module "my_ecr" {
   tags   = local.tags
 }
 
-data "aws_ssm_parameter" "gha_oidc_arn" {
-  name = "/acs/git/oidc-arn"
-}
-
 resource "aws_iam_role" "gha" {
   name                 = "${local.name}-${var.env}-gha"
   permissions_boundary = module.acs.role_permissions_boundary.arn
@@ -46,7 +43,7 @@ resource "aws_iam_role" "gha" {
   "Statement": [
     {
       "Effect": "Allow",
-      "Principal": {"Federated": "${data.aws_ssm_parameter.gha_oidc_arn.value}"},
+      "Principal": {"Federated": "${module.acs.github_oidc_arn}"},
       "Action": "sts:AssumeRoleWithWebIdentity",
       "Condition": {
         "StringLike": {
