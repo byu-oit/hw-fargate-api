@@ -36,7 +36,6 @@ module "my_ecr" {
 resource "aws_iam_role" "gha" {
   name                 = "${local.name}-${var.env}-gha"
   permissions_boundary = module.acs.role_permissions_boundary.arn
-  managed_policy_arns  = ["arn:aws:iam::aws:policy/AdministratorAccess"]
   assume_role_policy   = <<EOF
 {
   "Version": "2012-10-17",
@@ -55,6 +54,32 @@ resource "aws_iam_role" "gha" {
   ]
 }
 EOF
+  inline_policy {
+    name = "deploy-permissions"
+    policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+              "acm:*",
+              "dynamodb:*",
+              "ec2:*",
+              "ecr:*",
+              "iam:*",
+              "rds:*",
+              "route53:*",
+              "s3:*",
+              "ssm:*",
+              "sts:*"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+  }
 }
 
 output "gha_role_arn" {
