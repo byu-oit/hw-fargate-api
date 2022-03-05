@@ -55,7 +55,7 @@ resource "aws_iam_role" "gha" {
 }
 EOF
   inline_policy {
-    name = "deploy-permissions"
+    name   = "deploy-permissions"
     policy = <<EOF
 {
     "Version": "2012-10-17",
