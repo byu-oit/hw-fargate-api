@@ -27,3 +27,7 @@ module "setup" {
   env         = "dev"
   some_secret = var.some_secret
 }
+
+output "gha_role_arn" {
+  value = module.setup.gha_role_arn
+}
