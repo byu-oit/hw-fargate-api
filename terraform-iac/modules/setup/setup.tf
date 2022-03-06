@@ -63,18 +63,121 @@ EOF
         {
             "Effect": "Allow",
             "Action": [
-              "acm:*",
-              "dynamodb:*",
-              "ec2:*",
-              "ecr:*",
-              "iam:*",
-              "rds:*",
-              "route53:*",
-              "s3:*",
-              "ssm:*",
-              "sts:*"
+                "sts:GetCallerIdentity",
+                "ec2:DescribeAccountAttributes",
+                "iam:ListAccountAliases",
+                "ec2:DescribeVpcs",
+                "ec2:DescribeSubnets",
+                "iam:ListPolicies",
+                "route53:ListHostedZones",
+                "ec2:DescribeSecurityGroups",
+                "ec2:DescribeRouteTables",
+                "acm:ListCertificates"
             ],
             "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket"
+            ],
+            "Resource": "arn:aws:s3:::terraform-state-storage-977306314792"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:PutItem",
+                "dynamodb:GetItem",
+                "dynamodb:DeleteItem"
+            ],
+            "Resource": "arn:aws:dynamodb:us-west-2:977306314792:table/terraform-state-lock-977306314792"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject"
+            ],
+            "Resource": "arn:aws:s3:::terraform-state-storage-977306314792/hw-fargate-api/dev/app.tfstate"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:GetRole"
+            ],
+            "Resource": [
+              "arn:aws:iam::977306314792:role/PowerBuilder",
+              "arn:aws:iam::977306314792:role/PowerUser",
+              "arn:aws:iam::977306314792:role/ReadOnly"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ssm:GetParameter"
+            ],
+            "Resource": "arn:aws:ssm:us-west-2:977306314792:parameter/acsParameters"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "rds:DescribeDBSubnetGroups"
+            ],
+            "Resource": "arn:aws:rds:us-west-2:977306314792:subgrp:oit-oregon-dev-db-subnet-group"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:DescribeVpcAttribute"
+            ],
+            "Resource": "arn:aws:ec2:us-west-2:977306314792:vpc/vpc-03c6fb17e2731fe4a"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:GetHostedZone"
+            ],
+            "Resource": "arn:aws:route53:::hostedzone/Z2PJEHHCKKSZK0"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:ListTagsForResource"
+            ],
+            "Resource": [
+                "arn:aws:route53:::healthcheck/*",
+                "arn:aws:route53:::hostedzone/*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "acm:DescribeCertificate"
+            ],
+            "Resource": [
+              "arn:aws:acm:us-east-1:977306314792:certificate/a6eb1e68-48dc-40cf-941e-bfe02de50d4b",
+              "arn:aws:acm:us-west-2:977306314792:certificate/c90213f0-8c56-4f62-8f2a-d382e4bcf1fd"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "acm:ListTagsForCertificate"
+            ],
+            "Resource": [
+              "arn:aws:acm:us-east-1:977306314792:certificate/*",
+              "arn:aws:acm:us-west-2:977306314792:certificate/*"
+             ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:GetPolicy",
+                "iam:GetPolicyVersion"
+            ],
+            "Resource": [
+              "arn:aws:iam::977306314792:policy/iamRolePermissionBoundary",
+              "arn:aws:iam::977306314792:policy/iamUserPermissionBoundary"
+            ]
         }
     ]
 }
