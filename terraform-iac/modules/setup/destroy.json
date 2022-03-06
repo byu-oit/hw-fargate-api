@@ -1,0 +1,673 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "sts:GetCallerIdentity",
+                "ec2:DescribeAccountAttributes",
+                "iam:ListAccountAliases",
+                "iam:ListPolicies",
+                "ec2:DescribeVpcs",
+                "route53:ListHostedZones",
+                "ec2:DescribeSecurityGroups",
+                "ec2:DescribeSubnets",
+                "ec2:DescribeRouteTables",
+                "elasticloadbalancing:DescribeLoadBalancers",
+                "acm:ListCertificates",
+                "elasticloadbalancing:DescribeLoadBalancerAttributes",
+                "elasticloadbalancing:DescribeTargetGroups",
+                "elasticloadbalancing:DescribeTargetGroupAttributes",
+                "elasticloadbalancing:DescribeListeners",
+                "ecs:DescribeTaskDefinition",
+                "application-autoscaling:DescribeScalableTargets",
+                "application-autoscaling:DescribeScalingPolicies",
+                "application-autoscaling:DeleteScalingPolicy",
+                "application-autoscaling:DeregisterScalableTarget",
+                "ec2:DescribeNetworkInterfaces",
+                "ecs:DeregisterTaskDefinition"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket"
+            ],
+            "Resource": "arn:aws:s3:::terraform-state-storage-977306314792"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:PutItem",
+                "dynamodb:GetItem"
+            ],
+            "Resource": "arn:aws:dynamodb:us-west-2:977306314792:table/terraform-state-lock-977306314792"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject"
+            ],
+            "Resource": "arn:aws:s3:::terraform-state-storage-977306314792/hw-fargate-api/dev/app.tfstate"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:GetRole"
+            ],
+            "Resource": "arn:aws:iam::977306314792:role/PowerUser"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:GetRole"
+            ],
+            "Resource": "arn:aws:iam::977306314792:role/ReadOnly"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "codedeploy:GetApplication",
+                "codedeploy:ListTagsForResource",
+                "codedeploy:DeleteApplication"
+            ],
+            "Resource": "arn:aws:codedeploy:us-west-2:977306314792:application:hw-fargate-api-dev-codedeploy"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ssm:GetParameter"
+            ],
+            "Resource": "arn:aws:ssm:us-west-2:977306314792:parameter/acsParameters"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket",
+                "s3:DeleteBucket"
+            ],
+            "Resource": "arn:aws:s3:::hw-fargate-api-dev-logs"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:DescribeLogGroups"
+            ],
+            "Resource": "arn:aws:logs:us-west-2:977306314792:log-group:fargate/hw-fargate-api-dev*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:DescribeLogGroups"
+            ],
+            "Resource": "arn:aws:logs:us-west-2:977306314792:log-group:/aws/lambda/hw-fargate-api-dev-postman-tests*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ecs:DescribeClusters"
+            ],
+            "Resource": "arn:aws:ecs:us-west-2:977306314792:cluster/hw-fargate-api-dev"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetBucketCORS",
+                "s3:GetBucketWebsite",
+                "s3:GetBucketVersioning",
+                "s3:GetAccelerateConfiguration",
+                "s3:GetBucketRequestPayment",
+                "s3:GetBucketLogging",
+                "s3:GetReplicationConfiguration",
+                "s3:GetEncryptionConfiguration",
+                "s3:GetBucketObjectLockConfiguration",
+                "s3:GetBucketTagging",
+                "s3:GetBucketPublicAccessBlock"
+            ],
+            "Resource": "arn:aws:s3:::hw-fargate-api-dev-logs"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:DescribeTable",
+                "dynamodb:DescribeContinuousBackups",
+                "dynamodb:DescribeTimeToLive",
+                "dynamodb:ListTagsOfResource",
+                "dynamodb:DeleteTable"
+            ],
+            "Resource": "arn:aws:dynamodb:us-west-2:977306314792:table/hw-fargate-api-dev"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:ListTagsLogGroup",
+                "logs:DeleteLogGroup"
+            ],
+            "Resource": "arn:aws:logs:us-west-2:977306314792:log-group:fargate/hw-fargate-api-dev"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket",
+                "s3:DeleteBucket"
+            ],
+            "Resource": "arn:aws:s3:::hw-fargate-api-dev-postman-tests-977306314792-logs"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:GetRole"
+            ],
+            "Resource": "arn:aws:iam::977306314792:role/PowerBuilder"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:ListTagsLogGroup",
+                "logs:DeleteLogGroup"
+            ],
+            "Resource": "arn:aws:logs:us-west-2:977306314792:log-group:/aws/lambda/hw-fargate-api-dev-postman-tests"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "rds:DescribeDBSubnetGroups"
+            ],
+            "Resource": "arn:aws:rds:us-west-2:977306314792:subgrp:oit-oregon-dev-db-subnet-group"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:DescribeVpcAttribute"
+            ],
+            "Resource": "arn:aws:ec2:us-west-2:977306314792:vpc/vpc-03c6fb17e2731fe4a"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetBucketCORS",
+                "s3:GetBucketWebsite",
+                "s3:GetBucketVersioning",
+                "s3:GetAccelerateConfiguration",
+                "s3:GetBucketRequestPayment",
+                "s3:GetBucketLogging",
+                "s3:GetReplicationConfiguration",
+                "s3:GetEncryptionConfiguration",
+                "s3:GetBucketObjectLockConfiguration",
+                "s3:GetBucketTagging",
+                "s3:GetBucketPublicAccessBlock"
+            ],
+            "Resource": "arn:aws:s3:::hw-fargate-api-dev-postman-tests-977306314792-logs"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:GetPolicy",
+                "iam:GetPolicyVersion",
+                "iam:ListPolicyVersions",
+                "iam:DeletePolicy"
+            ],
+            "Resource": "arn:aws:iam::977306314792:policy/hw-fargate-api-dynamo-dev"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:GetHostedZone"
+            ],
+            "Resource": "arn:aws:route53:::hostedzone/Z2PJEHHCKKSZK0"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:ListTagsForResource"
+            ],
+            "Resource": [
+                "arn:aws:route53:::healthcheck/*",
+                "arn:aws:route53:::hostedzone/*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetLifecycleConfiguration"
+            ],
+            "Resource": "arn:aws:s3:::hw-fargate-api-dev-logs"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "elasticloadbalancing:DescribeTags",
+                "elasticloadbalancing:DeleteLoadBalancer"
+            ],
+            "Resource": "arn:aws:elasticloadbalancing:us-west-2:977306314792:loadbalancer/app/hw-fargate-api-dev-alb/88334a03689984d4"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "acm:DescribeCertificate"
+            ],
+            "Resource": "arn:aws:acm:us-west-2:977306314792:certificate/c90213f0-8c56-4f62-8f2a-d382e4bcf1fd"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetLifecycleConfiguration"
+            ],
+            "Resource": "arn:aws:s3:::hw-fargate-api-dev-postman-tests-977306314792-logs"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "acm:DescribeCertificate"
+            ],
+            "Resource": "arn:aws:acm:us-east-1:977306314792:certificate/a6eb1e68-48dc-40cf-941e-bfe02de50d4b"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "acm:ListTagsForCertificate"
+            ],
+            "Resource": "arn:aws:acm:us-west-2:977306314792:certificate/*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "acm:ListTagsForCertificate"
+            ],
+            "Resource": "arn:aws:acm:us-east-1:977306314792:certificate/*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:ListResourceRecordSets",
+                "route53:ChangeResourceRecordSets"
+            ],
+            "Resource": "arn:aws:route53:::hostedzone/*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket",
+                "s3:DeleteBucket"
+            ],
+            "Resource": "arn:aws:s3:::hw-fargate-api-dev"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "elasticloadbalancing:DescribeTags",
+                "elasticloadbalancing:DeleteTargetGroup"
+            ],
+            "Resource": "arn:aws:elasticloadbalancing:us-west-2:977306314792:targetgroup/hw-fargate-api-dev-tgb/1969ae66fa1fb2f6"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "elasticloadbalancing:DescribeTags",
+                "elasticloadbalancing:DeleteTargetGroup"
+            ],
+            "Resource": "arn:aws:elasticloadbalancing:us-west-2:977306314792:targetgroup/hw-fargate-api-dev-tgg/6dafb754c996a9d5"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetBucketAcl",
+                "s3:GetBucketCORS",
+                "s3:GetBucketWebsite",
+                "s3:GetBucketVersioning",
+                "s3:GetAccelerateConfiguration",
+                "s3:GetBucketRequestPayment",
+                "s3:GetBucketLogging",
+                "s3:GetReplicationConfiguration",
+                "s3:GetEncryptionConfiguration",
+                "s3:GetBucketObjectLockConfiguration",
+                "s3:GetBucketTagging",
+                "s3:GetBucketPublicAccessBlock"
+            ],
+            "Resource": "arn:aws:s3:::hw-fargate-api-dev"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "elasticloadbalancing:DescribeTags",
+                "elasticloadbalancing:DeleteListener"
+            ],
+            "Resource": "arn:aws:elasticloadbalancing:us-west-2:977306314792:listener/app/hw-fargate-api-dev-alb/88334a03689984d4/3df2fc5a392e7b70"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "elasticloadbalancing:DescribeTags",
+                "elasticloadbalancing:DeleteListener"
+            ],
+            "Resource": "arn:aws:elasticloadbalancing:us-west-2:977306314792:listener/app/hw-fargate-api-dev-alb/88334a03689984d4/edcf38848d093c09"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket",
+                "s3:DeleteBucket"
+            ],
+            "Resource": "arn:aws:s3:::hw-fargate-api-dev-postman-files"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:GetPolicy",
+                "iam:GetPolicyVersion"
+            ],
+            "Resource": "arn:aws:iam::977306314792:policy/iamUserPermissionBoundary"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "elasticloadbalancing:DescribeTags",
+                "elasticloadbalancing:DeleteListener"
+            ],
+            "Resource": "arn:aws:elasticloadbalancing:us-west-2:977306314792:listener/app/hw-fargate-api-dev-alb/88334a03689984d4/4f222119bce44a77"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetBucketAcl",
+                "s3:GetBucketCORS",
+                "s3:GetBucketWebsite",
+                "s3:GetBucketVersioning",
+                "s3:GetAccelerateConfiguration",
+                "s3:GetBucketRequestPayment",
+                "s3:GetBucketLogging",
+                "s3:GetReplicationConfiguration",
+                "s3:GetEncryptionConfiguration",
+                "s3:GetBucketObjectLockConfiguration",
+                "s3:GetBucketTagging",
+                "s3:GetBucketPublicAccessBlock"
+            ],
+            "Resource": "arn:aws:s3:::hw-fargate-api-dev-postman-files"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:GetPolicy",
+                "iam:GetPolicyVersion"
+            ],
+            "Resource": "arn:aws:iam::977306314792:policy/iamRolePermissionBoundary"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetLifecycleConfiguration"
+            ],
+            "Resource": "arn:aws:s3:::hw-fargate-api-dev"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:GetRole",
+                "iam:ListRolePolicies",
+                "iam:GetRolePolicy",
+                "iam:DeleteRolePolicy",
+                "iam:DetachRolePolicy",
+                "iam:ListInstanceProfilesForRole",
+                "iam:DeleteRole"
+            ],
+            "Resource": "arn:aws:iam::977306314792:role/hw-fargate-api-dev-postman-tests"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:GetRole",
+                "iam:ListRolePolicies",
+                "iam:DetachRolePolicy",
+                "iam:ListInstanceProfilesForRole",
+                "iam:DeleteRole"
+            ],
+            "Resource": "arn:aws:iam::977306314792:role/hw-fargate-api-dev-taskRole"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:GetRole",
+                "iam:ListRolePolicies",
+                "iam:DetachRolePolicy",
+                "iam:ListInstanceProfilesForRole",
+                "iam:DeleteRole"
+            ],
+            "Resource": "arn:aws:iam::977306314792:role/hw-fargate-api-dev-taskExecutionRole"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:ListAttachedRolePolicies"
+            ],
+            "Resource": "arn:aws:iam::977306314792:role//hw-fargate-api-dev-taskExecutionRole"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:ListAttachedRolePolicies"
+            ],
+            "Resource": "arn:aws:iam::977306314792:role//hw-fargate-api-dev-taskRole"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetLifecycleConfiguration"
+            ],
+            "Resource": "arn:aws:s3:::hw-fargate-api-dev-postman-files"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:ListAttachedRolePolicies"
+            ],
+            "Resource": "arn:aws:iam::977306314792:role//hw-fargate-api-dev-postman-tests"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:GetPolicy",
+                "iam:GetPolicyVersion",
+                "iam:ListPolicyVersions",
+                "iam:DeletePolicy"
+            ],
+            "Resource": "arn:aws:iam::977306314792:policy/hw-fargate-api-s3-dev"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:GetPolicy",
+                "iam:GetPolicyVersion",
+                "iam:ListPolicyVersions",
+                "iam:DeletePolicy"
+            ],
+            "Resource": "arn:aws:iam::977306314792:policy/hw-fargate-api-dev_secrets_access"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ecs:DescribeServices",
+                "ecs:UpdateService"
+            ],
+            "Resource": "arn:aws:ecs:us-west-2:977306314792:service/*/hw-fargate-api-dev"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:GetPolicy",
+                "iam:GetPolicyVersion",
+                "iam:ListPolicyVersions",
+                "iam:DeletePolicy"
+            ],
+            "Resource": "arn:aws:iam::977306314792:policy/hw-fargate-api-dev-postman-files-access"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:GetObjectVersion",
+                "s3:DeleteObject"
+            ],
+            "Resource": "arn:aws:s3:::hw-fargate-api-dev-postman-files/dev-tst.postman_environment.json"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:GetObjectVersion",
+                "s3:DeleteObject"
+            ],
+            "Resource": "arn:aws:s3:::hw-fargate-api-dev-postman-files/hw-fargate-api.postman_collection.json"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "lambda:GetFunction",
+                "lambda:ListVersionsByFunction",
+                "lambda:GetFunctionCodeSigningConfig",
+                "lambda:DeleteFunction"
+            ],
+            "Resource": "arn:aws:lambda:us-west-2:977306314792:function:hw-fargate-api-dev-postman-tests"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "codedeploy:GetDeploymentGroup",
+                "codedeploy:ListTagsForResource",
+                "codedeploy:DeleteDeploymentGroup"
+            ],
+            "Resource": "arn:aws:codedeploy:us-west-2:977306314792:deploymentgroup:hw-fargate-api-dev-codedeploy/hw-fargate-api-dev-deployment-group"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObjectTagging"
+            ],
+            "Resource": "arn:aws:s3:::hw-fargate-api-dev-postman-files/dev-tst.postman_environment.json"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObjectTagging"
+            ],
+            "Resource": "arn:aws:s3:::hw-fargate-api-dev-postman-files/hw-fargate-api.postman_collection.json"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "cloudwatch:DescribeAlarms"
+            ],
+            "Resource": "arn:aws:cloudwatch:us-west-2:977306314792:alarm:*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "cloudwatch:ListTagsForResource",
+                "cloudwatch:DeleteAlarms"
+            ],
+            "Resource": "arn:aws:cloudwatch:us-west-2:977306314792:alarm:hw-fargate-api-dev-alarm-down"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "cloudwatch:ListTagsForResource",
+                "cloudwatch:DeleteAlarms"
+            ],
+            "Resource": "arn:aws:cloudwatch:us-west-2:977306314792:alarm:hw-fargate-api-dev-alarm-up"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutBucketPublicAccessBlock"
+            ],
+            "Resource": "arn:aws:s3:::hw-fargate-api-dev"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutBucketPublicAccessBlock"
+            ],
+            "Resource": "arn:aws:s3:::hw-fargate-api-dev-logs"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutBucketPublicAccessBlock"
+            ],
+            "Resource": "arn:aws:s3:::hw-fargate-api-dev-postman-tests-977306314792-logs"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutBucketPublicAccessBlock"
+            ],
+            "Resource": "arn:aws:s3:::hw-fargate-api-dev-postman-files"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ecs:DeleteService"
+            ],
+            "Resource": "arn:aws:ecs:us-west-2:977306314792:service/*/arn:aws:ecs:us-west-2:977306314792:service/hw-fargate-api-dev/hw-fargate-api-dev"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:GetChange"
+            ],
+            "Resource": "arn:aws:route53:::change/C01550011GYV8EUBBDV8K"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:GetChange"
+            ],
+            "Resource": "arn:aws:route53:::change/C01161671DNGQ0PBHEN5Z"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ecs:DeleteCluster"
+            ],
+            "Resource": "arn:aws:ecs:us-west-2:977306314792:cluster/hw-fargate-api-dev"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:DeleteSecurityGroup"
+            ],
+            "Resource": "arn:aws:ec2:us-west-2:977306314792:security-group/sg-01dbde1f85d16bd45"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:DetachNetworkInterface"
+            ],
+            "Resource": [
+                "arn:aws:ec2:us-west-2:977306314792:instance/*",
+                "arn:aws:ec2:us-west-2:977306314792:network-interface/*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:DeleteSecurityGroup"
+            ],
+            "Resource": "arn:aws:ec2:us-west-2:977306314792:security-group/sg-03a932f8a2796c563"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:PutItem"
+            ],
+            "Resource": "arn:aws:dynamodb:us-west-2:977306314792:table/terraform-state-lock-977306314792"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:DeleteItem"
+            ],
+            "Resource": "arn:aws:dynamodb:us-west-2:977306314792:table/terraform-state-lock-977306314792"
+        }
+    ]
+}
