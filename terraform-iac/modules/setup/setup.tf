@@ -16,8 +16,7 @@ locals {
 }
 
 module "acs" {
-  source = "github.com/byu-oit/terraform-aws-acs-info?ref=gha-oidc"
-  #source = "github.com/byu-oit/terraform-aws-acs-info?ref=v3.5.0"
+  source = "github.com/byu-oit/terraform-aws-acs-info?ref=v3.4.0"
 }
 
 resource "aws_ssm_parameter" "some_secret" {
