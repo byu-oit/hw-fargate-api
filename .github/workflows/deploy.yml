@@ -94,6 +94,9 @@ jobs:
     strategy:
       matrix: ${{ fromJson(needs.env.outputs.matrix) }}
       fail-fast: false
+    permissions:
+      contents: read
+      id-token: write
     environment:
       name: ${{ matrix.env.environment_name }}
       url: https://${{ steps.url.outputs.stdout }}
