@@ -33,30 +33,24 @@ module "my_ecr" {
   tags   = local.tags
 }
 
-resource "aws_iam_role" "gha" {
-  name                 = "${local.name}-${var.env}-gha"
-  permissions_boundary = module.acs.role_permissions_boundary.arn
-  assume_role_policy   = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {"Federated": "${module.acs.github_oidc_arn}"},
-      "Action": "sts:AssumeRoleWithWebIdentity",
-      "Condition": {
-        "StringLike": {
-          "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
-          "token.actions.githubusercontent.com:sub": "repo:byu-oit/${local.name}:*"
-        }
-      }
-    }
-  ]
+module "gha_role" {
+  source                         = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version                        = "4.13.2"
+  create_role                    = true
+  role_name                      = "${local.name}-${var.env}-gha"
+  role_permissions_boundary_arn  = module.acs.role_permissions_boundary.arn
+  tags                           = local.tags
+  provider_url                   = "token.actions.githubusercontent.com"
+  oidc_fully_qualified_audiences = ["sts.amazonaws.com"]
+  oidc_subjects_with_wildcards   = ["repo:byu-oit/${local.name}:*"]
+  number_of_role_policy_arns     = 1
+  role_policy_arns               = [aws_iam_policy.gha.arn]
 }
-EOF
-  inline_policy {
-    name   = "deploy-permissions"
-    policy = <<EOF
+
+resource "aws_iam_policy" "gha" {
+  name   = "${local.name}-${var.env}-gha"
+  tags   = local.tags
+  policy = <<EOF
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -182,9 +176,8 @@ EOF
     ]
 }
 EOF
-  }
 }
 
 output "gha_role_arn" {
-  value = aws_iam_role.gha.arn
+  value = module.gha_role.iam_role_arn
 }
