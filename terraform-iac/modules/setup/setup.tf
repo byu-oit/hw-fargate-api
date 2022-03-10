@@ -42,8 +42,14 @@ module "gha_role" {
   provider_url                   = "token.actions.githubusercontent.com"
   oidc_fully_qualified_audiences = ["sts.amazonaws.com"]
   oidc_subjects_with_wildcards   = ["repo:byu-oit/${local.name}:*"]
-  number_of_role_policy_arns     = 1
-  role_policy_arns               = [aws_iam_policy.gha.arn]
+  number_of_role_policy_arns     = 2
+  role_policy_arns               = [module.backend_s3_cicd.cicd_policy.arn, aws_iam_policy.gha.arn]
+}
+
+module "backend_s3_cicd" {
+  source = "github.com/byu-oit/terraform-aws-backend-s3-cicd?ref=main"
+  name   = "${local.name}-${var.env}"
+  tags   = local.tags
 }
 
 resource "aws_iam_policy" "gha" {
@@ -68,29 +74,6 @@ resource "aws_iam_policy" "gha" {
                 "acm:ListCertificates"
             ],
             "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "s3:ListBucket"
-            ],
-            "Resource": "arn:aws:s3:::terraform-state-storage-977306314792"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "dynamodb:PutItem",
-                "dynamodb:GetItem",
-                "dynamodb:DeleteItem"
-            ],
-            "Resource": "arn:aws:dynamodb:us-west-2:977306314792:table/terraform-state-lock-977306314792"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "s3:GetObject"
-            ],
-            "Resource": "arn:aws:s3:::terraform-state-storage-977306314792/hw-fargate-api/dev/app.tfstate"
         },
         {
             "Effect": "Allow",
