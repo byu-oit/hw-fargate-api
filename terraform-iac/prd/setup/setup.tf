@@ -13,8 +13,20 @@ terraform {
   }
 }
 
+locals {
+  env = "prd"
+}
+
 provider "aws" {
   region = "us-west-2"
+
+  default_tags {
+    tags = {
+      repo             = "https://github.com/byu-oit/hw-fargate-api"
+      data-sensitivity = "public"
+      env              = local.env
+    }
+  }
 }
 
 variable "some_secret" {
@@ -24,6 +36,6 @@ variable "some_secret" {
 
 module "setup" {
   source      = "../../modules/setup/"
-  env         = "prd"
+  env         = local.env
   some_secret = var.some_secret
 }
