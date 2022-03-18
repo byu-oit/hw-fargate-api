@@ -24,11 +24,7 @@ variable "log_retention_days" {
 
 locals {
   name = "hw-fargate-api"
-  tags = {
-    env              = var.env
-    data-sensitivity = "public"
-    repo             = "https://github.com/byu-oit/${local.name}"
-  }
+  env  = var.env
 }
 
 data "aws_ecr_repository" "my_ecr_repo" {
@@ -36,7 +32,7 @@ data "aws_ecr_repository" "my_ecr_repo" {
 }
 
 module "acs" {
-  source = "github.com/byu-oit/terraform-aws-acs-info?ref=v3.4.0"
+  source = "github.com/byu-oit/terraform-aws-acs-info?ref=v3.4.1"
 }
 
 module "my_fargate_api" {
@@ -58,7 +54,6 @@ module "my_fargate_api" {
   codedeploy_termination_wait_time = var.codedeploy_termination_wait_time
   role_permissions_boundary_arn    = module.acs.role_permissions_boundary.arn
   log_retention_in_days            = var.log_retention_days
-  tags                             = local.tags
 
   primary_container_definition = {
     name  = "${local.name}-${var.env}"
@@ -92,7 +87,6 @@ resource "aws_dynamodb_table" "my_dynamo_table" {
   name         = "${local.name}-${var.env}"
   hash_key     = "my_key_field"
   billing_mode = "PAY_PER_REQUEST"
-  tags         = local.tags
   attribute {
     name = "my_key_field"
     type = "S"
@@ -136,7 +130,6 @@ EOF
 resource "aws_s3_bucket" "my_s3_bucket_logs" {
   bucket = "${local.name}-${var.env}-logs"
   acl    = "log-delivery-write"
-  tags   = local.tags
   lifecycle_rule {
     id                                     = "AutoAbortFailedMultipartUpload"
     enabled                                = true
@@ -168,7 +161,6 @@ resource "aws_s3_bucket_public_access_block" "default_logs" {
 
 resource "aws_s3_bucket" "my_s3_bucket" {
   bucket = "${local.name}-${var.env}"
-  tags   = local.tags
   logging {
     target_bucket = aws_s3_bucket.my_s3_bucket_logs.id
     target_prefix = "log/"
@@ -252,7 +244,6 @@ module "postman_test_lambda" {
   ]
   role_permissions_boundary_arn = module.acs.role_permissions_boundary.arn
   log_retention_in_days         = var.log_retention_days
-  tags                          = local.tags
 }
 
 output "url" {

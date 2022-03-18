@@ -8,22 +8,15 @@ variable "some_secret" {
 
 locals {
   name = "hw-fargate-api"
-  tags = {
-    env              = var.env
-    data-sensitivity = "public"
-    repo             = "https://github.com/byu-oit/${local.name}"
-  }
 }
 
 resource "aws_ssm_parameter" "some_secret" {
   name  = "/${local.name}/${var.env}/some-secret"
   type  = "SecureString"
   value = var.some_secret
-  tags  = local.tags
 }
 
 module "my_ecr" {
   source = "github.com/byu-oit/terraform-aws-ecr?ref=v2.0.1"
   name   = "${local.name}-${var.env}"
-  tags   = local.tags
 }

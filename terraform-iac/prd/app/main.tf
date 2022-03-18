@@ -18,8 +18,20 @@ terraform {
   }
 }
 
+locals {
+  env = "prd"
+}
+
 provider "aws" {
   region = "us-west-2"
+
+  default_tags {
+    tags = {
+      repo             = "https://github.com/byu-oit/hw-fargate-api"
+      data-sensitivity = "public"
+      env              = local.env
+    }
+  }
 }
 
 variable "image_tag" {
@@ -28,7 +40,7 @@ variable "image_tag" {
 
 module "app" {
   source                           = "../../modules/app/"
-  env                              = "prd"
+  env                              = local.env
   image_tag                        = var.image_tag
   codedeploy_termination_wait_time = 15
   deploy_test_postman_collection   = "../../../.postman/hw-fargate-api.postman_collection.json"
