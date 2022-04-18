@@ -166,7 +166,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Terraform Setup
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: ${{ env.tf_version }}
 
