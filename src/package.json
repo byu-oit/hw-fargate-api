@@ -18,7 +18,7 @@
     "jest": "^27.5.1",
     "snazzy": "^9.0.0",
     "standard": "^16.0.4",
-    "supertest": "^6.2.2"
+    "supertest": "^6.2.3"
   },
   "jest": {
     "collectCoverage": true,
