@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "main": "server.js",
   "scripts": {
-    "lint": "standard | snazzy",
+    "lint": "standard --verbose | snazzy",
     "test": "jest"
   },
   "dependencies": {
@@ -17,7 +17,7 @@
   "devDependencies": {
     "jest": "^28.1.0",
     "snazzy": "^9.0.0",
-    "standard": "^17.0.0",
+    "standard": "^16.0.4",
     "supertest": "^6.2.3"
   },
   "jest": {
