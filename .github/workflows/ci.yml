@@ -225,7 +225,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Auto-merge Dependabot Pull Request
-        uses: fastify/github-action-merge-dependabot@v3.1.6
+        uses: fastify/github-action-merge-dependabot@v3.1.7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           target: minor
