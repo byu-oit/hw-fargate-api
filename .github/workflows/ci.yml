@@ -5,7 +5,7 @@ on:
     branches: [dev, stg, prd]
     types: [opened, reopened, synchronize, edited]
 env:
-  node_version: "14.x"
+  node_version: "16.x"
   tf_version: "1.0.10" # must match value in terraform-iac/*/app/main.tf
   FORCE_COLOR: 3
 
