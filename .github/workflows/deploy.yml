@@ -4,7 +4,7 @@ on:
   push:
     branches: [dev, stg, prd]
 env:
-  node_version: "14.x"
+  node_version: "16.x"
   tf_version: "1.0.10" # must match value in terraform-iac/*/app/main.tf
   FORCE_COLOR: 3
 concurrency: ${{ github.ref }}
@@ -103,10 +103,10 @@ jobs:
       url: https://${{ steps.url.outputs.stdout }}
     steps:
       - name: Check out
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.node_version }}
           cache: npm
@@ -129,7 +129,7 @@ jobs:
         run: npm test
 
       - name: Report test coverage to Codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         if: env.CODECOV_TOKEN
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
@@ -150,14 +150,14 @@ jobs:
         run: echo "::set-output name=timestamp::$(date +'%Y-%m-%d_%H-%M-%S')"
 
       - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
 
       - name: Build and push the Docker image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPO: ${{ matrix.env.ecr_repo_name }}
           IMAGE_TAG: ${{ steps.date.outputs.timestamp }}
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: src
           push: true
@@ -166,7 +166,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Terraform Setup
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: ${{ env.tf_version }}
 
