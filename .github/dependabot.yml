@@ -46,7 +46,7 @@ updates:
       interval: daily
     target-branch: dev
 
-# For each of these, requesting reviews from yourself makes Dependabot PRs easier to find (https://github.com/pulls/review-requested)
-    reviewers:
-      - byu-oit/devops-tooling
-      - byu-oit/devx
+# For each of these, requesting reviews from your team makes Dependabot PRs easier to find (https://github.com/pulls/review-requested)
+#     reviewers:
+#       - byu-oit/devops-tooling
+#       - byu-oit/devx
