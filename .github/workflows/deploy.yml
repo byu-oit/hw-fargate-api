@@ -26,8 +26,7 @@ jobs:
                 "aws_secret_name":"byu_oit_terraform_dev_secret",
                 "rfc_key_name":"standard_change_sandbox_client_key",
                 "rfc_secret_name":"standard_change_sandbox_client_secret",
-                "rfc_template_id":"Codepipeline-Standard-Change",
-                "slack_channel":"#slack-bot-testing"
+                "rfc_template_id":"Codepipeline-Standard-Change"
               }
             ]
           }'
@@ -46,8 +45,7 @@ jobs:
                 "aws_secret_name":"byu_oit_terraform_dev_secret",
                 "rfc_key_name":"standard_change_sandbox_client_key",
                 "rfc_secret_name":"standard_change_sandbox_client_secret",
-                "rfc_template_id":"Codepipeline-Standard-Change",
-                "slack_channel":"#slack-bot-testing"
+                "rfc_template_id":"Codepipeline-Standard-Change"
               }
             ]
           }'
@@ -70,8 +68,7 @@ jobs:
                 "aws_secret_name":"byu_oit_terraform_prd_secret",
                 "rfc_key_name":"standard_change_sandbox_client_key",
                 "rfc_secret_name":"standard_change_sandbox_client_secret",
-                "rfc_template_id":"Codepipeline-Standard-Change",
-                "slack_channel":"#slack-bot-testing"
+                "rfc_template_id":"Codepipeline-Standard-Change"
               },
               {
                 "environment_name":"cpy",
@@ -81,8 +78,7 @@ jobs:
                 "aws_secret_name":"byu_oit_terraform_prd_secret",
                 "rfc_key_name":"standard_change_sandbox_client_key",
                 "rfc_secret_name":"standard_change_sandbox_client_secret",
-                "rfc_template_id":"Codepipeline-Standard-Change",
-                "slack_channel":"#slack-bot-testing"
+                "rfc_template_id":"Codepipeline-Standard-Change"
               }
             ]
           }'
@@ -239,11 +235,3 @@ jobs:
           change-sys-id: ${{ steps.start-standard-change.outputs.change-sys-id }}
           work-start: ${{ steps.start-standard-change.outputs.work-start }}
           success: ${{ job.status == 'success' }}
-
-      - name: Send Slack Notification
-        uses: byu-oit/github-action-slack@v1
-        if: always()
-        with:
-          status: ${{ job.status }}
-          channel: ${{ matrix.env.slack_channel }}
-          webhook-url: ${{ secrets.slack_webhook_url }}
