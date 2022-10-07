@@ -17,7 +17,7 @@
   "devDependencies": {
     "jest": "^29.1.2",
     "snazzy": "^9.0.0",
-    "standard": "^16.0.4",
+    "standard": "^17.0.0",
     "supertest": "^6.3.0"
   },
   "jest": {
@@ -32,10 +32,7 @@
     "verbose": true
   },
   "standard": {
-    "env": {
-      "jest": true,
-      "node": true
-    }
+    "env": ["jest", "node"]
   },
   "repository": {
     "type": "git",
