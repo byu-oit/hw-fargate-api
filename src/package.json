@@ -32,10 +32,7 @@
     "verbose": true
   },
   "standard": {
-    "env": {
-      "jest": true,
-      "node": true
-    }
+    "env": ["jest", "node"]
   },
   "repository": {
     "type": "git",
