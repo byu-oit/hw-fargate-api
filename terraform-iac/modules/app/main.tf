@@ -36,7 +36,7 @@ module "acs" {
 }
 
 module "my_fargate_api" {
-  source                        = "github.com/byu-oit/terraform-aws-fargate-api?ref=v3.4.0"
+  source                        = "github.com/byu-oit/terraform-aws-fargate-api?ref=v4.0.0"
   app_name                      = "${local.name}-${var.env}"
   container_port                = 8080
   health_check_path             = "/health"
@@ -67,6 +67,7 @@ module "my_fargate_api" {
       "SOME_SECRET" = "/${local.name}/${var.env}/some-secret"
     }
     efs_volume_mounts = null
+    ulimits           = null
   }
 
   autoscaling_config = {
