@@ -1,5 +1,5 @@
 terraform {
-  required_version = "1.2.0"
+  required_version = "1.3.2"
   backend "s3" {
     bucket         = "terraform-state-storage-977306314792"
     dynamodb_table = "terraform-state-lock-977306314792"
@@ -9,7 +9,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 3.0"
+      version = "~> 4.0"
     }
     local = {
       source  = "hashicorp/local"
@@ -26,9 +26,10 @@ provider "aws" {
   region = "us-west-2"
   default_tags {
     tags = {
-      repo             = "https://github.com/byu-oit/hw-fargate-api"
-      data-sensitivity = "public"
-      env              = local.env
+      repo                   = "https://github.com/byu-oit/hw-fargate-api"
+      data-sensitivity       = "public"
+      env                    = local.env
+      resource-creator-email = "GitHub-Actions"
     }
   }
 }
