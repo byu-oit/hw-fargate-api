@@ -36,7 +36,7 @@ module "acs" {
 }
 
 module "my_fargate_api" {
-  source                        = "github.com/byu-oit/terraform-aws-fargate-api?ref=v4.0.1"
+  source                        = "github.com/byu-oit/terraform-aws-fargate-api?ref=v5.0.0"
   app_name                      = "${local.name}-${var.env}"
   container_port                = 8080
   health_check_path             = "/health"
@@ -54,6 +54,8 @@ module "my_fargate_api" {
   codedeploy_termination_wait_time = var.codedeploy_termination_wait_time
   role_permissions_boundary_arn    = module.acs.role_permissions_boundary.arn
   log_retention_in_days            = var.log_retention_days
+
+  cpu_architecture = "ARM64"
 
   primary_container_definition = {
     name  = "${local.name}-${var.env}"

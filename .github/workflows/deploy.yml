@@ -145,6 +145,11 @@ jobs:
         id: date
         run: echo "timestamp=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_OUTPUT
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: arm64
+
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -156,6 +161,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: src
+          platforms: linux/arm64
           push: true
           tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPO}}:${{ env.IMAGE_TAG }}
           cache-from: type=gha
