@@ -132,24 +132,48 @@ EOF
 
 resource "aws_s3_bucket" "my_s3_bucket_logs" {
   bucket = "${local.name}-${var.env}-logs"
+}
+
+resource "aws_s3_bucket_acl" "my_s3_bucket_logs" {
+  bucket = aws_s3_bucket.my_s3_bucket_logs.id
   acl    = "log-delivery-write"
-  lifecycle_rule {
-    id                                     = "AutoAbortFailedMultipartUpload"
-    enabled                                = true
-    abort_incomplete_multipart_upload_days = 10
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "my_s3_bucket_logs" {
+  bucket = aws_s3_bucket.my_s3_bucket_logs.id
+
+  rule {
+    id     = "AutoAbortFailedMultipartUpload"
+    status = "Enabled"
+
+    filter {
+      prefix = ""
+    }
+
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 10
+    }
   }
-  lifecycle_rule {
-    id      = "ExpireOldLogs"
-    enabled = true
+
+  rule {
+    id = "ExpireOldLogs"
     expiration {
       days = var.log_retention_days
     }
+    status = "Enabled"
+
+    filter {
+      prefix = ""
+    }
   }
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "my_s3_bucket_logs" {
+  bucket = aws_s3_bucket.my_s3_bucket_logs.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
     }
   }
 }
@@ -164,29 +188,50 @@ resource "aws_s3_bucket_public_access_block" "default_logs" {
 
 resource "aws_s3_bucket" "my_s3_bucket" {
   bucket = "${local.name}-${var.env}"
-  logging {
-    target_bucket = aws_s3_bucket.my_s3_bucket_logs.id
-    target_prefix = "log/"
-  }
-  versioning {
-    enabled = true
-  }
-  //  lifecycle {
-  //    prevent_destroy = true
-  //  }
-  lifecycle_rule {
-    id                                     = "AutoAbortFailedMultipartUpload"
-    enabled                                = true
-    abort_incomplete_multipart_upload_days = 10
-  }
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "my_s3_bucket" {
+  bucket = aws_s3_bucket.my_s3_bucket.id
+
+  rule {
+    id     = "AutoAbortFailedMultipartUpload"
+    status = "Enabled"
+
+    filter {
+      prefix = ""
+    }
+
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 10
     }
   }
 }
+
+resource "aws_s3_bucket_logging" "my_s3_bucket" {
+  bucket = aws_s3_bucket.my_s3_bucket.id
+
+  target_bucket = aws_s3_bucket.my_s3_bucket_logs.id
+  target_prefix = "log/"
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "my_s3_bucket" {
+  bucket = aws_s3_bucket.my_s3_bucket.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+resource "aws_s3_bucket_versioning" "my_s3_bucket" {
+  bucket = aws_s3_bucket.my_s3_bucket.id
+
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
 
 resource "aws_s3_bucket_public_access_block" "default" {
   bucket                  = aws_s3_bucket.my_s3_bucket.id
