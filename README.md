@@ -91,7 +91,7 @@ This will output a DNS Name. Enter this in a browser. It will probably return `5
 
 In the AWS Console, see if you can find the ECS Service and see the state of its ECS Tasks. Also see if you can find the ALB Target Group, and notice when Tasks are added to it.
 
-> Note:
+> **Note**
 > 
 > While Terraform creates the ECS Service, it doesn't actually spin up any ECS Tasks. This isn't Terraform's job. The ECS Service is responsible for ensuring that ECS Tasks are running.
 > 
@@ -114,7 +114,7 @@ git push
 
 In GitHub Actions, watch the deploy steps run (you have a new push, so you'll have to go back and select the new workflow run instance and the job again). Once it gets to the CodeDeploy step, you can watch the deploy happen in the CodeDeploy console in AWS. Once CodeDeploy says that production traffic has been switched over, hit your application in the browser and see if your change worked. If the service is broken, look at the stopped ECS Tasks in the ECS Console to see if you can figure out why.
 
-> Note: 
+> **Note**
 >
 > It's always best to test your changes locally before pushing to GitHub and AWS. Testing locally will significantly increase your productivity as you won't be constantly waiting for GitHub Actions and CodeDeploy to deploy, just to discover bugs.
 >
