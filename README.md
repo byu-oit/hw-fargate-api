@@ -7,9 +7,6 @@ Example of creating and deploying an API with Docker and Terraform on AWS
 * Install the [AWS CLI](https://aws.amazon.com/cli/)
 * Log into your `dev` account (with [`aws sso login`](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/sso/login.html))
 * Ensure your account has a [Terraform State S3 Backend](https://github.com/byu-oit/terraform-aws-backend-s3) deployed
-* If you're outside the [`byu-oit` GitHub organization](https://github.com/byu-oit):
-  * Obtain a DivvyCloud username and password from the Cloud Office at cloudoffice@byu.edu
-  * Install [the GitHub App used for auto-merging Dependabot pull requests](https://github.com/apps/dependabot-merge-action) to your organization
 
 ## Setup
 * Create a new repo [using this template](https://github.com/byu-oit/hw-fargate-api/generate).
@@ -91,7 +88,7 @@ This will output a DNS Name. Enter this in a browser. It will probably return `5
 
 In the AWS Console, see if you can find the ECS Service and see the state of its ECS Tasks. Also see if you can find the ALB Target Group, and notice when Tasks are added to it.
 
-> Note:
+> **Note**
 > 
 > While Terraform creates the ECS Service, it doesn't actually spin up any ECS Tasks. This isn't Terraform's job. The ECS Service is responsible for ensuring that ECS Tasks are running.
 > 
@@ -114,7 +111,7 @@ git push
 
 In GitHub Actions, watch the deploy steps run (you have a new push, so you'll have to go back and select the new workflow run instance and the job again). Once it gets to the CodeDeploy step, you can watch the deploy happen in the CodeDeploy console in AWS. Once CodeDeploy says that production traffic has been switched over, hit your application in the browser and see if your change worked. If the service is broken, look at the stopped ECS Tasks in the ECS Console to see if you can figure out why.
 
-> Note: 
+> **Note**
 >
 > It's always best to test your changes locally before pushing to GitHub and AWS. Testing locally will significantly increase your productivity as you won't be constantly waiting for GitHub Actions and CodeDeploy to deploy, just to discover bugs.
 >
@@ -125,6 +122,8 @@ In GitHub Actions, watch the deploy steps run (you have a new push, so you'll ha
 By digging through the `.tf` files, you'll see what resources are being created. You should spend some time searching through the AWS Console for each of these resources. The goal is to start making connections between the Terraform syntax and the actual AWS resources that are created.
 
 Several OIT created Terraform modules are used. You can look these modules up in our GitHub Organization. There you can see what resources each of these modules creates. You can look those up in the AWS Console too.
+
+By default, [we build and deploy on ARM-based processors](https://github.com/byu-oit/hw-fargate-api/issues/389) to [save ~20% on our compute costs](https://aws.amazon.com/fargate/pricing/).
 
 ## Deployment details
 
