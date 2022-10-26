@@ -123,6 +123,8 @@ By digging through the `.tf` files, you'll see what resources are being created.
 
 Several OIT created Terraform modules are used. You can look these modules up in our GitHub Organization. There you can see what resources each of these modules creates. You can look those up in the AWS Console too.
 
+By default, [we build and deploy on ARM-based processors](https://github.com/byu-oit/hw-fargate-api/issues/389) to [save ~20% on our compute costs](https://aws.amazon.com/fargate/pricing/).
+
 ## Deployment details
 
 There are a lot of moving parts in the CI/CD pipeline for this project. This diagram shows the interaction between various services during a deployment.
