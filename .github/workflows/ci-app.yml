@@ -110,7 +110,7 @@ jobs:
       # Hadolint follows semantic versioning, but doesn't have a @v2 release
       - uses: hadolint/hadolint-action@v2.1.0
         with:
-          dockerfile: src
+          dockerfile: src/Dockerfile
 
   automerge:
     if: github.base_ref == 'dev' # Only automerge into dev branch
