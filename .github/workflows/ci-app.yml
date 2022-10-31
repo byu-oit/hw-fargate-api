@@ -101,6 +101,17 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+  hadolint:
+    name: Lint Docker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      # Hadolint follows semantic versioning, but doesn't have a @v2 release
+      - uses: hadolint/hadolint-action@v2.1.0
+        with:
+          dockerfile: src
+
   automerge:
     if: github.base_ref == 'dev' # Only automerge into dev branch
     name: Automerge
