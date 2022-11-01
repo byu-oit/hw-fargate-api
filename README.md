@@ -32,8 +32,7 @@ git checkout -b dev
   * replace `byu_oit_terraform_dev` with the name of your `dev` AWS account (with underscores)
   * replace `byu-oit-terraform-prd` with the name of your `prd` AWS account
   * replace `byu_oit_terraform_prd` with the name of your `prd` AWS account (with underscores)
-  * replace `#slack-bot-testing` with the name the Slack channel where you want to send deployment notifications
-  * replace `Codepipeline-Standard-Change` with your [Standard Change Template ID](https://it.byu.edu/nav_to.do?uri=%2Fu_standard_change_template_list.do) - If you need to create a new template, ask in [#servicenow](https://byu-oit.slack.com/archives/C18T2SYTT) for help getting it into the [sandbox ServiceNow environment](https://support-test.byu.edu/)
+  * replace `Codepipeline-Standard-Change` with your [Standard Change Template ID](https://it.byu.edu/nav_to.do?uri=%2Fu_standard_change_template_list.do) - If you need to create a new template, ask in [the ServiceNow channel](https://teams.microsoft.com/l/channel/19%3a75c66bbd4d2646fea0df336abb5723ca%40thread.tacv2/OIT%2520ENG%2520AppEng%2520-%2520ServiceNow?groupId=54688770-069e-42a2-9f77-07cbb0306d01&tenantId=c6fc6e9b-51fb-48a8-b779-9ee564b40413) for help getting it into the [sandbox ServiceNow environment](https://support-test.byu.edu/)
 * _Rename_ [`.postman/hw-fargate-api.postman_collection.json`](.postman/hw-fargate-api.postman_collection.json) with the name of your repo replacing `hw-fargate-api` in the filename
 * Add yourself (or your team) as a [Dependabot reviewer](https://docs.github.com/en/code-security/supply-chain-security/keeping-your-dependencies-updated-automatically/configuration-options-for-dependency-updates#reviewers) in [`dependabot.yml`](.github/dependabot.yml)
 * Enable [Dependabot Security updates](https://github.com/byu-oit/hw-fargate-api/settings/security_analysis) if you're outside the [`byu-oit` GitHub organization](https://github.com/byu-oit)
@@ -62,6 +61,10 @@ In the AWS Console, see if you can find the resources from `setup.tf` (ECR, SSM 
 
 * In GitHub, go to the [`Actions` tab](https://github.com/byu-oit/hw-fargate-api/actions) for your repo (e.g. https://github.com/byu-oit/my-repo/actions)
 * Click the `Enable Actions on this repo` button
+
+### Set up Teams notifications
+* Create an Incoming Webhook in Teams, following [these instructions](https://learn.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook#create-an-incoming-webhook), and copy the URL
+* Create a GitHub secret `MS_TEAMS_WEBHOOK_URL` using the copied URL (e.g. at https://github.com/byu-oit/hw-fargate-api/settings/secrets/actions/new)
 
 ### Push your changes
 
