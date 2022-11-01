@@ -303,3 +303,10 @@ jobs:
           change-sys-id: ${{ steps.start-standard-change.outputs.change-sys-id }}
           work-start: ${{ steps.start-standard-change.outputs.work-start }}
           success: ${{ job.status == 'success' }}
+
+      - name: Teams Notification
+        uses: byu-oit/github-action-teams@v3
+        if: always()
+        with:
+          status: ${{ job.status }}
+          webhook-url: ${{ secrets.MS_TEAMS_WEBHOOK_URL }}
