@@ -235,6 +235,7 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: ${{ env.tf_version }}
+          terraform_wrapper: false
 
       - name: Terraform Init
         working-directory: ${{ matrix.env.tf_working_dir }}
