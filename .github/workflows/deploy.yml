@@ -189,7 +189,7 @@ jobs:
       fail-fast: false
     environment:
       name: ${{ matrix.env.environment_name }}
-      url: https://${{ steps.url.outputs.stdout }}
+      url: https://${{ steps.terraform-outputs.outputs.url }}
     steps:
       - name: Check out
         uses: actions/checkout@v3
@@ -266,33 +266,22 @@ jobs:
         working-directory: ${{ matrix.env.tf_working_dir }}
         run: terraform apply plan
 
-      - name: Get CD App Name
-        id: cd-app-name
+      - name: Get Terraform Outputs
+        id: terraform-outputs
         working-directory: ${{ matrix.env.tf_working_dir }}
-        run: terraform output -json codedeploy_app_name | tr -d '"'
-
-      - name: Get CD Deployment Group Name
-        id: cd-group-name
-        working-directory: ${{ matrix.env.tf_working_dir }}
-        run: terraform output -json codedeploy_deployment_group_name | tr -d '"'
-
-      - name: Get CD Appspec File
-        id: cd-appspec-file
-        working-directory: ${{ matrix.env.tf_working_dir }}
-        run: terraform output -json codedeploy_appspec_json_file | tr -d '"'
-
-      - name: Get URL
-        id: url
-        working-directory: ${{ matrix.env.tf_working_dir }}
-        run: terraform output -json url | tr -d '"'
+        run: |
+          echo "codedeploy_app_name=$(terraform output -raw codedeploy_app_name)" >> $GITHUB_OUTPUT
+          echo "codedeploy_deployment_group_name=$(terraform output -raw codedeploy_deployment_group_name)" >> $GITHUB_OUTPUT
+          echo "codedeploy_appspec_json_file=$(terraform output -raw codedeploy_appspec_json_file)" >> $GITHUB_OUTPUT
+          echo "url=$(terraform output -raw url)" >> $GITHUB_OUTPUT
 
       - name: CodeDeploy
         id: deploy
         uses: byu-oit/github-action-codedeploy@v1
         with:
-          application-name: ${{ steps.cd-app-name.outputs.stdout }}
-          deployment-group-name: ${{ steps.cd-group-name.outputs.stdout }}
-          appspec-file: ${{ steps.cd-appspec-file.outputs.stdout }}
+          application-name: ${{ steps.terraform-outputs.outputs.codedeploy_app_name }}
+          deployment-group-name: ${{ steps.terraform-outputs.outputs.codedeploy_deployment_group_name }}
+          appspec-file: ${{ steps.terraform-outputs.outputs.codedeploy_appspec_json_file }}
 
       - name: End Standard Change
         uses: byu-oit/github-action-end-standard-change@v1
