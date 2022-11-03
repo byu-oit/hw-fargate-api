@@ -87,16 +87,9 @@ jobs:
     outputs:
       matrix: ${{ env.matrix }}
 
-  build_and_deploy:
-    name: Build and Deploy
+  test:
+    name: Test
     runs-on: ubuntu-latest
-    needs: env
-    strategy:
-      matrix: ${{ fromJson(needs.env.outputs.matrix) }}
-      fail-fast: false
-    environment:
-      name: ${{ matrix.env.environment_name }}
-      url: https://${{ steps.url.outputs.stdout }}
     steps:
       - name: Check out
         uses: actions/checkout@v3
@@ -108,19 +101,11 @@ jobs:
           cache: npm
           cache-dependency-path: '**/package-lock.json'
 
-      - name: Audit
-        working-directory: src
-        run: npm audit --audit-level=critical
-
-      - name: Build
+      - name: npm ci
         working-directory: src
         run: npm ci --prefer-offline
 
-      - name: Lint
-        working-directory: src
-        run: npm run lint
-
-      - name: Test
+      - name: npm test
         working-directory: src
         run: npm test
 
@@ -129,6 +114,85 @@ jobs:
         if: env.CODECOV_TOKEN
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  audit:
+    name: Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.node_version }}
+
+      # We don't need to install deps to audit them
+
+      - name: npm audit
+        working-directory: src
+        run: npm audit --audit-level=critical
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.node_version }}
+          cache: npm
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: npm ci
+        working-directory: src
+        run: npm ci --prefer-offline
+
+      - name: npm lint
+        working-directory: src
+        run: npm run lint
+
+  hadolint:
+    name: Lint Docker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      # Hadolint follows semantic versioning, but doesn't have a @v2 release
+      - name: Lint Dockerfile
+        uses: hadolint/hadolint-action@v2.1.0
+        with:
+          dockerfile: src/Dockerfile
+
+  format:
+    name: Terraform Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Terraform Setup
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.tf_version }}
+
+      - name: Terraform Format
+        working-directory: terraform-iac
+        run: terraform fmt -check -recursive
+
+  build_and_deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    needs: [env, test, audit, lint, hadolint, format]
+    strategy:
+      matrix: ${{ fromJson(needs.env.outputs.matrix) }}
+      fail-fast: false
+    environment:
+      name: ${{ matrix.env.environment_name }}
+      url: https://${{ steps.terraform-outputs.outputs.url }}
+    steps:
+      - name: Check out
+        uses: actions/checkout@v3
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -143,7 +207,12 @@ jobs:
 
       - name: Get Current Timestamp
         id: date
-        run: echo "::set-output name=timestamp::$(date +'%Y-%m-%d_%H-%M-%S')"
+        run: echo "timestamp=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_OUTPUT
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: arm64
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -156,6 +225,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: src
+          platforms: linux/arm64
           push: true
           tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPO}}:${{ env.IMAGE_TAG }}
           cache-from: type=gha
@@ -165,14 +235,11 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: ${{ env.tf_version }}
+          terraform_wrapper: false
 
       - name: Terraform Init
         working-directory: ${{ matrix.env.tf_working_dir }}
         run: terraform init
-
-      - name: Terraform Format
-        working-directory: "./"
-        run: terraform fmt -check -recursive
 
       - name: Terraform Plan
         working-directory: ${{ matrix.env.tf_working_dir }}
@@ -180,6 +247,8 @@ jobs:
 
       - name: Analyze Terraform Plan
         uses: byu-oit/github-action-tf-plan-analyzer@v2
+        if: github.repository_owner == 'byu-oit'
+        # If you're at BYU, but outside the byu-oit GitHub org, you may be able to obtain credentials by contacting cloudoffice@byu.edu
         with:
           working-directory: ${{ matrix.env.tf_working_dir }}
           terraform-plan-file: plan
@@ -198,33 +267,22 @@ jobs:
         working-directory: ${{ matrix.env.tf_working_dir }}
         run: terraform apply plan
 
-      - name: Get CD App Name
-        id: cd-app-name
+      - name: Get Terraform Outputs
+        id: terraform-outputs
         working-directory: ${{ matrix.env.tf_working_dir }}
-        run: terraform output -json codedeploy_app_name | tr -d '"'
-
-      - name: Get CD Deployment Group Name
-        id: cd-group-name
-        working-directory: ${{ matrix.env.tf_working_dir }}
-        run: terraform output -json codedeploy_deployment_group_name | tr -d '"'
-
-      - name: Get CD Appspec File
-        id: cd-appspec-file
-        working-directory: ${{ matrix.env.tf_working_dir }}
-        run: terraform output -json codedeploy_appspec_json_file | tr -d '"'
-
-      - name: Get URL
-        id: url
-        working-directory: ${{ matrix.env.tf_working_dir }}
-        run: terraform output -json url | tr -d '"'
+        run: |
+          echo "codedeploy_app_name=$(terraform output -raw codedeploy_app_name)" >> $GITHUB_OUTPUT
+          echo "codedeploy_deployment_group_name=$(terraform output -raw codedeploy_deployment_group_name)" >> $GITHUB_OUTPUT
+          echo "codedeploy_appspec_json_file=$(terraform output -raw codedeploy_appspec_json_file)" >> $GITHUB_OUTPUT
+          echo "url=$(terraform output -raw url)" >> $GITHUB_OUTPUT
 
       - name: CodeDeploy
         id: deploy
-        uses: byu-oit/github-action-codedeploy@v1
+        uses: byu-oit/github-action-codedeploy@v2
         with:
-          application-name: ${{ steps.cd-app-name.outputs.stdout }}
-          deployment-group-name: ${{ steps.cd-group-name.outputs.stdout }}
-          appspec-file: ${{ steps.cd-appspec-file.outputs.stdout }}
+          application-name: ${{ steps.terraform-outputs.outputs.codedeploy_app_name }}
+          deployment-group-name: ${{ steps.terraform-outputs.outputs.codedeploy_deployment_group_name }}
+          appspec-file: ${{ steps.terraform-outputs.outputs.codedeploy_appspec_json_file }}
 
       - name: End Standard Change
         uses: byu-oit/github-action-end-standard-change@v1
@@ -235,3 +293,10 @@ jobs:
           change-sys-id: ${{ steps.start-standard-change.outputs.change-sys-id }}
           work-start: ${{ steps.start-standard-change.outputs.work-start }}
           success: ${{ job.status == 'success' }}
+
+      - name: Teams Notification
+        uses: byu-oit/github-action-teams@v3
+        if: always()
+        with:
+          status: ${{ job.status }}
+          webhook-url: ${{ secrets.MS_TEAMS_WEBHOOK_URL }}

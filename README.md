@@ -7,9 +7,6 @@ Example of creating and deploying an API with Docker and Terraform on AWS
 * Install the [AWS CLI](https://aws.amazon.com/cli/)
 * Log into your `dev` account (with [`aws sso login`](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/sso/login.html))
 * Ensure your account has a [Terraform State S3 Backend](https://github.com/byu-oit/terraform-aws-backend-s3) deployed
-* If you're outside the [`byu-oit` GitHub organization](https://github.com/byu-oit):
-  * Obtain a DivvyCloud username and password from the Cloud Office at cloudoffice@byu.edu
-  * Install [the GitHub App used for auto-merging Dependabot pull requests](https://github.com/apps/dependabot-merge-action) to your organization
 
 ## Setup
 * Create a new repo [using this template](https://github.com/byu-oit/hw-fargate-api/generate).
@@ -35,8 +32,7 @@ git checkout -b dev
   * replace `byu_oit_terraform_dev` with the name of your `dev` AWS account (with underscores)
   * replace `byu-oit-terraform-prd` with the name of your `prd` AWS account
   * replace `byu_oit_terraform_prd` with the name of your `prd` AWS account (with underscores)
-  * replace `#slack-bot-testing` with the name the Slack channel where you want to send deployment notifications
-  * replace `Codepipeline-Standard-Change` with your [Standard Change Template ID](https://it.byu.edu/nav_to.do?uri=%2Fu_standard_change_template_list.do) - If you need to create a new template, ask in [#servicenow](https://byu-oit.slack.com/archives/C18T2SYTT) for help getting it into the [sandbox ServiceNow environment](https://support-test.byu.edu/)
+  * replace `Codepipeline-Standard-Change` with your [Standard Change Template ID](https://it.byu.edu/nav_to.do?uri=%2Fu_standard_change_template_list.do) - If you need to create a new template, ask in [the ServiceNow channel](https://teams.microsoft.com/l/channel/19%3a75c66bbd4d2646fea0df336abb5723ca%40thread.tacv2/OIT%2520ENG%2520AppEng%2520-%2520ServiceNow?groupId=54688770-069e-42a2-9f77-07cbb0306d01&tenantId=c6fc6e9b-51fb-48a8-b779-9ee564b40413) for help getting it into the [sandbox ServiceNow environment](https://support-test.byu.edu/)
 * _Rename_ [`.postman/hw-fargate-api.postman_collection.json`](.postman/hw-fargate-api.postman_collection.json) with the name of your repo replacing `hw-fargate-api` in the filename
 * Add yourself (or your team) as a [Dependabot reviewer](https://docs.github.com/en/code-security/supply-chain-security/keeping-your-dependencies-updated-automatically/configuration-options-for-dependency-updates#reviewers) in [`dependabot.yml`](.github/dependabot.yml)
 * Enable [Dependabot Security updates](https://github.com/byu-oit/hw-fargate-api/settings/security_analysis) if you're outside the [`byu-oit` GitHub organization](https://github.com/byu-oit)
@@ -66,6 +62,10 @@ In the AWS Console, see if you can find the resources from `setup.tf` (ECR, SSM 
 * In GitHub, go to the [`Actions` tab](https://github.com/byu-oit/hw-fargate-api/actions) for your repo (e.g. https://github.com/byu-oit/my-repo/actions)
 * Click the `Enable Actions on this repo` button
 
+### Set up Teams notifications
+* Create an Incoming Webhook in Teams, following [these instructions](https://learn.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook#create-an-incoming-webhook), and copy the URL
+* Create a GitHub secret `MS_TEAMS_WEBHOOK_URL` using the copied URL (e.g. at https://github.com/byu-oit/hw-fargate-api/settings/secrets/actions/new)
+
 ### Push your changes
 
 ```sh
@@ -91,7 +91,7 @@ This will output a DNS Name. Enter this in a browser. It will probably return `5
 
 In the AWS Console, see if you can find the ECS Service and see the state of its ECS Tasks. Also see if you can find the ALB Target Group, and notice when Tasks are added to it.
 
-> Note:
+> **Note**
 > 
 > While Terraform creates the ECS Service, it doesn't actually spin up any ECS Tasks. This isn't Terraform's job. The ECS Service is responsible for ensuring that ECS Tasks are running.
 > 
@@ -114,7 +114,7 @@ git push
 
 In GitHub Actions, watch the deploy steps run (you have a new push, so you'll have to go back and select the new workflow run instance and the job again). Once it gets to the CodeDeploy step, you can watch the deploy happen in the CodeDeploy console in AWS. Once CodeDeploy says that production traffic has been switched over, hit your application in the browser and see if your change worked. If the service is broken, look at the stopped ECS Tasks in the ECS Console to see if you can figure out why.
 
-> Note: 
+> **Note**
 >
 > It's always best to test your changes locally before pushing to GitHub and AWS. Testing locally will significantly increase your productivity as you won't be constantly waiting for GitHub Actions and CodeDeploy to deploy, just to discover bugs.
 >
@@ -125,6 +125,8 @@ In GitHub Actions, watch the deploy steps run (you have a new push, so you'll ha
 By digging through the `.tf` files, you'll see what resources are being created. You should spend some time searching through the AWS Console for each of these resources. The goal is to start making connections between the Terraform syntax and the actual AWS resources that are created.
 
 Several OIT created Terraform modules are used. You can look these modules up in our GitHub Organization. There you can see what resources each of these modules creates. You can look those up in the AWS Console too.
+
+By default, [we build and deploy on ARM-based processors](https://github.com/byu-oit/hw-fargate-api/issues/389) to [save ~20% on our compute costs](https://aws.amazon.com/fargate/pricing/).
 
 ## Deployment details
 
