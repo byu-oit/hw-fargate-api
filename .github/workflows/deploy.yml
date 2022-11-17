@@ -161,7 +161,7 @@ jobs:
 
       # Hadolint follows semantic versioning, but doesn't have a @v2 release
       - name: Lint Dockerfile
-        uses: hadolint/hadolint-action@v3.0.0
+        uses: hadolint/hadolint-action@v2.1.0
         with:
           dockerfile: src/Dockerfile
 
