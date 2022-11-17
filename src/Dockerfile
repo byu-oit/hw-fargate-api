@@ -1,12 +1,9 @@
-FROM node:18.12.1-slim
-WORKDIR /usr/app
+FROM node
 
-COPY package*.json ./
+RUN cp /usr/app && package*.json ./
 RUN npm ci --omit=dev
 
-COPY app.js server.js ./
+COPY app.js server.js .
 
 ENV NODE_ENV='production'
-USER node
-EXPOSE 8080
 CMD [ "node", "server.js" ]
