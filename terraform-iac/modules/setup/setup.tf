@@ -37,15 +37,15 @@ resource "aws_iam_role" "gha" {
       {
         Effect = "Allow"
         Principal = {
-          Federated = module.acs.github_oidc_arn
+          Federated = module.acs.github_oidc_provider.arn
         }
         Action = "sts:AssumeRoleWithWebIdentity"
         Condition = {
           StringLike = {
-            "token.actions.githubusercontent.com/brigham-young-university:sub" = "repo:${local.gh_org}/${local.gh_repo}:*"
+            "${module.acs.github_oidc_provider.url}:sub" = "repo:${local.gh_org}/${local.gh_repo}:*"
           }
           StringEquals = {
-            "token.actions.githubusercontent.com/brigham-young-university:aud" = "sts.amazonaws.com"
+            "${module.acs.github_oidc_provider.url}:aud" = "sts.amazonaws.com"
           }
         }
       }
