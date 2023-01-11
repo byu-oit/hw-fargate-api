@@ -22,7 +22,8 @@ jobs:
                 "environment_name":"dev",
                 "ecr_repo_name":"hw-fargate-api-dev",
                 "tf_working_dir":"./terraform-iac/dev/app",
-                "aws_key_name":"byu_oit_terraform_dev_key",
+                "aws_account":"977306314792",
+                "aws_gha_role":"hw-fargate-api-dev-gha",
                 "aws_secret_name":"byu_oit_terraform_dev_secret",
                 "rfc_key_name":"standard_change_sandbox_client_key",
                 "rfc_secret_name":"standard_change_sandbox_client_secret",
@@ -41,8 +42,8 @@ jobs:
                 "environment_name":"stg",
                 "ecr_repo_name":"hw-fargate-api-stg",
                 "tf_working_dir":"./terraform-iac/stg/app",
-                "aws_key_name":"byu_oit_terraform_dev_key",
-                "aws_secret_name":"byu_oit_terraform_dev_secret",
+                "aws_account":"977306314792",
+                "aws_gha_role":"hw-fargate-api-stg-gha",
                 "rfc_key_name":"standard_change_sandbox_client_key",
                 "rfc_secret_name":"standard_change_sandbox_client_secret",
                 "rfc_template_id":"Codepipeline-Standard-Change"
@@ -64,8 +65,8 @@ jobs:
                 "environment_name":"prd",
                 "ecr_repo_name":"hw-fargate-api-prd",
                 "tf_working_dir":"./terraform-iac/prd/app",
-                "aws_key_name":"byu_oit_terraform_prd_key",
-                "aws_secret_name":"byu_oit_terraform_prd_secret",
+                "aws_account":"539738229445",
+                "aws_gha_role":"hw-fargate-api-prd-gha",
                 "rfc_key_name":"standard_change_sandbox_client_key",
                 "rfc_secret_name":"standard_change_sandbox_client_secret",
                 "rfc_template_id":"Codepipeline-Standard-Change"
@@ -74,8 +75,8 @@ jobs:
                 "environment_name":"cpy",
                 "ecr_repo_name":"hw-fargate-api-cpy",
                 "tf_working_dir":"./terraform-iac/cpy/app",
-                "aws_key_name":"byu_oit_terraform_prd_key",
-                "aws_secret_name":"byu_oit_terraform_prd_secret",
+                "aws_account":"539738229445",
+                "aws_gha_role":"hw-fargate-api-cpy-gha",
                 "rfc_key_name":"standard_change_sandbox_client_key",
                 "rfc_secret_name":"standard_change_sandbox_client_secret",
                 "rfc_template_id":"Codepipeline-Standard-Change"
@@ -190,6 +191,9 @@ jobs:
     environment:
       name: ${{ matrix.env.environment_name }}
       url: https://${{ steps.terraform-outputs.outputs.url }}
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - name: Check out
         uses: actions/checkout@v3
@@ -197,8 +201,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets[matrix.env.aws_key_name] }}
-          aws-secret-access-key: ${{ secrets[matrix.env.aws_secret_name] }}
+          role-to-assume: "arn:aws:iam::${{ matrix.env.aws_account }}:role/${{ matrix.env.aws_gha_role }}"
+          role-session-name: ${{ github.sha }}
           aws-region: us-west-2
 
       - name: Log into Amazon ECR
