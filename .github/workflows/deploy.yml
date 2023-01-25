@@ -24,7 +24,6 @@ jobs:
                 "tf_working_dir":"./terraform-iac/dev/app",
                 "aws_account":"977306314792",
                 "aws_gha_role":"hw-fargate-api-dev-gha",
-                "aws_secret_name":"byu_oit_terraform_dev_secret",
                 "rfc_key_name":"standard_change_sandbox_client_key",
                 "rfc_secret_name":"standard_change_sandbox_client_secret",
                 "rfc_template_id":"Codepipeline-Standard-Change"
