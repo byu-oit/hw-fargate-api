@@ -29,9 +29,7 @@ git checkout -b dev
   * replace `539738229445` with your `prd` AWS account number
   * replace `hw-fargate-api` with the name of your repo
   * replace `byu-oit-terraform-dev` with the name of your `dev` AWS account
-  * replace `byu_oit_terraform_dev` with the name of your `dev` AWS account (with underscores)
   * replace `byu-oit-terraform-prd` with the name of your `prd` AWS account
-  * replace `byu_oit_terraform_prd` with the name of your `prd` AWS account (with underscores)
   * replace `Codepipeline-Standard-Change` with your [Standard Change Template ID](https://it.byu.edu/nav_to.do?uri=%2Fu_standard_change_template_list.do) - If you need to create a new template, ask in [the ServiceNow channel](https://teams.microsoft.com/l/channel/19%3a75c66bbd4d2646fea0df336abb5723ca%40thread.tacv2/OIT%2520ENG%2520AppEng%2520-%2520ServiceNow?groupId=54688770-069e-42a2-9f77-07cbb0306d01&tenantId=c6fc6e9b-51fb-48a8-b779-9ee564b40413) for help getting it into the [sandbox ServiceNow environment](https://support-test.byu.edu/)
 * _Rename_ [`.postman/hw-fargate-api.postman_collection.json`](.postman/hw-fargate-api.postman_collection.json) with the name of your repo replacing `hw-fargate-api` in the filename
 * Add yourself (or your team) as a [Dependabot reviewer](https://docs.github.com/en/code-security/supply-chain-security/keeping-your-dependencies-updated-automatically/configuration-options-for-dependency-updates#reviewers) in [`dependabot.yml`](.github/dependabot.yml)
@@ -51,16 +49,7 @@ terraform init
 terraform apply
 ```
 
-In the AWS Console, see if you can find the resources from `setup.tf` (ECR, SSM Param).
-
-### Get AWS Credentials
-
-* Use this [order form](https://it.byu.edu/it?id=sc_cat_item&sys_id=d20809201b2d141069fbbaecdc4bcb84) to give your repo access to the secrets that will let it deploy into your AWS accounts. Fill out the form twice to give access to both your `dev` and `prd` accounts. Please read the instructions on the form carefully - it's finicky.
-
-### Enable GitHub Actions on your repo
-
-* In GitHub, go to the [`Actions` tab](https://github.com/byu-oit/hw-fargate-api/actions) for your repo (e.g. https://github.com/byu-oit/my-repo/actions)
-* Click the `Enable Actions on this repo` button
+In the AWS Console, see if you can find the resources from `setup.tf` (ECR, SSM Param, IAM Role).
 
 ### Set up Teams notifications
 * Create an Incoming Webhook in Teams, following [these instructions](https://learn.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook#create-an-incoming-webhook), and copy the URL
