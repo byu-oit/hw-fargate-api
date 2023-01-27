@@ -27,29 +27,15 @@ module "my_ecr" {
   name   = "${local.name}-${var.env}"
 }
 
-resource "aws_iam_role" "gha" {
-  name                 = "${local.name}-${var.env}-gha"
-  permissions_boundary = module.acs.role_permissions_boundary.arn
-  managed_policy_arns  = module.acs.power_builder_policies[*].arn
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Principal = {
-          Federated = module.acs.github_oidc_provider.arn
-        }
-        Action = "sts:AssumeRoleWithWebIdentity"
-        Condition = {
-          StringLike = {
-            "${module.acs.github_oidc_provider.url}:sub" = "repo:${local.gh_org}/${local.gh_repo}:*"
-          }
-          StringEquals = {
-            "${module.acs.github_oidc_provider.url}:aud" = "sts.amazonaws.com"
-          }
-        }
-      }
-    ]
-  })
+module "gha_role" {
+  source                         = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version                        = "5.11.1"
+  create_role                    = true
+  role_name                      = "${local.name}-${var.env}-gha"
+  provider_url                   = module.acs.github_oidc_provider.url
+  role_permissions_boundary_arn  = module.acs.role_permissions_boundary.arn
+  role_policy_arns               = module.acs.power_builder_policies[*].arn
+  oidc_fully_qualified_audiences = ["sts.amazonaws.com"]
+  oidc_subjects_with_wildcards   = ["repo:${local.gh_org}/${local.gh_repo}:*"]
 }
 
