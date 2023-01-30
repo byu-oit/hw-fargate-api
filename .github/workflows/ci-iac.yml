@@ -4,9 +4,9 @@ on:
   pull_request:
     branches: [dev, stg, prd]
     types: [opened, reopened, synchronize, edited]
-    paths:
-      - 'terraform-iac/**'
-      - '.github/workflows/ci-iac.yml'
+    #paths:
+      #- 'terraform-iac/**'
+      #- '.github/workflows/ci-iac.yml'
 
 env:
   tf_version: "1.3.7" # must match value in terraform-iac/*/app/main.tf
