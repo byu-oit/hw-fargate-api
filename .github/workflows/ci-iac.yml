@@ -96,6 +96,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Debug OIDC Claims
+        uses: github/actions-oidc-debugger@main
+        with:
+          audience: 'sts.amazonaws.com'
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
