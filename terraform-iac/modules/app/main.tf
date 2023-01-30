@@ -36,7 +36,7 @@ module "acs" {
 }
 
 module "my_fargate_api" {
-  source                        = "github.com/byu-oit/terraform-aws-fargate-api?ref=v5.0.0"
+  source                        = "github.com/byu-oit/terraform-aws-fargate-api?ref=v5.0.1"
   app_name                      = "${local.name}-${var.env}"
   container_port                = 8080
   health_check_path             = "/health"
