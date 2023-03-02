@@ -132,4 +132,4 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: tfsec.sarif
-          working-directory: terraform-iac/modules/app
+          working_directory: terraform-iac/modules/app
