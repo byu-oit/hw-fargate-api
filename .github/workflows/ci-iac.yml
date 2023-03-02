@@ -123,13 +123,12 @@ jobs:
           working-directory: ${{ matrix.env.tf_working_dir }}
           terraform-plan-file: plan
 
-      - name: Analyze Terraform Plan
-        uses: byu-oit/github-action-tf-plan-analyzer@v2
-        if: github.repository_owner == 'byu-oit'
-        # If you're at BYU, but outside the byu-oit GitHub org, you may be able to obtain credentials by contacting cloudoffice@byu.edu
+      - name: tfsec
+        uses: aquasecurity/tfsec-sarif-action@v0.1.4
         with:
-          working-directory: ${{ matrix.env.tf_working_dir }}
-          terraform-plan-file: plan
-          divvycloud-username: ${{ secrets.DIVVYCLOUD_USERNAME }}
-          divvycloud-password: ${{ secrets.DIVVYCLOUD_PASSWORD }}
+          sarif_file: tfsec.sarif          
 
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: tfsec.sarif
