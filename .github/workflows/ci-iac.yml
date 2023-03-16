@@ -22,6 +22,7 @@ jobs:
           matrix='{
             "env":[
               {
+                "environment_name":"dev",
                 "tf_working_dir":"./terraform-iac/dev/app",
                 "aws_account":"977306314792",
                 "aws_gha_role":"hw-fargate-api-dev-gha"
@@ -36,6 +37,7 @@ jobs:
           matrix='{
             "env":[
               {
+                "environment_name":"stg",
                 "tf_working_dir":"./terraform-iac/stg/app",
                 "aws_account":"977306314792",
                 "aws_gha_role":"hw-fargate-api-stg-gha"
@@ -50,11 +52,13 @@ jobs:
           matrix='{
             "env":[
               {
+                "environment_name":"prd",
                 "tf_working_dir":"./terraform-iac/prd/app",
                 "aws_account":"539738229445",
                 "aws_gha_role":"hw-fargate-api-prd-gha"
               },
               {
+                "environment_name":"cpy",
                 "tf_working_dir":"./terraform-iac/cpy/app",
                 "aws_account":"539738229445",
                 "aws_gha_role":"hw-fargate-api-cpy-gha"
@@ -82,7 +86,7 @@ jobs:
         run: terraform fmt -check -recursive
 
   plan:
-    name: Terraform Plan
+    name: Terraform Plan (${{ matrix.env.environment_name }})
     runs-on: ubuntu-latest
     needs: env
     strategy:
