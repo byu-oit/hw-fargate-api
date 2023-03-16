@@ -185,7 +185,7 @@ jobs:
         run: terraform fmt -check -recursive
 
   build_and_deploy:
-    name: Build and Deploy (${{ matrix.env.environment_name }})
+    name: Build and Deploy / ${{ matrix.env.environment_name }}
     runs-on: ubuntu-latest
     needs: [env, test, audit, lint, hadolint, format]
     strategy:

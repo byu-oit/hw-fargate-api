@@ -86,7 +86,7 @@ jobs:
         run: terraform fmt -check -recursive
 
   plan:
-    name: Terraform Plan (${{ matrix.env.environment_name }})
+    name: Terraform Plan / ${{ matrix.env.environment_name }}
     runs-on: ubuntu-latest
     needs: env
     strategy:
