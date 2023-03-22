@@ -9,7 +9,7 @@ on:
       - '.github/workflows/ci-iac.yml'
 
 env:
-  tf_version: "1.3.7" # must match value in terraform-iac/*/app/main.tf
+  tf_version: "1.4.2" # must match value in terraform-iac/*/app/main.tf
 
 jobs:
   env:
