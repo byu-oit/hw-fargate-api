@@ -1,15 +1,15 @@
 terraform {
-  required_version = "1.4.2"
+  required_version = "1.4.5"
   backend "s3" {
     bucket         = "terraform-state-storage-539738229445"
     dynamodb_table = "terraform-state-lock-539738229445"
-    key            = "hw-fargate-api/prd/setup.tfstate"
+    key            = "hw-fargate-api/cpy/setup.tfstate"
     region         = "us-west-2"
   }
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.59"
+      version = "~> 4.63"
     }
     local = {
       source  = "hashicorp/local"
@@ -19,7 +19,7 @@ terraform {
 }
 
 locals {
-  env = "prd"
+  env = "cpy"
 }
 
 provider "aws" {

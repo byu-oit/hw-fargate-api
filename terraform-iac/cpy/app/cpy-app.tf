@@ -1,15 +1,15 @@
 terraform {
-  required_version = "1.4.2"
+  required_version = "1.4.5"
   backend "s3" {
     bucket         = "terraform-state-storage-539738229445"
     dynamodb_table = "terraform-state-lock-539738229445"
-    key            = "hw-fargate-api/prd/app.tfstate"
+    key            = "hw-fargate-api/cpy/app.tfstate"
     region         = "us-west-2"
   }
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.59"
+      version = "~> 4.63"
     }
     local = {
       source  = "hashicorp/local"
@@ -19,7 +19,7 @@ terraform {
 }
 
 locals {
-  env = "prd"
+  env = "cpy"
 }
 
 provider "aws" {
@@ -45,7 +45,7 @@ module "app" {
   image_tag                        = var.image_tag
   codedeploy_termination_wait_time = 15
   deploy_test_postman_collection   = "../../../.postman/hw-fargate-api.postman_collection.json"
-  deploy_test_postman_environment  = "../../../.postman/prd-tst.postman_environment.json"
+  deploy_test_postman_environment  = "../../../.postman/cpy-tst.postman_environment.json"
   log_retention_days               = 7
 }
 

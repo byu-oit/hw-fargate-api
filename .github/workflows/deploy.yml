@@ -9,7 +9,7 @@ on:
       - '.gitignore'
 env:
   node_version: "18.x"
-  tf_version: "1.4.2" # must match value in terraform-iac/*/app/main.tf
+  tf_version: "1.4.5" # must match value in terraform-iac/*/app/main.tf
   FORCE_COLOR: 3
 concurrency: ${{ github.ref }}
 jobs:
