@@ -134,11 +134,6 @@ resource "aws_s3_bucket" "my_s3_bucket_logs" {
   bucket = "${local.name}-${var.env}-logs"
 }
 
-resource "aws_s3_bucket_acl" "my_s3_bucket_logs" {
-  bucket = aws_s3_bucket.my_s3_bucket_logs.id
-  acl    = "log-delivery-write"
-}
-
 resource "aws_s3_bucket_lifecycle_configuration" "my_s3_bucket_logs" {
   bucket = aws_s3_bucket.my_s3_bucket_logs.id
 
@@ -282,7 +277,7 @@ EOF
 # -----------------------------------------------------------------------------
 
 module "postman_test_lambda" {
-  source   = "github.com/byu-oit/terraform-aws-postman-test-lambda?ref=v5.0.2"
+  source   = "github.com/byu-oit/terraform-aws-postman-test-lambda?ref=v5.0.3"
   app_name = "${local.name}-${var.env}"
   postman_collections = [
     {
