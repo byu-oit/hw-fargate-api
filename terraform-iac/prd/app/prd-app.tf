@@ -27,6 +27,7 @@ provider "aws" {
 
   default_tags {
     tags = {
+      app                    = "hw-fargate-api"
       repo                   = "https://github.com/byu-oit/hw-fargate-api"
       data-sensitivity       = "public"
       env                    = local.env
