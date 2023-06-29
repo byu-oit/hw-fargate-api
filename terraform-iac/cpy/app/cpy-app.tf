@@ -44,7 +44,7 @@ module "app" {
   source                           = "../../modules/app/"
   env                              = local.env
   image_tag                        = var.image_tag
-  codedeploy_termination_wait_time = 15
+  codedeploy_termination_wait_time = 0 # you probably want to change this to 15 when your service is really prd
   deploy_test_postman_collection   = "../../../.postman/hw-fargate-api.postman_collection.json"
   deploy_test_postman_environment  = "../../../.postman/cpy-tst.postman_environment.json"
   log_retention_days               = 7
