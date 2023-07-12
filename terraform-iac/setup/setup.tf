@@ -1,9 +1,44 @@
+terraform {
+  required_version = "1.7.0"
+  backend "s3" {
+    # The rest of the backend config is passed in
+    # https://developer.hashicorp.com/terraform/language/settings/backends/configuration#partial-configuration
+    region = "us-west-2"
+  }
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.65"
+    }
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.4"
+    }
+  }
+}
+
+provider "aws" {
+  region = "us-west-2"
+
+  default_tags {
+    tags = {
+      app                    = local.name
+      repo                   = "https://github.com/${local.gh_org}/${local.gh_repo}"
+      data-sensitivity       = "public"
+      env                    = var.env
+      resource-creator-email = "GitHub-Actions"
+    }
+  }
+}
+
 variable "env" {
-  type = string
+  type        = string
+  description = "Environment: dev, stg, cpy, or prd"
 }
 
 variable "some_secret" {
-  type = string
+  type        = string
+  description = "Some secret string that will be stored in SSM and mounted into the Fargate Tasks as an environment variable"
 }
 
 locals {

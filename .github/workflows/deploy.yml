@@ -10,7 +10,7 @@ on:
       - '.gitignore'
 env:
   node_version: "18.x"
-  tf_version: "1.7.0" # must match value in terraform-iac/*/app/main.tf
+  tf_version: "1.7.0" # must match value in terraform-iac/app/main.tf
   FORCE_COLOR: 3
 concurrency: ${{ github.ref }}
 jobs:
@@ -27,7 +27,6 @@ jobs:
               {
                 "environment_name":"dev",
                 "ecr_repo_name":"hw-fargate-api-dev",
-                "tf_working_dir":"./terraform-iac/dev/app",
                 "aws_account":"977306314792",
                 "aws_gha_role":"hw-fargate-api-dev-gha",
                 "rfc_key_name":"standard_change_sandbox_client_key",
@@ -46,7 +45,6 @@ jobs:
               {
                 "environment_name":"stg",
                 "ecr_repo_name":"hw-fargate-api-stg",
-                "tf_working_dir":"./terraform-iac/stg/app",
                 "aws_account":"977306314792",
                 "aws_gha_role":"hw-fargate-api-stg-gha",
                 "rfc_key_name":"standard_change_sandbox_client_key",
@@ -69,7 +67,6 @@ jobs:
               {
                 "environment_name":"prd",
                 "ecr_repo_name":"hw-fargate-api-prd",
-                "tf_working_dir":"./terraform-iac/prd/app",
                 "aws_account":"539738229445",
                 "aws_gha_role":"hw-fargate-api-prd-gha",
                 "rfc_key_name":"standard_change_sandbox_client_key",
@@ -79,7 +76,6 @@ jobs:
               {
                 "environment_name":"cpy",
                 "ecr_repo_name":"hw-fargate-api-cpy",
-                "tf_working_dir":"./terraform-iac/cpy/app",
                 "aws_account":"539738229445",
                 "aws_gha_role":"hw-fargate-api-cpy-gha",
                 "rfc_key_name":"standard_change_sandbox_client_key",
@@ -246,19 +242,19 @@ jobs:
           terraform_wrapper: false
 
       - name: Terraform Init
-        working-directory: ${{ matrix.env.tf_working_dir }}
-        run: terraform init
+        working-directory: terraform-iac/app
+        run: terraform init -backend-config=${{ matrix.env.environment_name }}.s3.tfbackend
 
       - name: Terraform Plan
-        working-directory: ${{ matrix.env.tf_working_dir }}
-        run: terraform plan -var 'image_tag=${{ steps.date.outputs.timestamp }}' -input=false -out=plan
+        working-directory: terraform-iac/app
+        run: terraform plan -var-file=${{ matrix.env.environment_name }}.tfvars -var 'image_tag=${{ steps.date.outputs.timestamp }}' -input=false -out=plan
 
       - name: Analyze Terraform Plan
         uses: byu-oit/github-action-tf-plan-analyzer@v2
         if: github.repository_owner == 'byu-oit'
         # If you're at BYU, but outside the byu-oit GitHub org, you may be able to obtain credentials by contacting cloudoffice@byu.edu
         with:
-          working-directory: ${{ matrix.env.tf_working_dir }}
+          working-directory: terraform-iac/app
           terraform-plan-file: plan
           divvycloud-username: ${{ secrets.DIVVYCLOUD_USERNAME }}
           divvycloud-password: ${{ secrets.DIVVYCLOUD_PASSWORD }}
@@ -272,12 +268,12 @@ jobs:
           template-id: ${{ matrix.env.rfc_template_id }}
 
       - name: Terraform Apply
-        working-directory: ${{ matrix.env.tf_working_dir }}
+        working-directory: terraform-iac/app
         run: terraform apply plan
 
       - name: Get Terraform Outputs
         id: terraform-outputs
-        working-directory: ${{ matrix.env.tf_working_dir }}
+        working-directory: terraform-iac/app
         run: |
           echo "codedeploy_app_name=$(terraform output -raw codedeploy_app_name)" >> $GITHUB_OUTPUT
           echo "codedeploy_deployment_group_name=$(terraform output -raw codedeploy_deployment_group_name)" >> $GITHUB_OUTPUT

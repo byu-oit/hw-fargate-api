@@ -1,3 +1,36 @@
+terraform {
+  required_version = "1.7.0"
+  backend "s3" {
+    # The rest of the backend config is passed in
+    # https://developer.hashicorp.com/terraform/language/settings/backends/configuration#partial-configuration
+    region = "us-west-2"
+  }
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.65"
+    }
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.4"
+    }
+  }
+}
+
+provider "aws" {
+  region = "us-west-2"
+
+  default_tags {
+    tags = {
+      app                    = local.name
+      repo                   = "https://github.com/${local.gh_org}/${local.gh_repo}"
+      data-sensitivity       = "public"
+      env                    = var.env
+      resource-creator-email = "GitHub-Actions"
+    }
+  }
+}
+
 variable "env" {
   type = string
 }
@@ -23,8 +56,9 @@ variable "log_retention_days" {
 }
 
 locals {
-  name = "hw-fargate-api"
-  env  = var.env
+  name    = "hw-fargate-api"
+  gh_org  = "byu-oit"
+  gh_repo = "hw-fargate-api"
 }
 
 data "aws_ecr_repository" "my_ecr_repo" {

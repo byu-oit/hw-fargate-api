@@ -9,7 +9,7 @@ on:
       - '.github/workflows/ci-iac.yml'
 
 env:
-  tf_version: "1.7.0" # must match value in terraform-iac/*/app/main.tf
+  tf_version: "1.7.0" # must match value in terraform-iac/app/main.tf
 
 jobs:
   env:
@@ -24,7 +24,6 @@ jobs:
             "env":[
               {
                 "environment_name":"dev",
-                "tf_working_dir":"./terraform-iac/dev/app",
                 "aws_account":"977306314792",
                 "aws_gha_role":"hw-fargate-api-dev-gha"
               }
@@ -39,7 +38,6 @@ jobs:
             "env":[
               {
                 "environment_name":"stg",
-                "tf_working_dir":"./terraform-iac/stg/app",
                 "aws_account":"977306314792",
                 "aws_gha_role":"hw-fargate-api-stg-gha"
               }
@@ -54,13 +52,11 @@ jobs:
             "env":[
               {
                 "environment_name":"prd",
-                "tf_working_dir":"./terraform-iac/prd/app",
                 "aws_account":"539738229445",
                 "aws_gha_role":"hw-fargate-api-prd-gha"
               },
               {
                 "environment_name":"cpy",
-                "tf_working_dir":"./terraform-iac/cpy/app",
                 "aws_account":"539738229445",
                 "aws_gha_role":"hw-fargate-api-cpy-gha"
               }
@@ -116,18 +112,18 @@ jobs:
           terraform_version: ${{ env.tf_version }}
 
       - name: Terraform Init
-        working-directory: ${{ matrix.env.tf_working_dir }}
-        run: terraform init
+        working-directory: terraform-iac/app
+        run: terraform init -backend-config=${{ matrix.env.environment_name }}.s3.tfbackend
 
       - name: Terraform Plan
-        working-directory: ${{ matrix.env.tf_working_dir }}
-        run: terraform plan -var 'image_tag=ci_test' -input=false -out plan -lock=false
+        working-directory: terraform-iac/app
+        run: terraform plan -var-file=${{ matrix.env.environment_name }}.tfvars -var 'image_tag=ci_test' -input=false -out plan -lock=false
 
       - name: Comment Terraform Plan
         uses: byu-oit/github-action-tf-plan-comment@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          working-directory: ${{ matrix.env.tf_working_dir }}
+          working-directory: terraform-iac/app
           terraform-plan-file: plan
 
       - name: Analyze Terraform Plan
@@ -135,7 +131,7 @@ jobs:
         if: github.repository_owner == 'byu-oit'
         # If you're at BYU, but outside the byu-oit GitHub org, you may be able to obtain credentials by contacting cloudoffice@byu.edu
         with:
-          working-directory: ${{ matrix.env.tf_working_dir }}
+          working-directory: terraform-iac/app
           terraform-plan-file: plan
           divvycloud-username: ${{ secrets.DIVVYCLOUD_USERNAME }}
           divvycloud-password: ${{ secrets.DIVVYCLOUD_PASSWORD }}
