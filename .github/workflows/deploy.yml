@@ -16,6 +16,7 @@ concurrency: ${{ github.ref }}
 jobs:
   env:
     name: Set Env Vars
+    timeout-minutes: 1
     runs-on: ubuntu-latest
     steps:
       - name: Set up DEV Environment Variables
@@ -94,10 +95,10 @@ jobs:
 
   test:
     name: Test
+    timeout-minutes: 3
     runs-on: ubuntu-latest
     steps:
-      - name: Check out
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -122,6 +123,7 @@ jobs:
 
   audit:
     name: Audit
+    timeout-minutes: 3
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -139,6 +141,7 @@ jobs:
 
   lint:
     name: Lint
+    timeout-minutes: 3
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -160,6 +163,7 @@ jobs:
 
   hadolint:
     name: Lint Docker
+    timeout-minutes: 3
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -172,6 +176,7 @@ jobs:
 
   format:
     name: Terraform Format
+    timeout-minutes: 3
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -187,6 +192,7 @@ jobs:
 
   build_and_deploy:
     name: Build and Deploy / ${{ matrix.env.environment_name }}
+    timeout-minutes: 90
     runs-on: ubuntu-latest
     needs: [env, test, audit, lint, hadolint, format]
     strategy:

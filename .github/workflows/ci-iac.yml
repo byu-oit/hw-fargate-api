@@ -14,6 +14,7 @@ env:
 jobs:
   env:
     name: Set Env Vars
+    timeout-minutes: 1
     runs-on: ubuntu-latest
     steps:
       - name: Set up DEV Environment Variables
@@ -72,6 +73,7 @@ jobs:
 
   format:
     name: Terraform Format
+    timeout-minutes: 3
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -87,6 +89,7 @@ jobs:
 
   plan:
     name: Terraform Plan / ${{ matrix.env.environment_name }}
+    timeout-minutes: 6
     runs-on: ubuntu-latest
     needs: env
     strategy:
