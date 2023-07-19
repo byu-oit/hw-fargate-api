@@ -3,7 +3,8 @@ terraform {
   backend "s3" {
     # The rest of the backend config is passed in
     # https://developer.hashicorp.com/terraform/language/settings/backends/configuration#partial-configuration
-    region = "us-west-2"
+    encrypt = true
+    region  = "us-west-2"
   }
   required_providers {
     aws = {
