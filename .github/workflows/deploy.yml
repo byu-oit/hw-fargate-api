@@ -242,11 +242,11 @@ jobs:
 
       - name: Terraform Init
         working-directory: terraform-iac/app
-        run: terraform init -backend-config=${{ matrix.env.environment_name }}.s3.tfbackend
+        run: terraform init -backend-config=./${{ matrix.env.environment_name }}/app.s3.tfbackend
 
       - name: Terraform Plan
         working-directory: terraform-iac/app
-        run: terraform plan -var-file=${{ matrix.env.environment_name }}.tfvars -var 'image_tag=${{ steps.date.outputs.timestamp }}' -input=false -out=plan
+        run: terraform plan -var-file=./${{ matrix.env.environment_name }}/app.tfvars -var 'image_tag=${{ steps.date.outputs.timestamp }}' -input=false -out=plan
 
       - name: Analyze Terraform Plan
         uses: byu-oit/github-action-tf-plan-analyzer@v2
