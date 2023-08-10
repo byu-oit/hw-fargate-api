@@ -1,4 +1,4 @@
-FROM node:18.17.0-slim
+FROM node:18.17.1-slim
 WORKDIR /usr/app
 
 COPY package*.json ./
