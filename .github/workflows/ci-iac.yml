@@ -113,11 +113,11 @@ jobs:
 
       - name: Terraform Init
         working-directory: terraform-iac/app
-        run: terraform init -backend-config=${{ matrix.env.environment_name }}.s3.tfbackend
+        run: terraform init -backend-config=./environments/${{ matrix.env.environment_name }}.s3.tfbackend
 
       - name: Terraform Plan
         working-directory: terraform-iac/app
-        run: terraform plan -var-file=${{ matrix.env.environment_name }}.tfvars -var 'image_tag=ci_test' -input=false -out plan -lock=false
+        run: terraform plan -var-file=./environments/${{ matrix.env.environment_name }}.tfvars -var 'image_tag=ci_test' -input=false -out plan -lock=false
 
       - name: Comment Terraform Plan
         uses: byu-oit/github-action-tf-plan-comment@v1
