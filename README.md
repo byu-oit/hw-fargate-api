@@ -44,9 +44,9 @@ git commit -am "Update template with repo specific details"
 ### Deploy the "one time setup" resources
 
 ```sh
-cd terraform-iac/dev/setup/
-terraform init
-terraform apply
+cd terraform/setup/
+terraform init -backend-config=dev.s3.tfbackend
+terraform apply -var-file=dev.tfvars
 ```
 
 In the AWS Console, see if you can find the resources from `setup.tf` (ECR, SSM Param, IAM Role).
@@ -72,7 +72,6 @@ If you look at [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), y
 Anytime after the `Terraform Apply` step succeeds:
 ```sh
 cd ../app/
-terraform init
 terraform output
 ```
 

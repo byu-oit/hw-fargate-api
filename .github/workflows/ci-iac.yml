@@ -5,11 +5,11 @@ on:
     branches: [dev, stg, prd]
     types: [opened, reopened, synchronize, edited]
     paths:
-      - 'terraform-iac/**'
+      - 'terraform/**'
       - '.github/workflows/ci-iac.yml'
 
 env:
-  tf_version: "1.7.0" # must match value in terraform-iac/app/main.tf
+  tf_version: "1.7.0" # must match value in terraform/app/main.tf
 
 jobs:
   env:
@@ -80,7 +80,7 @@ jobs:
           terraform_version: ${{ env.tf_version }}
 
       - name: Terraform Format
-        working-directory: terraform-iac
+        working-directory: terraform
         run: terraform fmt -check -recursive
 
   plan:
@@ -112,18 +112,18 @@ jobs:
           terraform_version: ${{ env.tf_version }}
 
       - name: Terraform Init
-        working-directory: terraform-iac/app
+        working-directory: terraform/app
         run: terraform init -backend-config=${{ matrix.env.environment_name }}.s3.tfbackend
 
       - name: Terraform Plan
-        working-directory: terraform-iac/app
+        working-directory: terraform/app
         run: terraform plan -var-file=${{ matrix.env.environment_name }}.tfvars -var 'image_tag=ci_test' -input=false -out plan -lock=false
 
       - name: Comment Terraform Plan
         uses: byu-oit/github-action-tf-plan-comment@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          working-directory: terraform-iac/app
+          working-directory: terraform/app
           terraform-plan-file: plan
 
       - name: Analyze Terraform Plan
@@ -131,7 +131,7 @@ jobs:
         if: github.repository_owner == 'byu-oit'
         # If you're at BYU, but outside the byu-oit GitHub org, you may be able to obtain credentials by contacting cloudoffice@byu.edu
         with:
-          working-directory: terraform-iac/app
+          working-directory: terraform/app
           terraform-plan-file: plan
           divvycloud-username: ${{ secrets.DIVVYCLOUD_USERNAME }}
           divvycloud-password: ${{ secrets.DIVVYCLOUD_PASSWORD }}

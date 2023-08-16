@@ -10,7 +10,7 @@ on:
       - '.gitignore'
 env:
   node_version: "18.x"
-  tf_version: "1.7.0" # must match value in terraform-iac/app/main.tf
+  tf_version: "1.7.0" # must match value in terraform/app/main.tf
   FORCE_COLOR: 3
 concurrency: ${{ github.ref }}
 jobs:
@@ -183,7 +183,7 @@ jobs:
           terraform_version: ${{ env.tf_version }}
 
       - name: Terraform Format
-        working-directory: terraform-iac
+        working-directory: terraform
         run: terraform fmt -check -recursive
 
   build_and_deploy:
@@ -242,11 +242,11 @@ jobs:
           terraform_wrapper: false
 
       - name: Terraform Init
-        working-directory: terraform-iac/app
+        working-directory: terraform/app
         run: terraform init -backend-config=${{ matrix.env.environment_name }}.s3.tfbackend
 
       - name: Terraform Plan
-        working-directory: terraform-iac/app
+        working-directory: terraform/app
         run: terraform plan -var-file=${{ matrix.env.environment_name }}.tfvars -var 'image_tag=${{ steps.date.outputs.timestamp }}' -input=false -out=plan
 
       - name: Analyze Terraform Plan
@@ -254,7 +254,7 @@ jobs:
         if: github.repository_owner == 'byu-oit'
         # If you're at BYU, but outside the byu-oit GitHub org, you may be able to obtain credentials by contacting cloudoffice@byu.edu
         with:
-          working-directory: terraform-iac/app
+          working-directory: terraform/app
           terraform-plan-file: plan
           divvycloud-username: ${{ secrets.DIVVYCLOUD_USERNAME }}
           divvycloud-password: ${{ secrets.DIVVYCLOUD_PASSWORD }}
@@ -268,12 +268,12 @@ jobs:
           template-id: ${{ matrix.env.rfc_template_id }}
 
       - name: Terraform Apply
-        working-directory: terraform-iac/app
+        working-directory: terraform/app
         run: terraform apply plan
 
       - name: Get Terraform Outputs
         id: terraform-outputs
-        working-directory: terraform-iac/app
+        working-directory: terraform/app
         run: |
           echo "codedeploy_app_name=$(terraform output -raw codedeploy_app_name)" >> $GITHUB_OUTPUT
           echo "codedeploy_deployment_group_name=$(terraform output -raw codedeploy_deployment_group_name)" >> $GITHUB_OUTPUT
