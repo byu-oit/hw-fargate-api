@@ -23,13 +23,13 @@ updates:
     target-branch: dev
 
   - package-ecosystem: terraform
-    directory: '/terraform-iac/app'
+    directory: '/terraform/app'
     schedule:
       interval: daily
     target-branch: dev
 
   - package-ecosystem: terraform
-    directory: '/terraform-iac/setup'
+    directory: '/terraform/setup'
     schedule:
       interval: daily
     target-branch: dev
