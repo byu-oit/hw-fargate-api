@@ -89,11 +89,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: arm64
-
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -101,7 +96,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: src
-          platforms: linux/arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

@@ -55,8 +55,6 @@ module "my_fargate_api" {
   role_permissions_boundary_arn    = module.acs.role_permissions_boundary.arn
   log_retention_in_days            = var.log_retention_days
 
-  cpu_architecture = "ARM64"
-
   primary_container_definition = {
     name  = "${local.name}-${var.env}"
     image = "${data.aws_ecr_repository.my_ecr_repo.repository_url}:${var.image_tag}"
