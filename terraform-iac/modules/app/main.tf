@@ -36,7 +36,7 @@ module "acs" {
 }
 
 module "my_fargate_api" {
-  source                        = "github.com/byu-oit/terraform-aws-fargate-api?ref=v5.0.2"
+  source                        = "github.com/byu-oit/terraform-aws-fargate-api?ref=scaling"
   app_name                      = "${local.name}-${var.env}"
   container_port                = 8080
   health_check_path             = "/health"
@@ -72,8 +72,10 @@ module "my_fargate_api" {
 
   autoscaling_config = {
     min_capacity = 1
-    max_capacity = 2
+    max_capacity = 8
   }
+  task_cpu    = 256
+  task_memory = 512
 
   codedeploy_lifecycle_hooks = {
     BeforeInstall         = null
