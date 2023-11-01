@@ -35,7 +35,7 @@ app.get('/', async (req, res) => {
     res.status(500).send('Error reading table or S3')
   }
 })
-function mySlowFunction (baseNumber) {
+async function mySlowFunction (baseNumber) {
   console.time('mySlowFunction')
   let result = 0
   for (let i = Math.pow(baseNumber, 7); i >= 0; i--) {
@@ -46,7 +46,9 @@ function mySlowFunction (baseNumber) {
 }
 app.get('/cpu/:complexity', async (req, res) => {
   try {
-    mySlowFunction(Number(req.params.complexity))
+    mySlowFunction(Number(req.params.complexity)).then(() => {}).catch((err) => {
+      console.log(err)
+    })
     res.send({
       ping: 'pong'
     })
