@@ -45,6 +45,7 @@ module "my_fargate_api" {
     aws_iam_policy.my_dynamo_policy.arn,
     aws_iam_policy.my_s3_policy.arn
   ]
+
   hosted_zone                      = module.acs.route53_zone
   https_certificate_arn            = module.acs.certificate.arn
   public_subnet_ids                = module.acs.public_subnet_ids
@@ -86,7 +87,7 @@ module "my_fargate_api" {
     AfterAllowTraffic     = null
   }
 
-  health_check_grace_period_seconds = 300
+  health_check_grace_period = 300
 }
 
 resource "aws_dynamodb_table" "my_dynamo_table" {
