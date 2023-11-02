@@ -75,6 +75,7 @@ module "my_fargate_api" {
     min_capacity          = 1
     max_capacity          = 8
     cpu_percentage_target = 30
+    scale_in_cooldown     = 300
   }
   task_cpu    = 256
   task_memory = 512
