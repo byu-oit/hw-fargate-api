@@ -85,6 +85,8 @@ module "my_fargate_api" {
     BeforeAllowTraffic    = null
     AfterAllowTraffic     = null
   }
+
+  health_check_grace_period_seconds = 300
 }
 
 resource "aws_dynamodb_table" "my_dynamo_table" {
