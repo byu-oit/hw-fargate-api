@@ -71,8 +71,9 @@ module "my_fargate_api" {
   }
 
   autoscaling_config = {
-    min_capacity = 1
-    max_capacity = 8
+    min_capacity          = 1
+    max_capacity          = 8
+    cpu_percentage_target = 30
   }
   task_cpu    = 256
   task_memory = 512
