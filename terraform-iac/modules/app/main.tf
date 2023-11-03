@@ -72,10 +72,10 @@ module "my_fargate_api" {
   }
 
   autoscaling_config = {
-    min_capacity          = 1
-    max_capacity          = 8
-    cpu_percentage_target = 30
-    scale_in_cooldown     = 300
+    min_capacity  = 1
+    max_capacity  = 8
+    target_metric = "ECSServiceAverageCPUUtilization"
+    target_value  = 30
   }
   task_cpu    = 256
   task_memory = 512
