@@ -33,6 +33,7 @@ data "aws_ecr_repository" "my_ecr_repo" {
 
 module "acs" {
   source = "github.com/byu-oit/terraform-aws-acs-info?ref=v4.0.0"
+  vpc_vpn_to_campus = true
 }
 
 module "my_fargate_api" {
@@ -47,7 +48,8 @@ module "my_fargate_api" {
   ]
   hosted_zone                      = module.acs.route53_zone
   https_certificate_arn            = module.acs.certificate.arn
-  public_subnet_ids                = module.acs.public_subnet_ids
+  alb_internal_flag                = true
+  public_subnet_ids                = module.acs.private_subnet_ids
   private_subnet_ids               = module.acs.private_subnet_ids
   vpc_id                           = module.acs.vpc.id
   codedeploy_service_role_arn      = module.acs.power_builder_role.arn
