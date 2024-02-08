@@ -10,7 +10,7 @@ on:
       - '.gitignore'
 env:
   node_version: "18.x"
-  tf_version: "1.5.3" # must match value in terraform/app/main.tf
+  tf_version: "1.7.0" # must match value in terraform-iac/*/app/main.tf
   FORCE_COLOR: 3
 concurrency: ${{ github.ref }}
 jobs:
@@ -94,10 +94,10 @@ jobs:
     timeout-minutes: 3
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.node_version }}
           cache: npm
@@ -112,7 +112,7 @@ jobs:
         run: npm test
 
       - name: Report test coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         if: env.CODECOV_TOKEN
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
@@ -122,10 +122,10 @@ jobs:
     timeout-minutes: 3
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.node_version }}
 
@@ -140,10 +140,10 @@ jobs:
     timeout-minutes: 3
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.node_version }}
           cache: npm
@@ -162,7 +162,7 @@ jobs:
     timeout-minutes: 3
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       # Hadolint follows semantic versioning, but doesn't have a @v2 release
       - name: Lint Dockerfile
@@ -175,10 +175,10 @@ jobs:
     timeout-minutes: 3
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Terraform Setup
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.tf_version }}
 
@@ -202,10 +202,10 @@ jobs:
       contents: read
     steps:
       - name: Check out
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: "arn:aws:iam::${{ matrix.env.aws_account }}:role/${{ matrix.env.aws_gha_role }}"
           role-session-name: ${{ github.sha }}
@@ -213,36 +213,30 @@ jobs:
 
       - name: Log into Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@v2
 
       - name: Get Current Timestamp
         id: date
         run: echo "timestamp=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_OUTPUT
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: arm64
-
       - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Build and push the Docker image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPO: ${{ matrix.env.ecr_repo_name }}
           IMAGE_TAG: ${{ steps.date.outputs.timestamp }}
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: src
-          platforms: linux/arm64
           push: true
           tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPO}}:${{ env.IMAGE_TAG }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Terraform Setup
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.tf_version }}
           terraform_wrapper: false

@@ -1,5 +1,5 @@
 terraform {
-  required_version = "1.5.3"
+  required_version = "1.7.0"
   backend "s3" {
     # The rest of the backend config is passed in
     # https://developer.hashicorp.com/terraform/language/settings/backends/configuration#partial-configuration
@@ -9,7 +9,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.65"
+      version = "~> 5.33"
     }
     local = {
       source  = "hashicorp/local"
@@ -65,7 +65,7 @@ module "my_ecr" {
 
 module "gha_role" {
   source                         = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                        = "5.28.0"
+  version                        = "5.30.0"
   create_role                    = true
   role_name                      = "${local.name}-${var.env}-gha"
   provider_url                   = module.acs.github_oidc_provider.url

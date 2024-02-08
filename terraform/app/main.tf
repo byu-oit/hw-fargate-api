@@ -1,5 +1,5 @@
 terraform {
-  required_version = "1.5.3"
+  required_version = "1.7.0"
   backend "s3" {
     # The rest of the backend config is passed in
     # https://developer.hashicorp.com/terraform/language/settings/backends/configuration#partial-configuration
@@ -9,7 +9,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.65"
+      version = "~> 5.33"
     }
     local = {
       source  = "hashicorp/local"
@@ -71,7 +71,7 @@ module "acs" {
 }
 
 module "my_fargate_api" {
-  source                        = "github.com/byu-oit/terraform-aws-fargate-api?ref=v5.0.2"
+  source                        = "github.com/byu-oit/terraform-aws-fargate-api?ref=v6.1.1"
   app_name                      = "${local.name}-${var.env}"
   container_port                = 8080
   health_check_path             = "/health"
@@ -89,8 +89,6 @@ module "my_fargate_api" {
   codedeploy_termination_wait_time = var.codedeploy_termination_wait_time
   role_permissions_boundary_arn    = module.acs.role_permissions_boundary.arn
   log_retention_in_days            = var.log_retention_days
-
-  cpu_architecture = "ARM64"
 
   primary_container_definition = {
     name  = "${local.name}-${var.env}"

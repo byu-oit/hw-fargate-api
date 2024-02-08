@@ -9,7 +9,7 @@ on:
       - '.github/workflows/ci-iac.yml'
 
 env:
-  tf_version: "1.5.3" # must match value in terraform/app/main.tf
+  tf_version: "1.7.0" # must match value in terraform-iac/*/app/main.tf
 
 jobs:
   env:
@@ -72,10 +72,10 @@ jobs:
     timeout-minutes: 3
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Terraform Setup
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.tf_version }}
 
@@ -97,17 +97,17 @@ jobs:
       pull-requests: write
       id-token: write
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: "arn:aws:iam::${{ matrix.env.aws_account }}:role/${{ matrix.env.aws_gha_role }}"
           role-session-name: ${{ github.sha }}
           aws-region: us-west-2
 
       - name: Terraform Setup
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.tf_version }}
 
