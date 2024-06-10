@@ -6,6 +6,10 @@ updates:
     schedule:
       interval: daily
     target-branch: dev
+    groups:
+      aws-sdk:
+        patterns:
+          - '@aws-sdk/*'
 
   - package-ecosystem: docker
     directory: '/src'
