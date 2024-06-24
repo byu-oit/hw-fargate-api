@@ -27,13 +27,9 @@ updates:
     target-branch: dev
 
   - package-ecosystem: terraform
-    directory: '/terraform/app'
-    schedule:
-      interval: daily
-    target-branch: dev
-
-  - package-ecosystem: terraform
-    directory: '/terraform/setup'
+    directories:
+      - '/terraform/app'
+      - '/terraform/setup'
     schedule:
       interval: daily
     target-branch: dev
