@@ -120,7 +120,7 @@ jobs:
         run: tofu plan -var-file=${{ matrix.env.environment_name }}.tfvars -var 'image_tag=ci_test' -input=false -out plan -lock=false
 
       - name: Comment Terraform Plan
-        uses: byu-oit/github-action-tf-plan-comment@support-tofu
+        uses: byu-oit/github-action-tf-plan-comment@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           working-directory: terraform/app
