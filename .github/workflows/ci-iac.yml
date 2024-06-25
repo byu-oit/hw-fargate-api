@@ -113,7 +113,7 @@ jobs:
 
       - name: Terraform Init
         working-directory: terraform/app
-        run: tofu init -backend-config=${{ matrix.env.environment_name }}.s3.tfbackend
+        run: tofu init -var-file=${{ matrix.env.environment_name }}.tfvars
 
       - name: Terraform Plan
         working-directory: terraform/app
