@@ -1,19 +1,20 @@
 terraform {
   required_version = "~> 1.8"
   backend "s3" {
-    # The rest of the backend config is passed in
-    # https://developer.hashicorp.com/terraform/language/settings/backends/configuration#partial-configuration
-    encrypt = true
-    region  = "us-west-2"
+    bucket         = "terraform-state-storage-${var.aws_account_id}"
+    dynamodb_table = "terraform-state-lock-${var.aws_account_id}"
+    key            = "${local.name}/${var.env}/setup.tfstate"
+    encrypt        = true
+    region         = "us-west-2"
   }
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.65"
+      version = "~> 5.55"
     }
     local = {
       source  = "hashicorp/local"
-      version = "~> 2.4"
+      version = "~> 2.5"
     }
   }
 }
@@ -35,6 +36,11 @@ provider "aws" {
 variable "env" {
   type        = string
   description = "Environment: dev, stg, cpy, or prd"
+}
+
+variable "aws_account_id" {
+  type        = string
+  description = "The 12-digit number that uniquely identifies an AWS account."
 }
 
 variable "some_secret" {

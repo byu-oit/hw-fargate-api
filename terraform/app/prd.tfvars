@@ -1,4 +1,5 @@
-env = "prd"
+env            = "prd"
+aws_account_id = "539738229445"
 
 # image_tag provided by pipeline (or user)
 codedeploy_termination_wait_time = 0 # You probably want to change this to 15 when your service is really prd

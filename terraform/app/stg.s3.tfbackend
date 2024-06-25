@@ -1,3 +1,0 @@
-bucket         = "terraform-state-storage-977306314792"
-dynamodb_table = "terraform-state-lock-977306314792"
-key            = "hw-fargate-api/stg/app.tfstate"

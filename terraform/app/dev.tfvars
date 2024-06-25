@@ -1,4 +1,5 @@
-env = "dev"
+env            = "dev"
+aws_account_id = "977306314792"
 
 # image_tag provided by pipeline (or user)
 codedeploy_termination_wait_time = 0
