@@ -1,5 +1,5 @@
 terraform {
-  required_version = "1.7.0"
+  required_version = "~> 1.8"
   backend "s3" {
     # The rest of the backend config is passed in
     # https://developer.hashicorp.com/terraform/language/settings/backends/configuration#partial-configuration

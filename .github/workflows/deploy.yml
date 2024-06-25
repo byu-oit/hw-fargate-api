@@ -10,7 +10,7 @@ on:
       - '.gitignore'
 env:
   node_version: "18.x"
-  tf_version: "1.7.0" # must match value in terraform/app/main.tf
+  tf_version: "1.8.0-alpha1" # must match value in terraform/app/main.tf
   FORCE_COLOR: 3
 concurrency: ${{ github.ref }}
 jobs:
@@ -171,20 +171,20 @@ jobs:
           dockerfile: src/Dockerfile
 
   format:
-    name: Terraform Format
+    name: Tofu Format
     timeout-minutes: 3
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Terraform Setup
-        uses: hashicorp/setup-terraform@v3
+      - name: Tofu Setup
+        uses: opentofu/setup-opentofu@v1
         with:
-          terraform_version: ${{ env.tf_version }}
+          tofu_version: ${{ env.tf_version }}
 
-      - name: Terraform Format
+      - name: Tofu Format
         working-directory: terraform
-        run: terraform fmt -check -recursive
+        run: tofu fmt -check -recursive
 
   build_and_deploy:
     name: Build and Deploy / ${{ matrix.env.environment_name }}
@@ -236,18 +236,18 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Terraform Setup
-        uses: hashicorp/setup-terraform@v3
+        uses: opentofu/setup-opentofu@v1
         with:
-          terraform_version: ${{ env.tf_version }}
-          terraform_wrapper: false
+          tofu_version: ${{ env.tf_version }}
+          tofu_wrapper: false
 
       - name: Terraform Init
         working-directory: terraform/app
-        run: terraform init -backend-config=${{ matrix.env.environment_name }}.s3.tfbackend
+        run: tofu init -var-file=${{ matrix.env.environment_name }}.tfvars
 
       - name: Terraform Plan
         working-directory: terraform/app
-        run: terraform plan -var-file=${{ matrix.env.environment_name }}.tfvars -var 'image_tag=${{ steps.date.outputs.timestamp }}' -input=false -out=plan
+        run: tofu plan -var-file=${{ matrix.env.environment_name }}.tfvars -var 'image_tag=${{ steps.date.outputs.timestamp }}' -input=false -out=plan
 
       - name: Analyze Terraform Plan
         uses: byu-oit/github-action-tf-plan-analyzer@v2
@@ -269,16 +269,16 @@ jobs:
 
       - name: Terraform Apply
         working-directory: terraform/app
-        run: terraform apply plan
+        run: tofu apply plan
 
       - name: Get Terraform Outputs
         id: terraform-outputs
         working-directory: terraform/app
         run: |
-          echo "codedeploy_app_name=$(terraform output -raw codedeploy_app_name)" >> $GITHUB_OUTPUT
-          echo "codedeploy_deployment_group_name=$(terraform output -raw codedeploy_deployment_group_name)" >> $GITHUB_OUTPUT
-          echo "codedeploy_appspec_json_file=$(terraform output -raw codedeploy_appspec_json_file)" >> $GITHUB_OUTPUT
-          echo "url=$(terraform output -raw url)" >> $GITHUB_OUTPUT
+          echo "codedeploy_app_name=$(tofu output -raw codedeploy_app_name)" >> $GITHUB_OUTPUT
+          echo "codedeploy_deployment_group_name=$(tofu output -raw codedeploy_deployment_group_name)" >> $GITHUB_OUTPUT
+          echo "codedeploy_appspec_json_file=$(tofu output -raw codedeploy_appspec_json_file)" >> $GITHUB_OUTPUT
+          echo "url=$(tofu output -raw url)" >> $GITHUB_OUTPUT
 
       - name: CodeDeploy
         id: deploy

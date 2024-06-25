@@ -9,7 +9,7 @@ on:
       - '.github/workflows/ci-iac.yml'
 
 env:
-  tf_version: "1.7.0" # must match value in terraform/app/main.tf
+  tf_version: "1.8.0-alpha1" # must match value in terraform/app/main.tf
 
 jobs:
   env:
@@ -75,13 +75,13 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Terraform Setup
-        uses: hashicorp/setup-terraform@v3
+        uses: opentofu/setup-opentofu@v1
         with:
-          terraform_version: ${{ env.tf_version }}
+          tofu_version: ${{ env.tf_version }}
 
       - name: Terraform Format
         working-directory: terraform
-        run: terraform fmt -check -recursive
+        run: tofu fmt -check -recursive
 
   plan:
     name: Terraform Plan / ${{ matrix.env.environment_name }}
@@ -107,17 +107,17 @@ jobs:
           aws-region: us-west-2
 
       - name: Terraform Setup
-        uses: hashicorp/setup-terraform@v3
+        uses: opentofu/setup-opentofu@v1
         with:
-          terraform_version: ${{ env.tf_version }}
+          tofu_version: ${{ env.tf_version }}
 
       - name: Terraform Init
         working-directory: terraform/app
-        run: terraform init -backend-config=${{ matrix.env.environment_name }}.s3.tfbackend
+        run: tofu init -backend-config=${{ matrix.env.environment_name }}.s3.tfbackend
 
       - name: Terraform Plan
         working-directory: terraform/app
-        run: terraform plan -var-file=${{ matrix.env.environment_name }}.tfvars -var 'image_tag=ci_test' -input=false -out plan -lock=false
+        run: tofu plan -var-file=${{ matrix.env.environment_name }}.tfvars -var 'image_tag=ci_test' -input=false -out plan -lock=false
 
       - name: Comment Terraform Plan
         uses: byu-oit/github-action-tf-plan-comment@v1
