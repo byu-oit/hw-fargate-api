@@ -131,7 +131,7 @@ jobs:
           terraform-plan-file: plan
 
       - name: Analyze Terraform Plan
-        uses: byu-oit/github-action-tf-plan-analyzer@v2
+        uses: byu-oit/github-action-tf-plan-analyzer@staging
         if: github.repository_owner == 'byu-oit'
         # If you're at BYU, but outside the byu-oit GitHub org, you may be able to obtain credentials by contacting cloudoffice@byu.edu
         with:
