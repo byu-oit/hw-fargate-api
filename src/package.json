@@ -10,8 +10,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.637.0",
-    "@aws-sdk/client-s3": "^3.637.0",
+    "@aws-sdk/client-dynamodb": "^3.651.1",
+    "@aws-sdk/client-s3": "^3.651.1",
     "express": "^4.19.2"
   },
   "devDependencies": {
