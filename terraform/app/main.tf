@@ -1,5 +1,48 @@
+terraform {
+  required_version = "~> 1.8"
+  backend "s3" {
+    bucket         = "terraform-state-storage-${var.aws_account_id}"
+    dynamodb_table = "terraform-state-lock-${var.aws_account_id}"
+    key            = "${local.name}/${var.env}/app.tfstate"
+    encrypt        = true
+    region         = "us-west-2"
+  }
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.70"
+    }
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.5"
+    }
+  }
+}
+
+provider "aws" {
+  region = "us-west-2"
+
+  allowed_account_ids = [var.aws_account_id]
+
+  default_tags {
+    tags = {
+      app                    = local.name
+      repo                   = "https://github.com/${local.gh_org}/${local.gh_repo}"
+      data-sensitivity       = "public"
+      env                    = var.env
+      resource-creator-email = "GitHub-Actions"
+    }
+  }
+}
+
 variable "env" {
-  type = string
+  type        = string
+  description = "Environment: dev, stg, cpy, or prd"
+}
+
+variable "aws_account_id" {
+  type        = string
+  description = "The 12-digit number that uniquely identifies an AWS account."
 }
 
 variable "image_tag" {
@@ -23,8 +66,9 @@ variable "log_retention_days" {
 }
 
 locals {
-  name = "hw-fargate-api"
-  env  = var.env
+  name    = "hw-fargate-api"
+  gh_org  = "byu-oit"
+  gh_repo = "hw-fargate-api"
 }
 
 data "aws_ecr_repository" "my_ecr_repo" {
@@ -32,7 +76,7 @@ data "aws_ecr_repository" "my_ecr_repo" {
 }
 
 module "acs" {
-  source = "github.com/byu-oit/terraform-aws-acs-info?ref=v4.0.0"
+  source = "github.com/byu-oit/terraform-aws-acs-info?ref=v4.1.0"
 }
 
 module "my_fargate_api" {
