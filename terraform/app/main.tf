@@ -10,7 +10,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.55"
+      version = "~> 5.70"
     }
     local = {
       source  = "hashicorp/local"
@@ -76,7 +76,7 @@ data "aws_ecr_repository" "my_ecr_repo" {
 }
 
 module "acs" {
-  source = "github.com/byu-oit/terraform-aws-acs-info?ref=v4.0.0"
+  source = "github.com/byu-oit/terraform-aws-acs-info?ref=v4.1.0"
 }
 
 module "my_fargate_api" {

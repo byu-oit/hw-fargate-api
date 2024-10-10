@@ -10,7 +10,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.55"
+      version = "~> 5.70"
     }
     local = {
       source  = "hashicorp/local"
@@ -57,7 +57,7 @@ locals {
 }
 
 module "acs" {
-  source = "github.com/byu-oit/terraform-aws-acs-info?ref=v4.0.0"
+  source = "github.com/byu-oit/terraform-aws-acs-info?ref=v4.1.0"
 }
 
 resource "aws_ssm_parameter" "some_secret" {
@@ -73,7 +73,7 @@ module "my_ecr" {
 
 module "gha_role" {
   source                         = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                        = "5.42.0"
+  version                        = "5.46.0"
   create_role                    = true
   role_name                      = "${local.name}-${var.env}-gha"
   provider_url                   = module.acs.github_oidc_provider.url
