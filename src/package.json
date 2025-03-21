@@ -5,9 +5,11 @@
   "author": "",
   "license": "Apache-2.0",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "lint": "standard --verbose | snazzy",
-    "test": "jest"
+    "test": "node --test",
+    "test:coverage": "node --test --experimental-test-coverage --test-reporter=lcov"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.772.0",
@@ -15,24 +17,12 @@
     "express": "^4.21.2"
   },
   "devDependencies": {
-    "jest": "^29.7.0",
     "snazzy": "^9.0.0",
     "standard": "^17.1.2",
     "supertest": "^7.1.0"
   },
-  "jest": {
-    "collectCoverage": true,
-    "coverageDirectory": "coverage",
-    "coverageReporters": [
-      "lcov",
-      "text"
-    ],
-    "passWithNoTests": true,
-    "testEnvironment": "node",
-    "verbose": true
-  },
   "standard": {
-    "env": ["jest", "node"]
+    "env": ["node"]
   },
   "repository": {
     "type": "git",

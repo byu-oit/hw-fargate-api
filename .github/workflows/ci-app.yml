@@ -34,7 +34,7 @@ jobs:
 
       - name: npm test
         working-directory: src
-        run: npm test
+        run: npm test:coverage
 
       - name: Report test coverage to Codecov
         uses: codecov/codecov-action@v5
