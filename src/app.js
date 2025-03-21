@@ -1,7 +1,7 @@
-'use strict'
-const express = require('express')
-const { DynamoDBClient, ScanCommand } = require('@aws-sdk/client-dynamodb')
-const { S3Client, ListObjectsV2Command } = require('@aws-sdk/client-s3')
+import express from 'express'
+import { DynamoDBClient, ScanCommand } from '@aws-sdk/client-dynamodb'
+import { S3Client, ListObjectsV2Command } from '@aws-sdk/client-s3'
+
 const app = express()
 const dynamodb = new DynamoDBClient({ region: 'us-west-2' })
 const s3 = new S3Client({})
@@ -36,4 +36,4 @@ app.get('/', async (req, res) => {
   }
 })
 
-module.exports = app
+export default app
