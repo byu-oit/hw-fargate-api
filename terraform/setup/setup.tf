@@ -64,6 +64,10 @@ resource "aws_ssm_parameter" "some_secret" {
   name  = "/${local.name}/${var.env}/some-secret"
   type  = "SecureString"
   value = var.some_secret
+
+  lifecycle {
+    ignore_changes = [value]
+  }
 }
 
 module "my_ecr" {
