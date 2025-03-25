@@ -1,5 +1,5 @@
 terraform {
-  required_version = "~> 1.8"
+  required_version = "~> 1.9"
   backend "s3" {
     bucket         = "terraform-state-storage-${var.aws_account_id}"
     dynamodb_table = "terraform-state-lock-${var.aws_account_id}"
