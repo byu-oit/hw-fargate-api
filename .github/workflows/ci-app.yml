@@ -10,7 +10,7 @@ on:
       - '.github/workflows/ci-app.yml'
 
 env:
-  node_version: "18.x"
+  node_version: "22.x"
   FORCE_COLOR: 3
 
 jobs:
@@ -34,7 +34,7 @@ jobs:
 
       - name: npm test
         working-directory: src
-        run: npm test
+        run: npm run test:coverage
 
       - name: Report test coverage to Codecov
         uses: codecov/codecov-action@v5

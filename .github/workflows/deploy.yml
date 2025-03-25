@@ -9,7 +9,7 @@ on:
       - 'LICENSE'
       - '.gitignore'
 env:
-  node_version: "18.x"
+  node_version: "22.x"
   tf_version: "1.7.0" # must match value in terraform-iac/*/app/main.tf
   FORCE_COLOR: 3
 concurrency: ${{ github.ref }}
@@ -113,7 +113,7 @@ jobs:
 
       - name: npm test
         working-directory: src
-        run: npm test
+        run: npm run test:coverage
 
       - name: Report test coverage to Codecov
         uses: codecov/codecov-action@v5
