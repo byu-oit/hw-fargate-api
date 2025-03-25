@@ -9,7 +9,7 @@ on:
       - 'LICENSE'
       - '.gitignore'
 env:
-  node_version: "18.x"
+  node_version: "22.x"
   tf_version: "1.8.0" # must match value in terraform/app/main.tf
   FORCE_COLOR: 3
 concurrency: ${{ github.ref }}
@@ -109,10 +109,10 @@ jobs:
 
       - name: npm test
         working-directory: src
-        run: npm test
+        run: npm run test:coverage
 
       - name: Report test coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         if: env.CODECOV_TOKEN
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
@@ -275,10 +275,10 @@ jobs:
         id: terraform-outputs
         working-directory: terraform/app
         run: |
-          echo "codedeploy_app_name=$(tofu output -raw codedeploy_app_name)" >> $GITHUB_OUTPUT
-          echo "codedeploy_deployment_group_name=$(tofu output -raw codedeploy_deployment_group_name)" >> $GITHUB_OUTPUT
-          echo "codedeploy_appspec_json_file=$(tofu output -raw codedeploy_appspec_json_file)" >> $GITHUB_OUTPUT
-          echo "url=$(tofu output -raw url)" >> $GITHUB_OUTPUT
+          echo "codedeploy_app_name=$(tofu output -var-file=${{ matrix.env.environment_name }}.tfvars -raw codedeploy_app_name)" >> $GITHUB_OUTPUT
+          echo "codedeploy_deployment_group_name=$(tofu output -var-file=${{ matrix.env.environment_name }}.tfvars -raw codedeploy_deployment_group_name)" >> $GITHUB_OUTPUT
+          echo "codedeploy_appspec_json_file=$(tofu output -var-file=${{ matrix.env.environment_name }}.tfvars -raw codedeploy_appspec_json_file)" >> $GITHUB_OUTPUT
+          echo "url=$(tofu output -var-file=${{ matrix.env.environment_name }}.tfvars -raw url)" >> $GITHUB_OUTPUT
 
       - name: CodeDeploy
         id: deploy
