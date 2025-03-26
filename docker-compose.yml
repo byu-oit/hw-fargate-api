@@ -7,7 +7,7 @@ services:
     volumes:
       - ~/.aws:/home/node/.aws # Use AWS credentials from host
     environment:
-      # Environment variables and secrets from primary_container_definition in terraform-iac/modules/app/main.tf
+      # Environment variables and secrets from primary_container_definition in terraform/app/main.tf
       DYNAMO_TABLE_NAME: hw-fargate-api-dev
       BUCKET_NAME: hw-fargate-api-dev
       SOME_SECRET: something
