@@ -1,12 +1,12 @@
 # hw-fargate-api
-Example of creating and deploying an API with Docker and Terraform on AWS
+Example of creating and deploying an containerized API onto AWS Fargate with OpenTofu
 
 ## Prerequisites
 
-* Install [Terraform](https://www.terraform.io/downloads.html)
+* Install [OpenTofu](https://opentofu.org/docs/intro/install/)
 * Install the [AWS CLI](https://aws.amazon.com/cli/)
 * Log into your `dev` account (with [`aws sso login`](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/sso/login.html))
-* Ensure your account has a [Terraform State S3 Backend](https://github.com/byu-oit/terraform-aws-backend-s3) deployed
+* Ensure your account has a [Terraform/OpenTofu State S3 Backend](https://github.com/byu-oit/terraform-aws-backend-s3) deployed
 
 ## Setup
 * Create a new repo [using this template](https://github.com/byu-oit/hw-fargate-api/generate).
@@ -44,9 +44,9 @@ git commit -am "Update template with repo specific details"
 ### Deploy the "one time setup" resources
 
 ```sh
-cd terraform/setup/
-terraform init -backend-config=dev.s3.tfbackend
-terraform apply -var-file=dev.tfvars
+cd iac/setup/
+tofu init -var-file=dev.tfvars
+tofu apply -var-file=dev.tfvars
 ```
 
 In the AWS Console, see if you can find the resources from `setup.tf` (ECR, SSM Param, IAM Role).
@@ -69,10 +69,10 @@ If you look at [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), y
 
 ### View the deployed application
 
-Anytime after the `Terraform Apply` step succeeds:
+Anytime after the `Tofu Apply` step succeeds:
 ```sh
 cd ../app/
-terraform output
+tofu output
 ```
 
 This will output a DNS Name. Enter this in a browser. It will probably return `503 Service Unavailable`. It takes some time for the ECS Tasks to spin up and for the ALB to recognize that they are healthy.
@@ -81,9 +81,9 @@ In the AWS Console, see if you can find the ECS Service and see the state of its
 
 > **Note**
 > 
-> While Terraform creates the ECS Service, it doesn't actually spin up any ECS Tasks. This isn't Terraform's job. The ECS Service is responsible for ensuring that ECS Tasks are running.
+> While OpenTofu creates the ECS Service, it doesn't actually spin up any ECS Tasks. This isn't OpenTofu's job. The ECS Service is responsible for ensuring that ECS Tasks are running.
 > 
-> Because of this, if the ECS Tasks fail to launch (due to bugs in the code causing the docker container to crash, for example), Terraform won't know anything about that. From Terraform's perspective, the deployment was successful.
+> Because of this, if the ECS Tasks fail to launch (due to bugs in the code causing the docker container to crash, for example), OpenTofu won't know anything about that. From OpenTofu's perspective, the deployment was successful.
 > 
 > These type of issues can often be tracked down by finding the Stopped ECS Tasks in the ECS Console, and looking at their logs or their container status.
 
@@ -110,15 +110,12 @@ In GitHub Actions, watch the deploy steps run (you have a new push, so you'll ha
 
 ## Learn what was built
 
-By digging through the `.tf` files, you'll see what resources are being created. You should spend some time searching through the AWS Console for each of these resources. The goal is to start making connections between the Terraform syntax and the actual AWS resources that are created.
+By digging through the `.tf` files, you'll see what resources are being created. You should spend some time searching through the AWS Console for each of these resources. The goal is to start making connections between the OpenTofu syntax and the actual AWS resources that are created.
 
-Several OIT created Terraform modules are used. You can look these modules up in our GitHub Organization. There you can see what resources each of these modules creates. You can look those up in the AWS Console too.
-
-By default, [we build and deploy on ARM-based processors](https://github.com/byu-oit/hw-fargate-api/issues/389) to [save ~20% on our compute costs](https://aws.amazon.com/fargate/pricing/).
+Several OIT created Terraform/OpenTofu modules are used. You can look these modules up in our GitHub Organization. There you can see what resources each of these modules creates. You can look those up in the AWS Console too.
 
 ## Deployment details
 
 There are a lot of moving parts in the CI/CD pipeline for this project. This diagram shows the interaction between various services during a deployment.
 
 ![CI/CD Sequence Diagram](doc/Fargate%20API%20CI%20CD.png)
-
