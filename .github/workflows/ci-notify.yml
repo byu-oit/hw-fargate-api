@@ -1,0 +1,23 @@
+name: Notify
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [test-notify, dev, stg, prd]
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+      - '.gitignore'
+env:
+  node_version: "22.x"
+  tf_version: "1.9.0" # must match value in iac/app/main.tf
+  FORCE_COLOR: 3
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Teams Notification
+        uses: byu-oit/github-action-teams@v4
+        with:
+          status: ${{ job.status }}
+          webhook-url: ${{ secrets.MS_TEAMS_WEBHOOK_URL }}
