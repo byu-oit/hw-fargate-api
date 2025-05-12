@@ -19,7 +19,7 @@
   "devDependencies": {
     "snazzy": "^9.0.0",
     "standard": "^17.1.2",
-    "supertest": "^7.1.0"
+    "supertest": "^7.1.1"
   },
   "standard": {
     "env": ["node"]
