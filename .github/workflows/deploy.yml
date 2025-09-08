@@ -8,16 +8,21 @@ on:
       - 'README.md'
       - 'LICENSE'
       - '.gitignore'
+
 env:
   node_version: "22.x"
   tf_version: "1.9.0" # must match value in iac/app/main.tf
   FORCE_COLOR: 3
+
 concurrency: ${{ github.ref }}
+
 jobs:
   env:
     name: Set Env Vars
     timeout-minutes: 1
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Set up DEV Environment Variables
         if: github.ref == 'refs/heads/dev'
@@ -93,6 +98,8 @@ jobs:
     name: Test
     timeout-minutes: 3
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v5
 
@@ -121,6 +128,8 @@ jobs:
     name: Audit
     timeout-minutes: 3
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v5
 
@@ -139,6 +148,8 @@ jobs:
     name: Lint
     timeout-minutes: 3
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v5
 
@@ -161,6 +172,8 @@ jobs:
     name: Lint Docker
     timeout-minutes: 3
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v5
 
@@ -174,6 +187,8 @@ jobs:
     name: Tofu Format
     timeout-minutes: 3
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v5
 

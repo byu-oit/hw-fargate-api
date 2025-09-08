@@ -18,6 +18,8 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     timeout-minutes: 3
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v5
 
@@ -46,6 +48,8 @@ jobs:
     name: Audit
     runs-on: ubuntu-latest
     timeout-minutes: 3
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v5
 
@@ -64,6 +68,8 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     timeout-minutes: 3
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v5
 
@@ -86,6 +92,8 @@ jobs:
     name: Docker Build
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v5
 
@@ -103,6 +111,8 @@ jobs:
     name: Lint Docker
     runs-on: ubuntu-latest
     timeout-minutes: 3
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v5
 
