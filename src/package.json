@@ -12,8 +12,8 @@
     "test:coverage": "node --test --test-reporter=spec --test-reporter-destination=stdout --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=lcov.info"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.883.0",
-    "@aws-sdk/client-s3": "^3.884.0",
+    "@aws-sdk/client-dynamodb": "^3.886.0",
+    "@aws-sdk/client-s3": "^3.886.0",
     "express": "^5.1.0"
   },
   "devDependencies": {
