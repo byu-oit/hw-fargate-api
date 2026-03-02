@@ -275,7 +275,7 @@ jobs:
           divvycloud-password: ${{ secrets.DIVVYCLOUD_PASSWORD }}
 
       - name: Start Standard Change
-        uses: byu-oit/github-action-start-standard-change@v1
+        uses: byu-oit/github-action-start-standard-change@v2
         id: start-standard-change
         with:
           client-key: ${{ secrets[matrix.env.rfc_key_name] }}
