@@ -275,12 +275,13 @@ jobs:
           divvycloud-password: ${{ secrets.DIVVYCLOUD_PASSWORD }}
 
       - name: Start Standard Change
-        uses: byu-oit/github-action-start-standard-change@v1
+        uses: byu-oit/github-action-start-standard-change@v2
         id: start-standard-change
         with:
           client-key: ${{ secrets[matrix.env.rfc_key_name] }}
           client-secret: ${{ secrets[matrix.env.rfc_secret_name] }}
           template-id: ${{ matrix.env.rfc_template_id }}
+          run-in-non-production: true
 
       - name: Tofu Apply
         working-directory: iac/app
@@ -304,11 +305,12 @@ jobs:
           appspec-file: ${{ steps.tofu-outputs.outputs.codedeploy_appspec_json_file }}
 
       - name: End Standard Change
-        uses: byu-oit/github-action-end-standard-change@v1
+        uses: byu-oit/github-action-end-standard-change@v2
         if: always() && steps.start-standard-change.outcome == 'success' # Run if RFC started, even if the deploy failed
         with:
           client-key: ${{ secrets[matrix.env.rfc_key_name] }}
           client-secret: ${{ secrets[matrix.env.rfc_secret_name] }}
           change-sys-id: ${{ steps.start-standard-change.outputs.change-sys-id }}
+          run-in-non-production: true
           work-start: ${{ steps.start-standard-change.outputs.work-start }}
           success: ${{ job.status == 'success' }}
