@@ -80,11 +80,12 @@ module "acs" {
 }
 
 module "my_fargate_api" {
-  source                        = "github.com/byu-oit/terraform-aws-fargate-api?ref=v6.3.1"
+  source                        = "github.com/byu-oit/terraform-aws-fargate-api?ref=fix%2Flistener-ssl-policy"
   app_name                      = "${local.name}-${var.env}"
   container_port                = 8080
   health_check_path             = "/health"
   codedeploy_test_listener_port = 4443
+  ssl_policy                    = "ELBSecurityPolicy-TLS13-1-2-2021-06"
   task_policies = [
     aws_iam_policy.my_dynamo_policy.arn,
     aws_iam_policy.my_s3_policy.arn
