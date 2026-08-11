@@ -116,7 +116,7 @@ module "my_fargate_api" {
   }
 
   autoscaling_config = {
-    min_capacity = 1
+    min_capacity = 2
     max_capacity = 2
   }
 
