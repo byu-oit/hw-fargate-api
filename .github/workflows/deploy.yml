@@ -265,28 +265,24 @@ jobs:
         working-directory: iac/app
         run: tofu plan -var-file=${{ matrix.env.environment_name }}.tfvars -var 'image_tag=${{ steps.date.outputs.timestamp }}' -input=false -out=plan
 
-      - name: Render Tofu Plan as JSON
-        working-directory: iac/app
-        run: tofu show -json plan > plan.tfplan.json
-
-      - name: Scan Tofu Plan with Trivy
+      - name: Scan Tofu with Trivy
         id: trivy-sarif
         uses: aquasecurity/trivy-action@v0.36.0
-        # Keep the scan root at the repository root so SARIF paths are correct in GitHub Code Scanning.
+        # Scan from the repository root so SARIF paths are correct in GitHub Code Scanning.
         env:
-          TRIVY_MISCONFIG_SCANNERS: terraformplan-json
+          TRIVY_MISCONFIG_SCANNERS: terraform
         with:
           scan-type: config
           scan-ref: .
           hide-progress: true
           format: sarif
-          output: trivy-results-${{ matrix.env.environment_name }}.sarif
+          output: trivy-tf-${{ matrix.env.environment_name }}.sarif
           exit-code: 0
 
-      - name: Enforce High/Critical Trivy Findings
+      - name: Enforce High/Critical Tofu Findings
         uses: aquasecurity/trivy-action@v0.36.0
         env:
-          TRIVY_MISCONFIG_SCANNERS: terraformplan-json
+          TRIVY_MISCONFIG_SCANNERS: terraform
         with:
           scan-type: config
           scan-ref: .
@@ -299,9 +295,10 @@ jobs:
       - name: Upload Trivy Results to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v4
         if: always() && steps.trivy-sarif.outcome != 'skipped'
+        continue-on-error: true
         with:
-          sarif_file: trivy-results-${{ matrix.env.environment_name }}.sarif
-          category: trivy-terraform-${{ matrix.env.environment_name }}
+          sarif_file: trivy-tf-${{ matrix.env.environment_name }}.sarif
+          category: trivy-tf-${{ matrix.env.environment_name }}
           checkout_path: ${{ github.workspace }}
 
       - name: Start Standard Change
