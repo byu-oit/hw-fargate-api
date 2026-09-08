@@ -218,10 +218,10 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "my_s3_bucket_logs
 
 resource "aws_s3_bucket_public_access_block" "default_logs" {
   bucket                  = aws_s3_bucket.my_s3_bucket_logs.id
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
 }
 
 resource "aws_s3_bucket" "my_s3_bucket" {
@@ -273,10 +273,10 @@ resource "aws_s3_bucket_versioning" "my_s3_bucket" {
 
 resource "aws_s3_bucket_public_access_block" "default" {
   bucket                  = aws_s3_bucket.my_s3_bucket.id
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
 }
 
 resource "aws_iam_policy" "my_s3_policy" {
