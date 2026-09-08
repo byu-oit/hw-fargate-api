@@ -99,6 +99,7 @@ jobs:
       contents: read
       actions: read
       pull-requests: write
+      security-events: write
       id-token: write
     steps:
       - uses: actions/checkout@v7
@@ -130,13 +131,41 @@ jobs:
           working-directory: iac/app
           terraform-plan-file: plan
 
-      - name: Analyze Tofu Plan
-        uses: byu-oit/github-action-tf-plan-analyzer@v2
-        if: github.repository_owner == 'byu-oit'
-        # If you're at BYU, but outside the byu-oit GitHub org, you may be able to obtain credentials by contacting cloudoffice@byu.edu
-        with:
-          working-directory: iac/app
-          terraform-plan-file: plan
-          divvycloud-username: ${{ secrets.DIVVYCLOUD_USERNAME }}
-          divvycloud-password: ${{ secrets.DIVVYCLOUD_PASSWORD }}
+      - name: Render Tofu Plan as JSON
+        working-directory: iac/app
+        run: tofu show -json plan > plan.tfplan.json
 
+      - name: Scan Tofu Plan with Trivy
+        id: trivy-sarif
+        uses: aquasecurity/trivy-action@v0.36.0
+        # Keep the scan root at the repository root so SARIF paths are correct in GitHub Code Scanning.
+        env:
+          TRIVY_MISCONFIG_SCANNERS: terraformplan-json
+        with:
+          scan-type: config
+          scan-ref: .
+          hide-progress: true
+          format: sarif
+          output: trivy-results-${{ matrix.env.environment_name }}.sarif
+          exit-code: 0
+
+      - name: Enforce High/Critical Trivy Findings
+        uses: aquasecurity/trivy-action@v0.36.0
+        env:
+          TRIVY_MISCONFIG_SCANNERS: terraformplan-json
+        with:
+          scan-type: config
+          scan-ref: .
+          hide-progress: true
+          format: table
+          severity: HIGH,CRITICAL
+          exit-code: 1
+          skip-setup-trivy: true
+
+      - name: Upload Trivy Results to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v4
+        if: always() && steps.trivy-sarif.outcome != 'skipped'
+        with:
+          sarif_file: trivy-results-${{ matrix.env.environment_name }}.sarif
+          category: trivy-terraform-${{ matrix.env.environment_name }}
+          checkout_path: ${{ github.workspace }}
