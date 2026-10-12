@@ -10,7 +10,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.70"
+      version = "~> 6.21"
     }
     local = {
       source  = "hashicorp/local"
@@ -320,7 +320,7 @@ EOF
 # -----------------------------------------------------------------------------
 
 module "postman_test_lambda" {
-  source   = "github.com/byu-oit/terraform-aws-postman-test-lambda?ref=v6.0.0"
+  source   = "github.com/byu-oit/terraform-aws-postman-test-lambda?ref=v7.0.0"
   app_name = "${local.name}-${var.env}"
   timeout  = 60
   postman_collections = [
