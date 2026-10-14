@@ -14,7 +14,7 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.1147.0",
     "@aws-sdk/client-s3": "^3.1147.0",
-    "express": "^5.2.1"
+    "express": "^5.3.0"
   },
   "devDependencies": {
     "snazzy": "^9.0.0",
