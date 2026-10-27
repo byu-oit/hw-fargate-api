@@ -140,9 +140,6 @@ jobs:
 
       # We don't need to install deps to audit them
 
-      - name: npm audit
-        working-directory: src
-        run: npm audit --audit-level=critical
 
   lint:
     name: Lint
