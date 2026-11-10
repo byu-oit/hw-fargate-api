@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      DEPLOY_deploy.yml: WORKFLOW
+      DEPLOY_WORKFLOW: deploy.yml
     steps:
       - name: Approve, merge, and deploy
         uses: actions/github-script@v9
