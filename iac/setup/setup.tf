@@ -76,14 +76,15 @@ module "my_ecr" {
 }
 
 module "gha_role" {
-  source                         = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                        = "5.46.0"
-  create_role                    = true
-  role_name                      = "${local.name}-${var.env}-gha"
-  provider_url                   = module.acs.github_oidc_provider.url
-  role_permissions_boundary_arn  = module.acs.role_permissions_boundary.arn
-  role_policy_arns               = module.acs.power_builder_policies[*].arn
-  oidc_fully_qualified_audiences = ["sts.amazonaws.com"]
-  oidc_subjects_with_wildcards   = ["repo:${local.gh_org}/${local.gh_repo}:*"]
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role"
+  version = "6.8.2"
+
+  name                   = "${local.name}-${var.env}-gha"
+  use_name_prefix        = false
+  enable_github_oidc     = true
+  permissions_boundary   = module.acs.role_permissions_boundary.arn
+  policies               = { for arn in module.acs.power_builder_policies[*].arn : arn => arn }
+  oidc_audiences         = ["sts.amazonaws.com"]
+  oidc_wildcard_subjects = ["${local.gh_org}/${local.gh_repo}:*"]
 }
 
