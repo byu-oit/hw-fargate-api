@@ -1,6 +1,8 @@
 version: 2
 
 updates:
+  # Keep each environment branch current independently so dependency updates
+  # deploy through that branch's existing workflow after they merge.
   - package-ecosystem: npm
     directory: '/src'
     schedule:
@@ -28,11 +30,77 @@ updates:
 
   - package-ecosystem: terraform
     directories:
-      - '/terraform/app'
-      - '/terraform/setup'
+      - '/iac/app'
+      - '/iac/setup'
     schedule:
       interval: daily
     target-branch: dev
+
+  - package-ecosystem: npm
+    directory: '/src'
+    schedule:
+      interval: daily
+    target-branch: stg
+    groups:
+      aws-sdk:
+        patterns:
+          - '@aws-sdk/*'
+
+  - package-ecosystem: docker
+    directory: '/src'
+    schedule:
+      interval: daily
+    target-branch: stg
+    ignore:
+      - dependency-name: node
+        update-types: ['version-update:semver-major'] # Stay within major version
+
+  - package-ecosystem: github-actions
+    directory: '/' # Check files in .github/workflows
+    schedule:
+      interval: daily
+    target-branch: stg
+
+  - package-ecosystem: terraform
+    directories:
+      - '/iac/app'
+      - '/iac/setup'
+    schedule:
+      interval: daily
+    target-branch: stg
+
+  - package-ecosystem: npm
+    directory: '/src'
+    schedule:
+      interval: daily
+    target-branch: prd
+    groups:
+      aws-sdk:
+        patterns:
+          - '@aws-sdk/*'
+
+  - package-ecosystem: docker
+    directory: '/src'
+    schedule:
+      interval: daily
+    target-branch: prd
+    ignore:
+      - dependency-name: node
+        update-types: ['version-update:semver-major'] # Stay within major version
+
+  - package-ecosystem: github-actions
+    directory: '/' # Check files in .github/workflows
+    schedule:
+      interval: daily
+    target-branch: prd
+
+  - package-ecosystem: terraform
+    directories:
+      - '/iac/app'
+      - '/iac/setup'
+    schedule:
+      interval: daily
+    target-branch: prd
 
 # For each of these, requesting reviews from your team makes Dependabot PRs easier to find (https://github.com/pulls/review-requested)
 #   reviewers:
