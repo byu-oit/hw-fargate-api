@@ -1,29 +1,160 @@
 name: Dependabot Auto-merge
 
 on:
-  pull_request:
+  pull_request_target:
     branches: [dev, stg, prd]
     types: [opened, reopened, synchronize, ready_for_review]
 
+concurrency:
+  group: dependabot-auto-merge-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 permissions:
+  actions: write
+  checks: read
   contents: write
   pull-requests: write
 
 jobs:
   auto-merge:
-    name: Approve and enable auto-merge
+    name: Wait for checks, merge, and deploy
     if: github.event.pull_request.user.login == 'dependabot[bot]'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      DEPLOY_deploy.yml: WORKFLOW
     steps:
-      - name: Approve pull request
-        continue-on-error: true # Some repositories disable approvals from Actions.
-        run: gh pr review --approve "$PR_URL"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
+      - name: Approve, merge, and deploy
+        uses: actions/github-script@v9
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner
+            const repo = context.repo.repo
+            const pullNumber = context.payload.pull_request.number
+            const headSha = context.payload.pull_request.head.sha
+            const allowedConclusions = new Set(['success', 'neutral', 'skipped'])
+            const ignoredCheckNames = new Set([
+              'Approve and enable auto-merge',
+              'Wait for checks, merge, and deploy'
+            ])
+            const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))
 
-      - name: Enable auto-merge
-        run: gh pr merge --auto --squash "$PR_URL"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
+            try {
+              await github.rest.pulls.createReview({
+                owner,
+                repo,
+                pull_number: pullNumber,
+                event: 'APPROVE'
+              })
+            } catch (error) {
+              if (error.status !== 422) throw error
+              core.info('The pull request is already approved.')
+            }
+
+            // Give path-filtered CI and security checks time to register.
+            await sleep(30000)
+
+            let previousSignature
+            let stablePolls = 0
+            let checksPassed = false
+
+            for (let attempt = 1; attempt <= 120; attempt++) {
+              const checkRuns = await github.paginate(github.rest.checks.listForRef, {
+                owner,
+                repo,
+                ref: headSha,
+                filter: 'latest',
+                per_page: 100
+              }, (response) => response.data.check_runs)
+              const relevantChecks = checkRuns.filter(({ name }) => !ignoredCheckNames.has(name))
+
+              const { data: combinedStatus } = await github.rest.repos.getCombinedStatusForRef({
+                owner,
+                repo,
+                ref: headSha
+              })
+              const statuses = combinedStatus.statuses
+
+              const failedChecks = relevantChecks.filter(({ status, conclusion }) =>
+                status === 'completed' && !allowedConclusions.has(conclusion)
+              )
+              const failedStatuses = statuses.filter(({ state }) => ['error', 'failure'].includes(state))
+
+              if (failedChecks.length || failedStatuses.length) {
+                const failures = [
+                  ...failedChecks.map(({ name, conclusion }) => `${name}: ${conclusion}`),
+                  ...failedStatuses.map(({ context, state }) => `${context}: ${state}`)
+                ]
+                throw new Error(`Checks failed: ${failures.join(', ')}`)
+              }
+
+              const pendingChecks = relevantChecks.filter(({ status }) => status !== 'completed')
+              const pendingStatuses = statuses.filter(({ state }) => state === 'pending')
+              const signature = [
+                ...relevantChecks.map(({ id, status, conclusion }) => `${id}:${status}:${conclusion}`),
+                ...statuses.map(({ id, state }) => `${id}:${state}`)
+              ].sort().join('|')
+
+              if (!pendingChecks.length && !pendingStatuses.length && signature === previousSignature) {
+                stablePolls += 1
+              } else {
+                stablePolls = 0
+              }
+
+              if (stablePolls >= 2) {
+                checksPassed = true
+                break
+              }
+
+              previousSignature = signature
+              core.info(`Waiting for checks (poll ${attempt}/120): ${pendingChecks.length + pendingStatuses.length} pending`)
+              await sleep(10000)
+            }
+
+            if (!checksPassed) {
+              throw new Error('Timed out waiting for pull request checks.')
+            }
+
+            for (let attempt = 1; attempt <= 6; attempt++) {
+              const { data: pullRequest } = await github.rest.pulls.get({
+                owner,
+                repo,
+                pull_number: pullNumber
+              })
+
+              if (pullRequest.merged) {
+                core.info('The pull request was already merged.')
+                return
+              }
+
+              try {
+                const { data: merge } = await github.rest.pulls.merge({
+                  owner,
+                  repo,
+                  pull_number: pullNumber,
+                  merge_method: 'squash',
+                  sha: pullRequest.head.sha
+                })
+
+                if (merge.merged) {
+                  await github.rest.actions.createWorkflowDispatch({
+                    owner,
+                    repo,
+                    workflow_id: process.env.DEPLOY_WORKFLOW,
+                    ref: pullRequest.base.ref
+                  })
+                  core.info(`Merged and dispatched ${process.env.DEPLOY_WORKFLOW} on ${pullRequest.base.ref}.`)
+                  return
+                }
+
+                core.info(`Merge attempt ${attempt}/6 was not ready: ${merge.message}`)
+              } catch (error) {
+                if (![405, 409, 422].includes(error.status) || attempt === 6) throw error
+                core.info(`Merge attempt ${attempt}/6 failed with HTTP ${error.status}; retrying.`)
+              }
+
+              await sleep(10000)
+            }
+
+            throw new Error('Unable to merge the pull request after six attempts.')
