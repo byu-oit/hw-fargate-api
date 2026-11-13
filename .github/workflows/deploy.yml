@@ -276,7 +276,7 @@ jobs:
           client-key: ${{ secrets[matrix.env.rfc_key_name] }}
           client-secret: ${{ secrets[matrix.env.rfc_secret_name] }}
           template-id: ${{ matrix.env.rfc_template_id }}
-          run-in-non-production: true
+          run-in-non-production: false
 
       - name: Tofu Apply
         working-directory: iac/app
@@ -306,6 +306,6 @@ jobs:
           client-key: ${{ secrets[matrix.env.rfc_key_name] }}
           client-secret: ${{ secrets[matrix.env.rfc_secret_name] }}
           change-sys-id: ${{ steps.start-standard-change.outputs.change-sys-id }}
-          run-in-non-production: true
+          run-in-non-production: false
           work-start: ${{ steps.start-standard-change.outputs.work-start }}
           success: ${{ job.status == 'success' }}
